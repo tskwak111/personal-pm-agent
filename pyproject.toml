@@ -10,7 +10,16 @@ dev = [
     "ruff>=0.13",
     "mypy>=1.18",
     "pyyaml>=6.0,<7",
+    "httpx>=0.28",
+    "personal-pm-planner",
+    "personal-pm-api",
+    "personal-pm-worker",
 ]
+
+[tool.uv.sources]
+personal-pm-planner = { workspace = true }
+personal-pm-api = { workspace = true }
+personal-pm-worker = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/planner", "apps/api", "apps/worker"]
@@ -34,7 +43,12 @@ python_version = "3.13"
 strict = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+    "tests",
+    "packages/planner/tests",
+    "apps/api/tests",
+    "apps/worker/tests",
+]
 markers = [
     "integration: tests that require external services such as PostgreSQL or Redis",
     "e2e: end-to-end browser or system tests",

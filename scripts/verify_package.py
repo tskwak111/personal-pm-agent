@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Verify the Personal PM Agent development package without third-party modules."""
+
 from __future__ import annotations
 
 import hashlib
@@ -130,10 +131,11 @@ def check_required_files(errors: list[str]) -> None:
             fail(errors, f"missing or empty required file: {relative}")
 
 
-
 def check_distribution_manifest(errors: list[str]) -> int:
     manifest_path = ROOT / "MANIFEST.sha256"
-    lines = [line for line in manifest_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    lines = [
+        line for line in manifest_path.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
     listed: set[str] = set()
     for line_number, line in enumerate(lines, 1):
         try:
@@ -157,6 +159,7 @@ def check_distribution_manifest(errors: list[str]) -> int:
     if extra:
         fail(errors, f"distribution manifest coverage mismatch: extra={extra}")
     return len(listed), len(untracked)
+
 
 def check_source_hashes(errors: list[str]) -> None:
     manifest = ROOT / "SOURCE_SPEC_HASHES.sha256"
@@ -293,13 +296,16 @@ def check_scenarios(errors: list[str]) -> int:
     return len(ids)
 
 
-
 def check_metric_index(errors: list[str]) -> int:
-    spec = (ROOT / "docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md").read_text(encoding="utf-8")
+    spec = (
+        ROOT / "docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md"
+    ).read_text(encoding="utf-8")
     index = (ROOT / "docs/quality/metric-gate-index.md").read_text(encoding="utf-8")
     pattern = r"\b(?:SAFE|PLAN|PQ|AI|EXT|OUT|UX|OPS)-\d{3}\b"
     spec_ids = set(re.findall(pattern, spec))
-    index_ids = re.findall(r"^\| ((?:SAFE|PLAN|PQ|AI|EXT|OUT|UX|OPS)-\d{3}) \|", index, re.MULTILINE)
+    index_ids = re.findall(
+        r"^\| ((?:SAFE|PLAN|PQ|AI|EXT|OUT|UX|OPS)-\d{3}) \|", index, re.MULTILINE
+    )
     if len(index_ids) != len(set(index_ids)):
         fail(errors, "duplicate Metric IDs in metric gate index")
     if set(index_ids) != spec_ids:
@@ -309,6 +315,7 @@ def check_metric_index(errors: list[str]) -> int:
     if len(spec_ids) != 64:
         fail(errors, f"expected 64 approved Metric IDs, found {len(spec_ids)}")
     return len(spec_ids)
+
 
 def check_prompt(errors: list[str]) -> None:
     path = ROOT / "prompts/CODEX_MASTER_META_PROMPT.md"

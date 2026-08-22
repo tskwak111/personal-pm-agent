@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5.1.0
+
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pinned pnpm
+        run: corepack enable
+
+      - name: Install uv
+        run: python3 -m pip install --disable-pip-version-check uv==0.12.3
+
+      - name: Sync Python workspace
+        run: uv sync
+
+      - name: Install Node workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: make format-check
+
+      - name: Lint
+        run: make lint
+
+      - name: Typecheck
+        run: make typecheck
+
+      - name: Unit tests
+        run: make test-unit
+
+      - name: Build
+        run: make build
+
+      - name: Verify docs and repository contract
+        run: |
+          make verify-docs
+          make verify-repo

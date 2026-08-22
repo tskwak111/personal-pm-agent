@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Regenerate MANIFEST.md and MANIFEST.sha256 for the development package."""
+
 from __future__ import annotations
 
 import hashlib
@@ -94,7 +95,8 @@ def build_markdown() -> str:
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
 - **Manifest regenerated:** {generated}
-- **Product implementation status:** not started; this manifest verifies development-package artifacts only
+- **Product implementation status:** not started; this manifest verifies
+  development-package artifacts only
 
 ## Package metrics
 
@@ -129,7 +131,8 @@ sha256sum -c MANIFEST.sha256        # Linux
 shasum -a 256 -c MANIFEST.sha256   # macOS
 ```
 
-`MANIFEST.sha256` includes `MANIFEST.md` and every package file except itself, Python bytecode and `__pycache__` artifacts.
+`MANIFEST.sha256` includes `MANIFEST.md` and every package file except itself,
+Python bytecode and `__pycache__` artifacts.
 """
 
 

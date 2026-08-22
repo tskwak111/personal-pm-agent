@@ -1,12 +1,12 @@
 .PHONY: bootstrap format-check lint typecheck test-unit test-integration test-e2e \
-        build verify-planner verify-api verify-web verify-docs verify
+        build verify-planner verify-api verify-web verify-docs verify-repo verify
 
 bootstrap:
 	uv sync
 	pnpm install
 
 format-check:
-	uv run ruff format --check tests packages/planner/src apps/api/src apps/worker/src
+	uv run ruff format --check tests packages/planner/src apps/api/src apps/worker/src scripts
 	pnpm -r format:check
 
 lint:
@@ -44,4 +44,7 @@ verify-web:
 verify-docs:
 	python3 scripts/verify_package.py
 
-verify: format-check lint typecheck test-unit build verify-docs
+verify-repo:
+	python3 scripts/verify_repo.py
+
+verify: format-check lint typecheck test-unit build verify-docs verify-repo

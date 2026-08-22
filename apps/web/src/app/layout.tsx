@@ -7,9 +7,7 @@ export const metadata: Metadata = {
   description: "계획을 세우는 것이 아니라 유지하고 재조정합니다.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
       <body>{children}</body>

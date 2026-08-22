@@ -2,8 +2,9 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-23T05:22:00+09:00
-- **Product implementation status:** not started; this manifest verifies development-package artifacts only
+- **Manifest regenerated:** 2026-08-23T05:39:02+09:00
+- **Product implementation status:** not started; this manifest verifies
+  development-package artifacts only
 
 ## Package metrics
 
@@ -26,7 +27,7 @@
 | `SOURCE_SPEC_HASHES.sha256` | 1 |
 | `docs` | 33 |
 | `prompts` | 8 |
-| `scripts` | 2 |
+| `scripts` | 3 |
 
 ## File inventory before manifest files
 
@@ -79,8 +80,9 @@
 | `prompts/CODE_REVIEW_PROMPT.md` | 2614 | `03785f9e40d1fa87bfae3e63c4c70d0a318d0ded276df998533c28e8baa50919` |
 | `prompts/README.md` | 1332 | `2424412eb57776c961a4e5805e1425b21701f52aa3f139b73d2eed593b77d11d` |
 | `prompts/RELEASE_AUDIT_PROMPT.md` | 2318 | `3e15e593dba6326a77049cd34d559aee4ccef4ce1f655420172bc5e63a583994` |
-| `scripts/build_distribution_manifest.py` | 4041 | `3cf33cfef4599d45f372d7a44593720901f5cfb5fdb58dd722b85885dfafbad3` |
-| `scripts/verify_package.py` | 14949 | `27dcc98b12adc218fb7d2a0ab3ae91a0fb5966f1caae130c59d01b7b8442860d` |
+| `scripts/build_distribution_manifest.py` | 4044 | `715b4b50999d6f786cb278c91b1a7f24d5ad88884d58a3923330ed41dc4b77b2` |
+| `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
+| `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |
 
 ## Verification
 
@@ -94,4 +96,5 @@ sha256sum -c MANIFEST.sha256        # Linux
 shasum -a 256 -c MANIFEST.sha256   # macOS
 ```
 
-`MANIFEST.sha256` includes `MANIFEST.md` and every package file except itself, Python bytecode and `__pycache__` artifacts.
+`MANIFEST.sha256` includes `MANIFEST.md` and every package file except itself,
+Python bytecode and `__pycache__` artifacts.

@@ -8,6 +8,7 @@ REQUIRED = {
     "Makefile": "verify:",
 }
 
+
 def test_root_contract_files_and_markers_exist() -> None:
     for name, marker in REQUIRED.items():
         text = Path(name).read_text(encoding="utf-8")
