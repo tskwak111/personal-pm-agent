@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/
+
+# uv / pnpm scratch
+uv-cache/
+pnpm-store/
+
+# Reports (generated artifacts are committed intentionally under reports/)
+*.log

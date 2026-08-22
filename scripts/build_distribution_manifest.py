@@ -11,6 +11,29 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_MD = ROOT / "MANIFEST.md"
 MANIFEST_SHA = ROOT / "MANIFEST.sha256"
 
+EXCLUDED_DIRECTORIES = frozenset(
+    {
+        ".git",
+        ".venv",
+        "node_modules",
+        "__pycache__",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".hypothesis",
+        ".next",
+        ".turbo",
+        ".vercel",
+        "dist",
+        "build",
+        "coverage",
+        "uv-cache",
+        "pnpm-store",
+        ".idea",
+        ".vscode",
+    }
+)
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -20,12 +43,34 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+PACKAGE_TOP_LEVEL_FILES = frozenset(
+    {
+        "00_START_HERE.md",
+        "README.md",
+        "AGENTS.md",
+        "PACKAGE_MANIFEST.md",
+        "SOURCE_SPEC_HASHES.sha256",
+        "PACKAGE_SUMMARY.json",
+    }
+)
+PACKAGE_DIRECTORIES = frozenset({"docs", "prompts", "scripts"})
+
+
+def is_package_artifact(relative: Path) -> bool:
+    parts = relative.parts
+    if not parts:
+        return False
+    return parts[0] in PACKAGE_DIRECTORIES or relative.as_posix() in PACKAGE_TOP_LEVEL_FILES
+
+
 def included_files(*, include_manifest_md: bool) -> list[Path]:
     result: list[Path] = []
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if "__pycache__" in path.parts or path.suffix == ".pyc":
+        if EXCLUDED_DIRECTORIES.intersection(path.parts):
+            continue
+        if not is_package_artifact(path.relative_to(ROOT)):
             continue
         if path == MANIFEST_SHA:
             continue

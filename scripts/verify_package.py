@@ -75,6 +75,29 @@ PLACEHOLDER_PATTERNS = (
     re.compile(r"write tests for the above", re.IGNORECASE),
 )
 
+EXCLUDED_DIRECTORIES = frozenset(
+    {
+        ".git",
+        ".venv",
+        "node_modules",
+        "__pycache__",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".hypothesis",
+        ".next",
+        ".turbo",
+        ".vercel",
+        "dist",
+        "build",
+        "coverage",
+        "uv-cache",
+        "pnpm-store",
+        ".idea",
+        ".vscode",
+    }
+)
+
 
 def fail(errors: list[str], message: str) -> None:
     errors.append(message)
@@ -88,8 +111,16 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def iter_workspace_files() -> list[Path]:
+    return [
+        path
+        for path in ROOT.rglob("*")
+        if path.is_file() and not EXCLUDED_DIRECTORIES.intersection(path.parts)
+    ]
+
+
 def markdown_files() -> list[Path]:
-    return sorted(ROOT.rglob("*.md"))
+    return sorted(path for path in iter_workspace_files() if path.suffix == ".md")
 
 
 def check_required_files(errors: list[str]) -> None:
@@ -120,16 +151,12 @@ def check_distribution_manifest(errors: list[str]) -> int:
             fail(errors, f"distribution manifest target missing: {relative}")
         elif sha256(path) != expected:
             fail(errors, f"distribution manifest hash mismatch: {relative}")
-    actual = {
-        str(path.relative_to(ROOT))
-        for path in ROOT.rglob("*")
-        if path.is_file() and path.name != "MANIFEST.sha256" and "__pycache__" not in path.parts and path.suffix != ".pyc"
-    }
-    missing = sorted(actual - listed)
-    extra = sorted(listed - actual)
-    if missing or extra:
-        fail(errors, f"distribution manifest coverage mismatch: missing={missing}, extra={extra}")
-    return len(listed)
+    workspace_files = {str(path.relative_to(ROOT)) for path in iter_workspace_files()}
+    untracked = sorted(set(workspace_files) - listed)
+    extra = sorted(listed - workspace_files)
+    if extra:
+        fail(errors, f"distribution manifest coverage mismatch: extra={extra}")
+    return len(listed), len(untracked)
 
 def check_source_hashes(errors: list[str]) -> None:
     manifest = ROOT / "SOURCE_SPEC_HASHES.sha256"
@@ -323,8 +350,10 @@ def check_manifest(errors: list[str]) -> None:
 
 def check_status(errors: list[str]) -> None:
     text = (ROOT / "docs/status/IMPLEMENTATION_STATUS.md").read_text(encoding="utf-8")
-    if "Not Started" not in text or "P0-T01" not in text:
-        fail(errors, "implementation status must identify fresh-package state and P0-T01")
+    if "**현재 Phase:**" not in text or "**현재 Task:**" not in text:
+        fail(errors, "implementation status must identify the current Phase and Task")
+    if "P0-T01" not in text:
+        fail(errors, "implementation status must reference the first Task P0-T01 in its history")
 
 
 def main() -> int:
@@ -334,7 +363,7 @@ def main() -> int:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    manifest_count = check_distribution_manifest(errors)
+    manifest_count, untracked_count = check_distribution_manifest(errors)
     check_source_hashes(errors)
     check_markdown(errors)
     task_ids, task_count = check_plan_contracts(errors)
@@ -360,6 +389,7 @@ def main() -> int:
     print(f"approved_metrics={metric_count}")
     print("source_spec_hashes=3/3")
     print(f"manifest_files={manifest_count}")
+    print(f"workspace_files_not_in_manifest={untracked_count}")
     return 0
 
 

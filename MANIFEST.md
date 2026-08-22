@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-22T19:59:39+00:00
+- **Manifest regenerated:** 2026-08-23T05:18:29+09:00
 - **Product implementation status:** not started; this manifest verifies development-package artifacts only
 
 ## Package metrics
@@ -62,7 +62,7 @@
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
-| `docs/status/DECISION_LOG.md` | 1501 | `9961dd72af7d70ab0fcf0f4fbd02e4b2a4e53e887422fc2245731df5c730d9cf` |
+| `docs/status/DECISION_LOG.md` | 2362 | `b24a909ffa6dbc51bcdfe0c7d123446b20761863c1cedfdfc719784fa77444da` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
 | `docs/status/IMPLEMENTATION_STATUS.md` | 1472 | `8d9951e929a7f344240e8c6e787fede42235bfacc7be9c3b87dc7e53e005d0ec` |
 | `docs/status/RISK_REGISTER.md` | 1578 | `1e1b956f730f1bccdfca0349547abcf03c7694a9bee2949d08096934cc21bfef` |
@@ -79,8 +79,8 @@
 | `prompts/CODE_REVIEW_PROMPT.md` | 2614 | `03785f9e40d1fa87bfae3e63c4c70d0a318d0ded276df998533c28e8baa50919` |
 | `prompts/README.md` | 1332 | `2424412eb57776c961a4e5805e1425b21701f52aa3f139b73d2eed593b77d11d` |
 | `prompts/RELEASE_AUDIT_PROMPT.md` | 2318 | `3e15e593dba6326a77049cd34d559aee4ccef4ce1f655420172bc5e63a583994` |
-| `scripts/build_distribution_manifest.py` | 3062 | `c5309bb167ee82015b6d566b268d6ab2ab0f753117b60be3b314c410d26fbe92` |
-| `scripts/verify_package.py` | 14202 | `613a7e8d656dd267fbee30f2c32b0981905a3f79948c96b79227b4fa79c0a9fa` |
+| `scripts/build_distribution_manifest.py` | 4041 | `3cf33cfef4599d45f372d7a44593720901f5cfb5fdb58dd722b85885dfafbad3` |
+| `scripts/verify_package.py` | 14949 | `27dcc98b12adc218fb7d2a0ab3ae91a0fb5966f1caae130c59d01b7b8442860d` |
 
 ## Verification
 
