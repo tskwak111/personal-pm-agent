@@ -22,3 +22,8 @@ class WorkstreamId:
 @dataclass(frozen=True, slots=True, order=True)
 class MilestoneId:
     value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class TaskId:
+    value: UUID

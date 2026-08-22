@@ -36,3 +36,9 @@ class WorkstreamStatus(StrEnum):
     PAUSED = "paused"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
+
+
+class Uncertainty(StrEnum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
