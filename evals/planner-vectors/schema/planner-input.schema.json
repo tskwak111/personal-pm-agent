@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planner-input.schema.json",
+  "title": "Personal PM Planner Input (canonical primitive form)",
+  "description": "Canonical JSON shape produced by personal_pm_planner.contracts.input.canonical_input_bytes. Lists of entities are serialized as arrays; identifiers are UUID strings; datetimes are UTC ISO-8601 strings; enums use canonical lowercase values.",
+  "type": "object",
+  "required": [
+    "planner_version",
+    "now_utc",
+    "user_timezone",
+    "horizon_end_utc",
+    "slot_minutes",
+    "availability_windows",
+    "calendar_events",
+    "tasks",
+    "milestones",
+    "task_dependencies",
+    "external_dependencies",
+    "pinned_task_ids",
+    "excluded_dates"
+  ],
+  "properties": {
+    "planner_version": {"type": "string", "minLength": 1},
+    "now_utc": {"$ref": "#/$defs/utcInstant"},
+    "user_timezone": {"type": "string", "description": "IANA timezone name"},
+    "horizon_end_utc": {"$ref": "#/$defs/utcInstant"},
+    "slot_minutes": {"type": "integer", "exclusiveMinimum": 0},
+    "availability_windows": {"type": "array", "items": {"$ref": "#/$defs/availabilityWindow"}},
+    "calendar_events": {"type": "array", "items": {"$ref": "#/$defs/calendarEvent"}},
+    "tasks": {"type": "array", "items": {"$ref": "#/$defs/task"}},
+    "milestones": {"type": "array", "items": {"$ref": "#/$defs/milestone"}},
+    "task_dependencies": {"type": "array", "items": {"$ref": "#/$defs/taskDependency"}},
+    "external_dependencies": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/externalDependency"}
+    },
+    "pinned_task_ids": {"type": "array", "items": {"$ref": "#/$defs/uuid"}, "uniqueItems": true},
+    "excluded_dates": {"type": "array", "items": {"$ref": "#/$defs/isoDate"}}
+  },
+  "$defs": {
+    "uuid": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},
+    "utcInstant": {"type": "string", "format": "date-time"},
+    "isoDate": {"type": "string", "format": "date"},
+    "availabilityWindow": {
+      "type": "object",
+      "required": ["start_at", "end_at", "tags"],
+      "properties": {
+        "start_at": {"$ref": "#/$defs/utcInstant"},
+        "end_at": {"$ref": "#/$defs/utcInstant"},
+        "tags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "calendarEvent": {
+      "type": "object",
+      "required": ["id", "workspace_id", "title", "start_at", "end_at", "event_kind", "deadline_date", "version"],
+      "properties": {
+        "id": {"$ref": "#/$defs/uuid"},
+        "workspace_id": {"$ref": "#/$defs/uuid"},
+        "title": {"type": "string"},
+        "start_at": {"$ref": "#/$defs/utcInstant"},
+        "end_at": {"$ref": "#/$defs/utcInstant"},
+        "event_kind": {"enum": ["fixed_busy", "movable_commitment", "tentative", "all_day_info"]},
+        "deadline_date": {"anyOf": [{"$ref": "#/$defs/isoDate"}, {"type": "null"}]},
+        "version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "id", "workspace_id", "workstream_id", "milestone_id", "title", "status",
+        "deadline_date", "deadline_at", "deadline_time_known", "start_after",
+        "base_duration_minutes", "safety_duration_minutes", "remaining_base_minutes",
+        "remaining_safety_minutes", "uncertainty", "splittable", "min_chunk_minutes",
+        "pinned", "waiting_reason", "version"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/uuid"},
+        "workspace_id": {"$ref": "#/$defs/uuid"},
+        "workstream_id": {"$ref": "#/$defs/uuid"},
+        "milestone_id": {"anyOf": [{"$ref": "#/$defs/uuid"}, {"type": "null"}]},
+        "title": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["draft", "planned", "ready", "in_progress", "waiting", "blocked", "done", "deferred", "cancelled"]
+        },
+        "deadline_date": {"anyOf": [{"$ref": "#/$defs/isoDate"}, {"type": "null"}]},
+        "deadline_at": {"anyOf": [{"$ref": "#/$defs/utcInstant"}, {"type": "null"}]},
+        "deadline_time_known": {"type": "boolean"},
+        "start_after": {"anyOf": [{"$ref": "#/$defs/utcInstant"}, {"type": "null"}]},
+        "base_duration_minutes": {"type": "integer", "exclusiveMinimum": 0},
+        "safety_duration_minutes": {"type": "integer", "minimum": 1},
+        "remaining_base_minutes": {"type": "integer", "minimum": 0},
+        "remaining_safety_minutes": {"type": "integer", "minimum": 0},
+        "uncertainty": {"enum": ["low", "medium", "high"]},
+        "splittable": {"type": "boolean"},
+        "min_chunk_minutes": {"type": "integer", "exclusiveMinimum": 0},
+        "pinned": {"type": "boolean"},
+        "waiting_reason": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+        "version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "milestone": {
+      "type": "object",
+      "required": [
+        "id", "workspace_id", "workstream_id", "title", "deadline_date", "deadline_at",
+        "deadline_date_known", "deadline_time_known", "deadline_type",
+        "required_buffer_minutes", "version"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/uuid"},
+        "workspace_id": {"$ref": "#/$defs/uuid"},
+        "workstream_id": {"$ref": "#/$defs/uuid"},
+        "title": {"type": "string"},
+        "deadline_date": {"anyOf": [{"$ref": "#/$defs/isoDate"}, {"type": "null"}]},
+        "deadline_at": {"anyOf": [{"$ref": "#/$defs/utcInstant"}, {"type": "null"}]},
+        "deadline_date_known": {"type": "boolean"},
+        "deadline_time_known": {"type": "boolean"},
+        "deadline_type": {
+          "enum": ["hard_deadline", "external_commitment", "internal_target", "soft_goal"]
+        },
+        "required_buffer_minutes": {"type": "integer", "minimum": 0},
+        "version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "taskDependency": {
+      "type": "object",
+      "required": ["predecessor_id", "successor_id", "dependency_type"],
+      "properties": {
+        "predecessor_id": {"$ref": "#/$defs/uuid"},
+        "successor_id": {"$ref": "#/$defs/uuid"},
+        "dependency_type": {
+          "enum": ["blocks_start", "blocks_completion", "waiting_external", "related"]
+        }
+      }
+    },
+    "externalDependency": {
+      "type": "object",
+      "required": [
+        "id", "workspace_id", "deliverable", "owner_label", "expected_delivery_at",
+        "uncertainty_buffer_minutes", "fallback_available", "fallback_task_ids",
+        "affected_task_ids", "version"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/uuid"},
+        "workspace_id": {"$ref": "#/$defs/uuid"},
+        "deliverable": {"type": "string"},
+        "owner_label": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+        "expected_delivery_at": {"anyOf": [{"$ref": "#/$defs/utcInstant"}, {"type": "null"}]},
+        "uncertainty_buffer_minutes": {"type": "integer", "minimum": 0},
+        "fallback_available": {"type": "boolean"},
+        "fallback_task_ids": {"type": "array", "items": {"$ref": "#/$defs/uuid"}},
+        "affected_task_ids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/uuid"},
+          "minItems": 1
+        },
+        "version": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

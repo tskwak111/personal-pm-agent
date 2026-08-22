@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planner-output.schema.json",
+  "title": "Personal PM Planner Output (canonical primitive form)",
+  "description": "Stable skeleton of the planner result. Phase 2 planning tasks populate plan results; the envelope fields are frozen now.",
+  "type": "object",
+  "required": [
+    "planner_version",
+    "input_hash",
+    "generated_at_utc",
+    "base_plan",
+    "safety_plan",
+    "today_plan",
+    "milestone_risks",
+    "validation_warnings"
+  ],
+  "properties": {
+    "planner_version": {"type": "string", "minLength": 1},
+    "input_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "base_plan": {"anyOf": [{"$ref": "#/$defs/planPass"}, {"type": "null"}]},
+    "safety_plan": {"anyOf": [{"$ref": "#/$defs/planPass"}, {"type": "null"}]},
+    "today_plan": {"anyOf": [{"$ref": "#/$defs/todayPlan"}, {"type": "null"}]},
+    "milestone_risks": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/milestoneRisk"}
+    },
+    "validation_warnings": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "passType": {"enum": ["base", "safety"]},
+    "taskAllocation": {
+      "type": "object",
+      "required": ["task_id", "pass_type", "start_at", "end_at", "chunk_index"],
+      "properties": {
+        "task_id": {"$ref": "#/$defs/uuid"},
+        "pass_type": {"$ref": "#/properties/base_plan/$ref/#/$defs/passType"},
+        "start_at": {"type": "string", "format": "date-time"},
+        "end_at": {"type": "string", "format": "date-time"},
+        "chunk_index": {"type": "integer", "minimum": 0}
+      }
+    },
+    "planPass": {
+      "type": "object",
+      "required": ["pass_type", "allocations", "unallocated_base_minutes", "unallocated_safety_minutes"],
+      "properties": {
+        "pass_type": {"enum": ["base", "safety"]},
+        "allocations": {"type": "array", "items": {"$ref": "#/$defs/taskAllocation"}},
+        "unallocated_base_minutes": {"type": "integer", "minimum": 0},
+        "unallocated_safety_minutes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "todayPlan": {
+      "type": "object",
+      "required": ["core_result_task_id", "must_do", "next_queue", "opportunistic", "excluded"],
+      "properties": {
+        "core_result_task_id": {"anyOf": [{"$ref": "#/$defs/uuid"}, {"type": "null"}]},
+        "must_do": {"type": "array", "items": {"$ref": "#/$defs/uuid"}},
+        "next_queue": {"type": "array", "items": {"$ref": "#/$defs/uuid"}},
+        "opportunistic": {"type": "array", "items": {"$ref": "#/$defs/uuid"}},
+        "excluded": {"type": "array", "items": {"$ref": "#/$defs/uuid"}}
+      }
+    },
+    "milestoneRisk": {
+      "type": "object",
+      "required": [
+        "milestone_id",
+        "risk_level",
+        "base_coverage",
+        "safety_coverage",
+        "slack_minutes",
+        "reasons"
+      ],
+      "properties": {
+        "milestone_id": {"$ref": "#/$defs/uuid"},
+        "risk_level": {
+          "enum": ["critical", "high", "medium", "low", "unknown"]
+        },
+        "base_coverage": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "safety_coverage": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "slack_minutes": {"anyOf": [{"type": "integer"}, {"type": "null"}]},
+        "reasons": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
