@@ -7,3 +7,18 @@ from uuid import UUID
 @dataclass(frozen=True, slots=True, order=True)
 class WorkspaceId:
     value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class AreaId:
+    value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class WorkstreamId:
+    value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class MilestoneId:
+    value: UUID
