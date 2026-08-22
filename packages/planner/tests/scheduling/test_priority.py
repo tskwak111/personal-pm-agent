@@ -36,7 +36,9 @@ def priority_context():
 @pytest.fixture
 def tied_tasks():
     # Identical business attributes; only UUIDs differ.
-    return [make_schedulable(id=UUID(int=value)) for value in (30, 10, 20)]
+    from personal_pm_planner.domain.identifiers import TaskId
+
+    return [make_schedulable(id=TaskId(UUID(int=value))) for value in (30, 10, 20)]
 
 
 def test_identical_business_priority_uses_task_id_as_final_tie_break(
@@ -87,13 +89,15 @@ def test_must_start_by_beats_unlock_count(priority_context) -> None:
     assert ordered[0] is early
 
 
-def test_external_commitment_and_prior_position_ordering(priority_context) -> None:
+def test_external_commitment_ranks_before_prior_position(priority_context) -> None:
     from personal_pm_planner.scheduling.priority import priority_key
 
     committed = make_schedulable(external_commitment=True, prior_plan_position=5)
     positioned = make_schedulable(prior_plan_position=1)
     ordered = sorted([committed, positioned], key=lambda t: priority_key(t, priority_context))
-    assert ordered[0] is positioned
+    # Normative tuple: -external_commitment precedes prior_plan_position.
+    assert ordered[0] is committed
+    assert ordered[1] is positioned
 
 
 def test_initial_classification_rules() -> None:
@@ -110,7 +114,7 @@ def test_initial_classification_rules() -> None:
             deadline_type=DeadlineType.HARD_DEADLINE,
             importance=ImportanceLevel.PROTECTED,
         ).value
-        == "P1"
+        == 1
     )
     assert (
         initial_priority_class(
@@ -119,7 +123,7 @@ def test_initial_classification_rules() -> None:
             importance=ImportanceLevel.IMPORTANT,
             is_synthetic_buffer=True,
         ).value
-        == "P1"
+        == 1
     )
     assert (
         initial_priority_class(
@@ -128,7 +132,7 @@ def test_initial_classification_rules() -> None:
             importance=ImportanceLevel.OPTIONAL,
             is_exploration=True,
         ).value
-        == "P4"
+        == 4
     )
     assert (
         initial_priority_class(
@@ -137,5 +141,5 @@ def test_initial_classification_rules() -> None:
             importance=ImportanceLevel.NORMAL,
             is_routine=True,
         ).value
-        == "P3"
+        == 3
     )
