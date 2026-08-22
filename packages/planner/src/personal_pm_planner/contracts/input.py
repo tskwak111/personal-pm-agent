@@ -29,6 +29,22 @@ from personal_pm_planner.domain.work import MilestoneSnapshot
 
 
 @dataclass(frozen=True, slots=True)
+class PriorAllocation:
+    task_id: TaskId
+    start_at: datetime
+    end_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class PriorPlanSnapshot:
+    """The last validated plan; never overwritten by a failed replan."""
+
+    id: UUID
+    input_hash: str
+    allocations: tuple[PriorAllocation, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class PlannerInput:
     """Canonical snapshot handed to :func:`personal_pm_planner.plan`."""
 
@@ -45,6 +61,7 @@ class PlannerInput:
     external_dependencies: tuple[ExternalDependencySnapshot, ...]
     pinned_task_ids: frozenset[TaskId]
     excluded_dates: tuple[date, ...]
+    prior_plan_snapshot: PriorPlanSnapshot | None = None
 
     def __post_init__(self) -> None:
         if not self.planner_version.strip():
