@@ -75,6 +75,16 @@ def make_milestone(**overrides: object) -> MilestoneSnapshot:
 
 
 @pytest.fixture
+def date_only_milestone() -> MilestoneSnapshot:
+    return make_milestone(deadline_time_known=False)
+
+
+@pytest.fixture
+def milestone_factory():
+    return make_milestone
+
+
+@pytest.fixture
 def planner_input_factory():
     def factory(
         *,

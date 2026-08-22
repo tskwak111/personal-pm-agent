@@ -45,8 +45,7 @@ def validate_contract(value: PlannerInput) -> tuple[ContractViolation, ...]:
                 ContractViolation(
                     rule_id="DONE_TASK_HAS_REMAINING_TIME",
                     detail=(
-                        f"task {task.id.value.hex} is {task.status.value}"
-                        " with remaining minutes"
+                        f"task {task.id.value.hex} is {task.status.value} with remaining minutes"
                     ),
                 )
             )
