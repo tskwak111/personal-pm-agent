@@ -9,6 +9,7 @@ dev = [
     "pytest>=8.4,<9",
     "ruff>=0.13",
     "mypy>=1.18",
+    "pyyaml>=6.0,<7",
 ]
 
 [tool.uv.workspace]
