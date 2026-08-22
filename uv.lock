@@ -7,6 +7,7 @@ members = [
     "personal-pm-agent",
     "personal-pm-api",
     "personal-pm-planner",
+    "personal-pm-worker",
 ]
 
 [[package]]
@@ -381,6 +382,21 @@ dev = [
     { name = "hypothesis", specifier = ">=6.13" },
     { name = "pytest", specifier = ">=8.4,<9" },
 ]
+
+[[package]]
+name = "personal-pm-worker"
+version = "0.1.0"
+source = { editable = "apps/worker" }
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8.4,<9" }]
 
 [[package]]
 name = "pluggy"
