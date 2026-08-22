@@ -1,0 +1,21 @@
+{
+  "package_name": "personal-pm-agent-final-development-package",
+  "package_version": "1.0.0",
+  "generated_at": "2026-08-23T00:00:00+09:00",
+  "status": "implementation-ready documentation package; product code not implemented",
+  "specifications": 3,
+  "implementation_phases": 9,
+  "implementation_tasks": 77,
+  "traced_requirements": 104,
+  "acceptance_scenarios": 20,
+  "approved_metric_ids": 64,
+  "entrypoint": "00_START_HERE.md",
+  "master_prompt": "prompts/CODEX_MASTER_META_PROMPT.md",
+  "verifier": "scripts/verify_package.py",
+  "source_spec_hash_manifest": "SOURCE_SPEC_HASHES.sha256",
+  "codex_prompts": 7,
+  "package_manifest": "PACKAGE_MANIFEST.md",
+  "distribution_manifest": "MANIFEST.sha256",
+  "manifest_builder": "scripts/build_distribution_manifest.py",
+  "phase_entry_task": "P0-T01"
+}
