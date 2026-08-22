@@ -55,7 +55,7 @@ packages/planner/src/personal_pm_planner/contracts/
 - Consumes: Python standard library only
 - Produces: `WorkspaceId`, canonical enums and UTC-aware validation helpers
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from datetime import datetime
@@ -73,7 +73,7 @@ def test_naive_datetime_is_rejected() -> None:
         require_aware_utc(datetime(2026, 8, 23, 12, 0))
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -83,7 +83,7 @@ uv run pytest packages/planner/tests/domain/test_primitives.py -q
 
 Expected: FAIL because canonical primitives do not exist.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 from dataclasses import dataclass
@@ -101,7 +101,7 @@ def require_aware_utc(value: datetime) -> datetime:
     return value.astimezone(timezone.utc)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_primitives.py -q
@@ -109,13 +109,13 @@ uv run pytest packages/planner/tests/domain/test_primitives.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run ruff check packages/planner && uv run mypy packages/planner/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/identifiers.py packages/planner/src/personal_pm_planner/domain/enums.py packages/planner/src/personal_pm_planner/domain/time.py packages/planner/tests/domain/test_primitives.py
@@ -133,7 +133,7 @@ git commit -m "feat(domain): add canonical identifiers and time primitives"
 - Consumes: canonical IDs, enums and aware time
 - Produces: `SourceFact`, `AreaSnapshot`, `WorkstreamSnapshot`, `MilestoneSnapshot`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.domain.work import MilestoneSnapshot
@@ -145,7 +145,7 @@ def test_date_only_deadline_does_not_fabricate_time(milestone_factory) -> None:
     assert milestone.deadline_at is None
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -155,7 +155,7 @@ uv run pytest packages/planner/tests/domain/test_work_snapshots.py -q
 
 Expected: FAIL because milestone snapshots are missing.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -179,7 +179,7 @@ class MilestoneSnapshot:
             raise ValueError("unknown deadline time cannot persist a factual deadline_at")
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_work_snapshots.py -q
@@ -187,13 +187,13 @@ uv run pytest packages/planner/tests/domain/test_work_snapshots.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/domain -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/facts.py packages/planner/src/personal_pm_planner/domain/work.py packages/planner/tests/domain/test_work_snapshots.py
@@ -211,7 +211,7 @@ git commit -m "feat(domain): add workstream and milestone snapshots"
 - Consumes: workstream and milestone snapshots
 - Produces: `TaskSnapshot`, `TaskTransitionRequest`, `transition_task` with guarded state transitions
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 import pytest
@@ -229,7 +229,7 @@ def test_done_requires_zero_remaining_minutes(task_factory) -> None:
         transition_task(task, TaskStatus.DONE, completion_confirmed=True)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -239,7 +239,7 @@ uv run pytest packages/planner/tests/domain/test_task_state_machine.py -q
 
 Expected: FAIL because the state machine is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
@@ -255,7 +255,7 @@ ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
 }
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_task_state_machine.py -q
@@ -263,13 +263,13 @@ uv run pytest packages/planner/tests/domain/test_task_state_machine.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/domain -q && uv run mypy packages/planner/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/task.py packages/planner/src/personal_pm_planner/domain/state_machine.py packages/planner/tests/domain/test_task_state_machine.py
@@ -287,7 +287,7 @@ git commit -m "feat(domain): enforce task state transitions"
 - Consumes: Task IDs and dependency enums
 - Produces: `TaskDependency`, `DependencyGraph`, `DependencyCycle` and stable cycle reporting
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.domain.dependency import DependencyGraph, TaskDependency
@@ -303,7 +303,7 @@ def test_cycle_path_is_stable(task_ids) -> None:
     assert graph.cycles()[0].task_ids == tuple(sorted((a, b, c)))
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -313,7 +313,7 @@ uv run pytest packages/planner/tests/domain/test_dependencies.py -q
 
 Expected: FAIL because dependency graph contracts are missing.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -335,7 +335,7 @@ class DependencyGraph:
         )))
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_dependencies.py -q
@@ -343,13 +343,13 @@ uv run pytest packages/planner/tests/domain/test_dependencies.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/domain -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/dependency.py packages/planner/src/personal_pm_planner/domain/errors.py packages/planner/tests/domain/test_dependencies.py
@@ -366,7 +366,7 @@ git commit -m "feat(domain): add dependency graph contracts"
 - Consumes: aware time primitives and Task IDs
 - Produces: `AvailabilityWindow`, `CalendarEventSnapshot`, `ExternalDependencySnapshot` with invariant validation
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 import pytest
@@ -378,7 +378,7 @@ def test_availability_requires_positive_window(aware_datetime) -> None:
         AvailabilityWindow(start_at=start, end_at=start, tags=frozenset())
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -388,7 +388,7 @@ uv run pytest packages/planner/tests/domain/test_availability_snapshots.py -q
 
 Expected: FAIL because availability contracts are absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -404,7 +404,7 @@ class AvailabilityWindow:
             raise ValueError("end must be after start")
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_availability_snapshots.py -q
@@ -412,13 +412,13 @@ uv run pytest packages/planner/tests/domain/test_availability_snapshots.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/domain -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/availability.py packages/planner/tests/domain/test_availability_snapshots.py
@@ -437,7 +437,7 @@ git commit -m "feat(domain): add availability and external dependency snapshots"
 - Consumes: canonical action and deadline enums
 - Produces: `authorization_level(action)`, version-bound Approval and immutable AuditEvent
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.domain.authorization import authorization_level
@@ -450,7 +450,7 @@ def test_priority_calculation_is_automatic() -> None:
     assert authorization_level(ActionType.CALCULATE_PRIORITY) is AuthorizationLevel.AUTOMATIC
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -460,7 +460,7 @@ uv run pytest packages/planner/tests/domain/test_authorization.py -q
 
 Expected: FAIL because the policy table is missing.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 AUTHORIZATION_POLICY: dict[ActionType, AuthorizationLevel] = {
@@ -478,7 +478,7 @@ def authorization_level(action: ActionType) -> AuthorizationLevel:
     return AUTHORIZATION_POLICY[action]
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/domain/test_authorization.py -q
@@ -486,13 +486,13 @@ uv run pytest packages/planner/tests/domain/test_authorization.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/domain -q && uv run mypy packages/planner/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/domain/approval.py packages/planner/src/personal_pm_planner/domain/audit.py packages/planner/src/personal_pm_planner/domain/authorization.py packages/planner/tests/domain/test_authorization.py
@@ -513,7 +513,7 @@ git commit -m "feat(domain): add approval and authority policies"
 - Consumes: all Phase 1 immutable snapshots
 - Produces: `PlannerInput`, `PlannerOutput`, canonical serialization and public package exports
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner import PlannerInput
@@ -525,7 +525,7 @@ def test_canonical_input_is_independent_of_collection_order(planner_input_factor
     assert canonical_input_bytes(first) == canonical_input_bytes(second)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -535,7 +535,7 @@ uv run pytest packages/planner/tests/contracts/test_contract_serialization.py -q
 
 Expected: FAIL because Planner contracts and canonical serialization are absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def canonical_input_bytes(value: PlannerInput) -> bytes:
@@ -552,7 +552,7 @@ def input_hash(value: PlannerInput) -> str:
     return hashlib.sha256(canonical_input_bytes(value)).hexdigest()
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/contracts/test_contract_serialization.py -q
@@ -560,13 +560,13 @@ uv run pytest packages/planner/tests/contracts/test_contract_serialization.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests -q && uv run ruff check packages/planner && uv run mypy packages/planner/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/contracts/input.py packages/planner/src/personal_pm_planner/contracts/output.py packages/planner/src/personal_pm_planner/__init__.py packages/planner/tests/contracts/test_contract_serialization.py evals/planner-vectors/schema/planner-input.schema.json evals/planner-vectors/schema/planner-output.schema.json
@@ -575,10 +575,10 @@ git commit -m "feat(domain): freeze Planner input and output contracts"
 
 ## Phase 1 Exit Criteria
 
-- [ ] Planner public snapshots are immutable and framework-independent.
-- [ ] Task transition tests cover every allowed and forbidden edge.
-- [ ] Dependency types and cycle results are stable.
-- [ ] Authorization policy matches the design spec.
-- [ ] Date-only deadlines cannot carry a fabricated factual time.
-- [ ] Canonical Planner input serialization is order-independent.
-- [ ] Phase 2 can consume only committed Phase 1 contracts.
+- [x] Planner public snapshots are immutable and framework-independent.
+- [x] Task transition tests cover every allowed and forbidden edge.
+- [x] Dependency types and cycle results are stable.
+- [x] Authorization policy matches the design spec.
+- [x] Date-only deadlines cannot carry a fabricated factual time.
+- [x] Canonical Planner input serialization is order-independent.
+- [x] Phase 2 can consume only committed Phase 1 contracts.

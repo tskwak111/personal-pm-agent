@@ -15,5 +15,6 @@
 | DEC-011 | 2026-08-23 | 루트 패치 핀: Python 3.13.15, Node 24.19.0, pnpm 10.34.5 | toolchain-baseline.md의 patch-selection gate: 공식 배포판 확인, 설치 환경에서 실측(`uv python list`, `node --version`, `pnpm --version`), `.python-version`/`.node-version`/`packageManager`에 고정 | Accepted |
 | DEC-012 | 2026-08-23 | 로컬 compose는 메이저 태그(postgres:18, redis:8, minio/minio) 사용, 불변 다이제스트 핀은 레지스트리 접근 가능 시점(P8 배포 경화 전)으로 연기 | toolchain-baseline은 "검증되지 않은 패치를 current/secure로 서술 금지"를 요구. 실행 환경에서 레지스트리 조회가 타임아웃으로 실패해 다이제스트 실측 불가. RISK-001로 추적 | Accepted |
 | DEC-013 | 2026-08-23 | compose 호스트 포트를 환경변수 오버라이드로 제공하고 PG18 이미지의 `/var/lib/postgresql` 볼륨 레이아웃을 채택 | 개발 환경의 기존 로컬 PostgreSQL(5432 사용 중)과 충돌 없이 검증하기 위함. PG18 공식 이미지는 메이저별 하위 디렉터리 레이아웃을 요구하며 실측(pg_isready healthy, PostgreSQL 18.6 응답)으로 확인 | Accepted |
+| DEC-014 | 2026-08-23 | Task 상태 머신에 `Ready→Waiting`, `Ready→Blocked` 엣지를 포함하고, Waiting 이탈 시 사유를 해소로 표기하며 CANCELLED 진입 시 잔여량을 0으로 정리 | 도메인 상태 문서 §1 전이표에 없는 두 엣지는 Phase 1 계획(P1-T03)의 허용 테이블에 명시됨. 설계 §14.4가 Blocked/Waiting을 시작 여부와 무관한 원인 상태로 정의하므로 Ready 단계의 외부 대기·장애 기록이 제품 행동과 일치. 권한·승인에 영향 없음. 전수 엣지 테스트로 고정 | Accepted |
 
-새 결정은 `DEC-014`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.
+새 결정은 `DEC-015`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.

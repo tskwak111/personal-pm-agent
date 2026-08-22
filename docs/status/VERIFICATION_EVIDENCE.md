@@ -141,3 +141,28 @@ Notes:
 Reviewer: ox-alpha (self-review)
 Residual risk: RISK_REGISTER의 R-011 유지(다이제스트 핀은 P8 전 필수)
 ```
+
+## Phase 1 — Domain Core closeout
+
+```text
+Task ID: P1-T01..P1-T07 (branch phase/01-domain-core)
+Commits: 2cd0597, 5a19e90, 01dd7b9, ac39fa5, 3b47b49, cabd3a0, afb90f0, 74c1442
+Timestamp UTC: 2026-08-22T21:30Z
+Focused red commands and observed failures:
+  P1-T01 ModuleNotFoundError personal_pm_planner.domain
+  P1-T02 collection error domain.work 부재
+  P1-T03 ImportError TaskId 미정의
+  P1-T04 import error dependency 모듈 부재
+  P1-T05 import error availability/식별자 부재
+  P1-T06 import error authorization 부재
+  P1-T07 import error PlannerInput 부재
+Focused green results:
+  P1-T01 5 passed / P1-T02 13 passed(domain) / P1-T03+전수 엣지 59 passed(planner 전체)
+  P1-T04 SCC 사이클 안정성 포함 통과 / P1-T05 불변식 테스트 통과
+  P1-T06 권한 행렬·승인 바인딩·감사 계약 통과 / P1-T07 순서 무관 canonical 직렬화 통과
+Adjacent regression: uv run pytest packages/planner/tests -q → 59 passed; ruff/mypy strict → clean
+Completion command: make verify → 전 단계 통과(아래 재실행 기록)
+Notes:
+  - DEC-014: Ready→Waiting/Blocked 엣지와 Waiting 이탈 사유 해소, CANCELLED 잔여량 영정 의미를 기록
+  - 추적표 증거 경로를 tests/domain 실제 레이아웃으로 갱신(문서 규칙상 허용되는 경로 정제)
+Residual risk: 없음. Phase 2 참조 벡터에서 도메인 계약 소비 확인 예정

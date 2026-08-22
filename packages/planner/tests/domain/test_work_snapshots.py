@@ -49,9 +49,7 @@ def milestone_factory():
 
 
 def test_date_only_deadline_does_not_fabricate_time(milestone_factory) -> None:
-    milestone: MilestoneSnapshot = milestone_factory(
-        deadline_date="2026-09-10", deadline_at=None
-    )
+    milestone: MilestoneSnapshot = milestone_factory(deadline_date="2026-09-10", deadline_at=None)
     assert milestone.deadline_date == date(2026, 9, 10)
     assert milestone.deadline_date_known is True
     assert milestone.deadline_time_known is False

@@ -51,9 +51,7 @@ class TaskSnapshot:
         if self.base_duration_minutes <= 0:
             raise ValueError("base_duration_minutes must be positive")
         if self.safety_duration_minutes < self.base_duration_minutes:
-            raise ValueError(
-                "safety_duration_minutes cannot be below base_duration_minutes"
-            )
+            raise ValueError("safety_duration_minutes cannot be below base_duration_minutes")
         if self.min_chunk_minutes <= 0:
             raise ValueError("min_chunk_minutes must be positive")
         object.__setattr__(self, "status", TaskStatus(self.status))
@@ -70,6 +68,4 @@ class TaskSnapshot:
         )
         object.__setattr__(self, "deadline_at", normalized_deadline)
         if self.start_after is not None:
-            object.__setattr__(
-                self, "start_after", require_aware_utc(self.start_after)
-            )
+            object.__setattr__(self, "start_after", require_aware_utc(self.start_after))
