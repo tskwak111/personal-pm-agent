@@ -42,3 +42,10 @@ class Uncertainty(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
+
+
+class DependencyType(StrEnum):
+    BLOCKS_START = "blocks_start"
+    BLOCKS_COMPLETION = "blocks_completion"
+    WAITING_EXTERNAL = "waiting_external"
+    RELATED = "related"
