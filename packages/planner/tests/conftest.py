@@ -30,6 +30,7 @@ def make_task(
     safety: int | None = None,
     uncertainty: str = "medium",
     splittable: bool = True,
+    deadline_date: date | None = date(2026, 9, 10),
 ) -> TaskSnapshot:
     safety_minutes = safety if safety is not None else base + 30
     return TaskSnapshot(
@@ -39,7 +40,7 @@ def make_task(
         milestone_id=MILESTONE,
         title=f"task-{offset}",
         status=status,
-        deadline_date=date(2026, 9, 10),
+        deadline_date=deadline_date,
         deadline_at=None,
         deadline_time_known=False,
         start_after=None,

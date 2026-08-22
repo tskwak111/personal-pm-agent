@@ -72,9 +72,7 @@ class AvailabilityContext:
             kind = getattr(event, "event_kind", None)
             if kind is not None and getattr(kind, "value", None) == "fixed_busy":
                 bounded = cast(IntervalLike, event)
-                intervals.append(
-                    Interval(start_at=bounded.start_at, end_at=bounded.end_at)
-                )
+                intervals.append(Interval(start_at=bounded.start_at, end_at=bounded.end_at))
         return tuple(intervals)
 
 
