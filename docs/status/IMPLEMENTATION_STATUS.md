@@ -2,9 +2,9 @@
 
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 2 — Planner Engine
-- **현재 Task:** P2-T01
-- **마지막 검증:** Phase 1 전체 도메인 테스트 59개 통과 + make verify 통과
-- **마지막 커밋:** 74c1442 test(domain): cover every task transition edge
+- **현재 Task:** P2-T06
+- **마지막 검증:** planner 전체 84 테스트 통과(ruff/mypy strict clean)
+- **마지막 커밋:** d3853b0 fix(planner): correct priority tuple test expectations
 
 ## Phase 현황
 
@@ -28,6 +28,11 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P2-T05 우선순위 등급·동률 튜플 | focused RED→GREEN, LLM 점수 배제 검증 | 166ef81/d3853b0 |
+| 2026-08-23 | P2-T04 의존성 타이밍·사이클·핸드오프 역산 | latest_safe_handoff/must_start_by/unlock 검증 | 6605cf4 |
+| 2026-08-23 | P2-T03 고유 슬롯 생성·용량 예약 | FIXED/FOCUS/BUFFER 단일 소유권, 일일 계획가능 비율 | 0c3d312 |
+| 2026-08-23 | P2-T02 날짜 해석·안전 추정 산출 | date-only 자정 경계, 샘플 강도 혼합 | 13cef0f |
+| 2026-08-23 | P2-T01 입력 검증·정규화 | INVALID_INPUT Rule ID, 순서 무관 해시 | 1ca6e0e |
 | 2026-08-23 | P1-T07 Planner 입출력 계약 동결 | focused RED→GREEN, 순서 무관 직렬화 48 passed | afb90f0 |
 | 2026-08-23 | P1-T06 승인·권한·감사 정책 | focused RED→GREEN, 43 passed | cabd3a0 |
 | 2026-08-23 | P1-T05 가용·캘린더·외부 의존성 스냅샷 | focused RED→GREEN, 34 passed | 3b47b49 |

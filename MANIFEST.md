@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-23T06:17:09+09:00
+- **Manifest regenerated:** 2026-08-23T06:46:25+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -65,7 +65,7 @@
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
 | `docs/status/DECISION_LOG.md` | 3814 | `5d28beef9584278abc67a56e2c5ec481a8490983bc1bd0574ed6b7ac4e462eb6` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 2391 | `b7c7ea136cf7546d28ae6f7c10ec0447ff720da6c37d3e6e1c14a684a77424da` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 3009 | `66442f011db8eb619faa953d3d98932f7e1edfa12f4224e5b3c42be6a933d400` |
 | `docs/status/RISK_REGISTER.md` | 1792 | `36e7ada9f43703e1bb42912ff489741ea095402b1a7eef0688ccf5413b2c7021` |
 | `docs/status/VERIFICATION_EVIDENCE.md` | 8594 | `aa414f864551be7ba482db7c6eb8852aeeac13ba618b9ccf4356179fb0c091c5` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
