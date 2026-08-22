@@ -49,3 +49,10 @@ class DependencyType(StrEnum):
     BLOCKS_COMPLETION = "blocks_completion"
     WAITING_EXTERNAL = "waiting_external"
     RELATED = "related"
+
+
+class CalendarEventKind(StrEnum):
+    FIXED_BUSY = "fixed_busy"
+    MOVABLE_COMMITMENT = "movable_commitment"
+    TENTATIVE = "tentative"
+    ALL_DAY_INFO = "all_day_info"

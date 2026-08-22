@@ -27,3 +27,13 @@ class MilestoneId:
 @dataclass(frozen=True, slots=True, order=True)
 class TaskId:
     value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class CalendarEventId:
+    value: UUID
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class ExternalDependencyId:
+    value: UUID
