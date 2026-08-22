@@ -55,7 +55,7 @@ apps/web/                        Next.js App Router application
 - Consumes: approved runtime policy from `engineering-standards.md`
 - Produces: root files that pin Python, Node, pnpm and define stable make targets
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from pathlib import Path
@@ -74,7 +74,7 @@ def test_root_contract_files_and_markers_exist() -> None:
         assert marker in text, (name, marker)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -84,7 +84,7 @@ python3 -m pytest tests/handoff/test_root_contract.py -q
 
 Expected: FAIL because the root toolchain files do not exist.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 # package.json
@@ -114,7 +114,7 @@ python_version = "3.13"
 strict = true
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 python3 -m pytest tests/handoff/test_root_contract.py -q
@@ -122,13 +122,13 @@ python3 -m pytest tests/handoff/test_root_contract.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 python3 scripts/verify_package.py && git diff --check
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add tests/handoff/test_root_contract.py .python-version .node-version package.json pnpm-workspace.yaml pyproject.toml Makefile .editorconfig .gitignore .env.example
@@ -147,7 +147,7 @@ git commit -m "chore(repo): pin toolchain and workspace contracts"
 - Consumes: environment variable names from `.env.example`
 - Produces: healthy PostgreSQL, Redis and S3-compatible services with persistent local volumes
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from pathlib import Path
@@ -160,7 +160,7 @@ def test_compose_declares_required_services_and_healthchecks() -> None:
         assert "healthcheck" in data["services"][service]
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -170,7 +170,7 @@ python3 -m pytest tests/handoff/test_compose_contract.py -q
 
 Expected: FAIL because `compose.yaml` is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 services:
@@ -203,7 +203,7 @@ services:
       retries: 20
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 python3 -m pytest tests/handoff/test_compose_contract.py -q
@@ -211,13 +211,13 @@ python3 -m pytest tests/handoff/test_compose_contract.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 docker compose -f compose.yaml config >/dev/null
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add tests/handoff/test_compose_contract.py compose.yaml infra/docker/postgres/init.sql infra/docker/minio/create-bucket.sh
@@ -236,7 +236,7 @@ git commit -m "chore(infra): define local data services"
 - Consumes: root uv workspace
 - Produces: `personal_pm_planner` import and explicit planner package version with no framework dependencies
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from importlib.metadata import version
@@ -246,7 +246,7 @@ def test_planner_package_is_importable_and_versioned() -> None:
     assert personal_pm_planner.__version__ == version("personal-pm-planner")
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -256,7 +256,7 @@ uv run --package personal-pm-planner pytest packages/planner/tests/test_package_
 
 Expected: FAIL because the package is not defined.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 # packages/planner/src/personal_pm_planner/version.py
@@ -270,7 +270,7 @@ from .version import __version__
 __all__ = ["__version__"]
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run --package personal-pm-planner pytest packages/planner/tests/test_package_contract.py -q
@@ -278,13 +278,13 @@ uv run --package personal-pm-planner pytest packages/planner/tests/test_package_
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run ruff check packages/planner && uv run mypy packages/planner/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/pyproject.toml packages/planner/src/personal_pm_planner/__init__.py packages/planner/src/personal_pm_planner/version.py packages/planner/tests/test_package_contract.py
@@ -304,7 +304,7 @@ git commit -m "chore(planner): bootstrap pure Python package"
 - Consumes: root uv workspace and environment contract
 - Produces: `create_app()` and `/health/live`, `/health/ready` endpoints
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from fastapi.testclient import TestClient
@@ -316,7 +316,7 @@ def test_live_health_is_process_only() -> None:
     assert response.json() == {"status": "ok"}
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -326,7 +326,7 @@ uv run --package personal-pm-api pytest apps/api/tests/test_health.py -q
 
 Expected: FAIL because `create_app` does not exist.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 from fastapi import FastAPI
@@ -344,7 +344,7 @@ def create_app() -> FastAPI:
 app = create_app()
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run --package personal-pm-api pytest apps/api/tests/test_health.py -q
@@ -352,13 +352,13 @@ uv run --package personal-pm-api pytest apps/api/tests/test_health.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run ruff check apps/api && uv run mypy apps/api/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add apps/api/pyproject.toml apps/api/src/personal_pm_api/__init__.py apps/api/src/personal_pm_api/settings.py apps/api/src/personal_pm_api/main.py apps/api/tests/test_health.py
@@ -377,7 +377,7 @@ git commit -m "chore(api): bootstrap FastAPI application"
 - Consumes: root uv workspace
 - Produces: a worker entrypoint that validates settings and exposes a deterministic startup result
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_worker.main import build_worker_identity
@@ -386,7 +386,7 @@ def test_worker_identity_is_stable() -> None:
     assert build_worker_identity("local") == "personal-pm-worker:local"
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -396,7 +396,7 @@ uv run --package personal-pm-worker pytest apps/worker/tests/test_worker_contrac
 
 Expected: FAIL because the worker package does not exist.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def build_worker_identity(environment: str) -> str:
@@ -406,7 +406,7 @@ def build_worker_identity(environment: str) -> str:
     return f"personal-pm-worker:{normalized}"
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run --package personal-pm-worker pytest apps/worker/tests/test_worker_contract.py -q
@@ -414,13 +414,13 @@ uv run --package personal-pm-worker pytest apps/worker/tests/test_worker_contrac
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run ruff check apps/worker && uv run mypy apps/worker/src
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add apps/worker/pyproject.toml apps/worker/src/personal_pm_worker/__init__.py apps/worker/src/personal_pm_worker/main.py apps/worker/tests/test_worker_contract.py
@@ -441,7 +441,7 @@ git commit -m "chore(worker): bootstrap worker process"
 - Consumes: root pnpm workspace
 - Produces: strict TypeScript Next.js app with a render test and production build
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 // apps/web/src/test/home.test.tsx
@@ -454,7 +454,7 @@ it("renders the product identity", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -464,7 +464,7 @@ pnpm --filter @personal-pm/web test -- --run
 
 Expected: FAIL because the web workspace and page are absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 // apps/web/src/app/page.tsx
@@ -478,7 +478,7 @@ export default function HomePage() {
 }
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 pnpm --filter @personal-pm/web test -- --run
@@ -486,13 +486,13 @@ pnpm --filter @personal-pm/web test -- --run
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 pnpm --filter @personal-pm/web typecheck && pnpm --filter @personal-pm/web build
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add apps/web/package.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/src/app/layout.tsx apps/web/src/app/page.tsx apps/web/src/test/home.test.tsx
@@ -512,7 +512,7 @@ git commit -m "chore(web): bootstrap Next.js application"
 - Consumes: all bootstrapped workspaces
 - Produces: `make verify` and a CI workflow that run format, lint, type, test and build from a clean checkout
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from pathlib import Path
@@ -523,7 +523,7 @@ def test_makefile_exposes_required_targets() -> None:
         assert target in text
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -533,7 +533,7 @@ python3 -m pytest tests/handoff/test_command_contract.py -q
 
 Expected: FAIL because the unified targets and CI are incomplete.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 # Makefile excerpt
@@ -561,7 +561,7 @@ build:
 verify: format-check lint typecheck test-unit build
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 python3 -m pytest tests/handoff/test_command_contract.py -q
@@ -569,13 +569,13 @@ python3 -m pytest tests/handoff/test_command_contract.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 make verify && git diff --check
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add .github/workflows/ci.yml .pre-commit-config.yaml scripts/verify_repo.py Makefile tests/handoff/test_command_contract.py
@@ -584,9 +584,9 @@ git commit -m "ci(repo): enforce clean-checkout verification"
 
 ## Phase 0 Exit Criteria
 
-- [ ] A clean clone can install dependencies using committed lockfiles.
-- [ ] Local PostgreSQL, Redis and object storage report healthy.
-- [ ] Planner, API, worker and web tests run independently.
-- [ ] `make verify` succeeds locally and in CI.
-- [ ] No product behavior beyond bootstraps is implemented.
-- [ ] `IMPLEMENTATION_STATUS.md` advances to Phase 1.
+- [x] A clean clone can install dependencies using committed lockfiles.
+- [x] Local PostgreSQL, Redis and object storage report healthy.
+- [x] Planner, API, worker and web tests run independently.
+- [x] `make verify` succeeds locally and in CI.
+- [x] No product behavior beyond bootstraps is implemented.
+- [x] `IMPLEMENTATION_STATUS.md` advances to Phase 1.

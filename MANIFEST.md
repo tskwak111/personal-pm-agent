@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-23T05:39:02+09:00
+- **Manifest regenerated:** 2026-08-23T05:46:47+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -46,7 +46,7 @@
 | `docs/architecture/toolchain-baseline.md` | 2476 | `1dcce647e77946e6595143e8bc237bed3fb569463effa7f1e5e8c50de84b4408` |
 | `docs/operations/security-privacy-and-runbook.md` | 4789 | `34ad3a9ba0cddffd9d9a87eb4280b7fdfc608d7d183fb621929ddb95936769e3` |
 | `docs/plans/00-master-implementation-roadmap.md` | 9610 | `7a44de857adfd143c65bb5c654098062f5602ee0b344d074e9652544b18d7c68` |
-| `docs/plans/01-phase-0-foundation.md` | 16689 | `a0159f3db1bd36d3b9fceb4387f8337e8d09589891ff85be53c8602efd63b539` |
+| `docs/plans/01-phase-0-foundation.md` | 16689 | `cf79961f8831910e89834f71cd0b955fe75a6a068fe70e2ba1b04403e05ebf85` |
 | `docs/plans/02-phase-1-domain-core.md` | 19883 | `e41cc74c3d5f4e5fa2c25641448b83f612f60004f8560110aef336af1c768f86` |
 | `docs/plans/03-phase-2-planner-engine.md` | 29827 | `11a8cc5c0b561fa375bfaae46e2216dd9e4a1bcccddd7e8152be2bb08832b211` |
 | `docs/plans/04-phase-3-persistence-api.md` | 26158 | `57b3061aa3bc94f7de015cfa937141773448bbf997b13e641bc07f64080c312e` |
@@ -63,11 +63,11 @@
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
-| `docs/status/DECISION_LOG.md` | 2804 | `6f19843c8c905c8eb7e6838aa1f0e958d72926f2422071da918656d40924d5e7` |
+| `docs/status/DECISION_LOG.md` | 3235 | `5ac9bdd01ac19e7ea9c973c9278bc9cc07c62f20cdff94f630cadfb90b3eaa4a` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 1472 | `8d9951e929a7f344240e8c6e787fede42235bfacc7be9c3b87dc7e53e005d0ec` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 2150 | `ea39347d0ce30162622f5d84939addc54474159eb9331a4e2df406a88e391844` |
 | `docs/status/RISK_REGISTER.md` | 1792 | `36e7ada9f43703e1bb42912ff489741ea095402b1a7eef0688ccf5413b2c7021` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 525 | `4b4d4398385937b9c557d09093d8e187265031577549f23f79d0c896b26c465b` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 7175 | `bafec2d6f12fb835ef427dba2f53841d91985bc79bfb15d3010aadc1efefc667` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |
