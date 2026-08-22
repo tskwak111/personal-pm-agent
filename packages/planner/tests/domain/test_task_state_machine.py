@@ -114,3 +114,55 @@ def test_forbidden_transition_is_rejected(task_factory) -> None:
     task = task_factory(status=TaskStatus.DRAFT)
     with pytest.raises(ValueError, match="not allowed"):
         transition_task(task, TaskStatus.IN_PROGRESS)
+
+
+@pytest.mark.parametrize("source", list(TaskStatus))
+def test_every_transition_edge_is_classified(source, task_factory) -> None:
+    from personal_pm_planner.domain.state_machine import ALLOWED_TRANSITIONS, transition_task
+
+    for target in TaskStatus:
+        frozen = source in (TaskStatus.DONE, TaskStatus.CANCELLED)
+        zero_remaining = target is TaskStatus.DONE or frozen
+        task = task_factory(
+            status=source,
+            waiting_reason="external:dataset" if source is TaskStatus.WAITING else None,
+            remaining_base_minutes=0 if zero_remaining else 60,
+            remaining_safety_minutes=0 if zero_remaining else 90,
+        )
+        kwargs: dict[str, object] = {
+            "waiting_resolved": True,
+            "blocker_resolved": True,
+            "completion_confirmed": True,
+            "waiting_reason": "external:review",
+        }
+        allowed = target in ALLOWED_TRANSITIONS[source]
+        if allowed:
+            moved = transition_task(task, target, **kwargs)
+            assert moved.status is target
+            assert moved.version == task.version + 1
+            # Leaving Waiting resolves the reason; entering it requires one.
+            expected_reason = (
+                "external:review"
+                if target is TaskStatus.WAITING and source is not TaskStatus.WAITING
+                else None
+            )
+            assert moved.waiting_reason == expected_reason
+        else:
+            with pytest.raises(ValueError, match="not allowed"):
+                transition_task(task, target, **kwargs)
+
+
+def test_ready_task_can_enter_waiting_with_reason(task_factory) -> None:
+    from personal_pm_planner.domain.state_machine import transition_task
+
+    task = task_factory(status=TaskStatus.READY)
+    waiting = transition_task(task, TaskStatus.WAITING, waiting_reason="external:data")
+    assert waiting.waiting_reason == "external:data"
+
+
+def test_entering_waiting_without_reason_is_rejected(task_factory) -> None:
+    from personal_pm_planner.domain.state_machine import transition_task
+
+    task = task_factory(status=TaskStatus.READY)
+    with pytest.raises(ValueError, match="waiting reason"):
+        transition_task(task, TaskStatus.WAITING)
