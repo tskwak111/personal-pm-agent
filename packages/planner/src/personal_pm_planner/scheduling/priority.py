@@ -50,6 +50,11 @@ class SchedulableTask:
     context_switch_penalty: int
     created_at: datetime
     llm_score: float | None = None
+    base_duration_minutes: int = 0
+    safety_duration_minutes: int = 0
+    splittable: bool = True
+    min_chunk_minutes: int = 30
+    start_after: datetime | None = None
 
 
 def initial_priority_class(

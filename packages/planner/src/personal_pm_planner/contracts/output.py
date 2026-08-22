@@ -24,6 +24,8 @@ class TaskAllocation:
     start_at: datetime
     end_at: datetime
     chunk_index: int
+    kind: str = "TASK"
+    source_slot_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         require_aware_utc(self.start_at)
