@@ -35,6 +35,7 @@
 | 2026-08-23 | P1-T03 Task 스냅샷·상태 머신 | focused RED→GREEN + 전수 엣지 커버 | 01dd7b9/74c1442 |
 | 2026-08-23 | P1-T02 Facts·Workstream·Milestone 스냅샷 | date-only 마감 불변식 등 13 passed | 5a19e90 |
 | 2026-08-23 | P1-T01 식별자·enum·시간 원시 타입 | focused RED→GREEN 5 passed | 2cd0597 |
+| 2026-08-22 | P0-T01 툴체인 핀(Phase 0 전체는 이전 표와 VERIFICATION_EVIDENCE 참조) | focused RED→GREEN | 91fe556 |
 
 ## 다음 행동
 

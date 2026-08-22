@@ -166,3 +166,5 @@ Notes:
   - DEC-014: Ready→Waiting/Blocked 엣지와 Waiting 이탈 사유 해소, CANCELLED 잔여량 영정 의미를 기록
   - 추적표 증거 경로를 tests/domain 실제 레이아웃으로 갱신(문서 규칙상 허용되는 경로 정제)
 Residual risk: 없음. Phase 2 참조 벡터에서 도메인 계약 소비 확인 예정
+
+```
