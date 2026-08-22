@@ -2,9 +2,9 @@
 
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 2 — Planner Engine
-- **현재 Task:** P2-T06
-- **마지막 검증:** planner 전체 84 테스트 통과(ruff/mypy strict clean)
-- **마지막 커밋:** d3853b0 fix(planner): correct priority tuple test expectations
+- **현재 Task:** P2-T07
+- **마지막 검증:** make verify 전체 통과 + planner 88 테스트 통과
+- **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
 
@@ -28,6 +28,7 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P2-T06 직렬 일정 생성(분할/비분할) | TV-01·TV-08 케이스 GREEN, 슬롯 단일 소유 검증 | d685f5a |
 | 2026-08-23 | P2-T05 우선순위 등급·동률 튜플 | focused RED→GREEN, LLM 점수 배제 검증 | 166ef81/d3853b0 |
 | 2026-08-23 | P2-T04 의존성 타이밍·사이클·핸드오프 역산 | latest_safe_handoff/must_start_by/unlock 검증 | 6605cf4 |
 | 2026-08-23 | P2-T03 고유 슬롯 생성·용량 예약 | FIXED/FOCUS/BUFFER 단일 소유권, 일일 계획가능 비율 | 0c3d312 |
