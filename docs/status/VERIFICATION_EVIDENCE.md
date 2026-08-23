@@ -227,3 +227,16 @@ Focused green: 원자적 커밋试(도메인+감사 동시 존재) / 예외 시 
 Adjacent: ruff/mypy strict clean; api 통합 스위트 8 passed
 Notes: 이벤트 루프 교체 대응 reset_engine() 공개 API 추가(테스트 자동화 품질)
 ```
+
+### P3-T04
+
+```text
+Focused red: identity 모듈 부재 Import 오류 → user_sessions 테이블 부재(마이그레이션 누락 발견)
+Focused green: 미인증 401 / 타 워크스페이스 task 404(존재 유출 없음) / 소유자 200 / workstreams 스코핑
+Adjacent: alembic 0002 생성·적용, ruff/mypy strict clean, api 11 passed
+Notes:
+  - relationship() 부재 시 SQLAlchemy 매퍼 간 INSERT 순서 미보장 → User.sessions/Workspace.owner 관계 명시
+  - CurrentActor.workspace_id를 비옵셔널로 확정(resolve 시 primary workspace 없으면 인거부)
+Residual risk: Google OIDC는 Phase 5에서 동일 포트 뒤에 연결
+
+```
