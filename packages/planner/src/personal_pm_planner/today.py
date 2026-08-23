@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Protocol
@@ -34,7 +35,7 @@ class TodayPlanView:
 def build_today_plan(
     value: PlannerInput,
     passes: PlanningPasses,
-    risks: dict[object, RiskAssessmentLike],
+    risks: Mapping[MilestoneId, RiskAssessmentLike],
 ) -> TodayPlanView:
     """Derive the today view from the Base pass without inventing work.
 

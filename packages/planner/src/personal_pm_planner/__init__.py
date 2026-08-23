@@ -14,6 +14,7 @@ from .contracts.output import (
     TaskAllocation,
     TodayPlan,
 )
+from .planner import plan
 from .version import __version__
 
 __all__ = [
@@ -27,4 +28,5 @@ __all__ = [
     "TodayPlan",
     "canonical_input_bytes",
     "input_hash",
+    "plan",
 ]
