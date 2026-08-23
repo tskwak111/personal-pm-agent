@@ -8,6 +8,10 @@ dependencies = [
     "pydantic>=2.12",
     "pydantic-settings>=2.11",
     "uvicorn>=0.38",
+    "sqlalchemy[asyncio]>=2.0.43,<3",
+    "asyncpg>=0.30",
+    "alembic>=1.16",
+    "psycopg[binary]>=3.2",
 ]
 
 [dependency-groups]
@@ -25,4 +29,5 @@ build-backend = "hatchling.build"
 packages = ["src/personal_pm_api"]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 testpaths = ["tests"]
