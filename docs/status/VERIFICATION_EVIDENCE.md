@@ -189,3 +189,17 @@ Notes:
 Residual risk: RISK_REGISTER 유지. 20k 속성 시나리오 실행은 P8-T02에서 산출
 
 ```
+
+### PLAN-002 회귀 적발 기록 (Phase 2 종료 직후)
+
+```text
+Date: 2026-08-22T22:45Z
+Event: make verify 실행 중 Hypothesis 속성 테스트(test_dependency_order_is_never_violated)가
+       의존성 체인에서 후행 작업이 선행 완료 전 배정되는 위반 사례를 생성
+Root cause: serial_schedule에 Blocks Start 시작 게이트 미구현 (준비 집합 루프 누락)
+Fix: start_gates 매개변수로 게이트 전달 → 완전 배정된 선행작업만 게이트 해제,
+     게이트 미해제 잔여 작업은 unallocated 처리
+Proof: 수정 전 실패 재현(29 failed) → 수정 후 packages/planner/tests 120 passed,
+       make verify exit=0 (커밋 2feaba9)
+Rule IDs: PLAN-002, REQ-PLN-010
+```
