@@ -8,7 +8,7 @@ review/submission buffers are synthetic tasks that consume real slots.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import NAMESPACE_URL, uuid5
 
@@ -36,6 +36,9 @@ class PlanningPasses:
     base: ScheduleResult
     safety: ScheduleResult
     promoted_task_count: int
+    buffers_by_milestone: dict[MilestoneId, tuple[SchedulableTask, ...]] = field(
+        default_factory=dict
+    )
 
 
 def _verified_deadline_passed(task: TaskSnapshot, now_utc: datetime) -> bool:
@@ -116,8 +119,8 @@ def _prior_positions(value: PlannerInput) -> dict[TaskId, int]:
 
 def create_synthetic_buffers(
     value: PlannerInput,
-) -> tuple[SchedulableTask, ...]:
-    buffers: list[SchedulableTask] = []
+) -> dict[MilestoneId, tuple[SchedulableTask, ...]]:
+    buffers_by_milestone: dict[MilestoneId, list[SchedulableTask]] = {}
     for milestone in value.milestones:
         limit = effective_deadline(milestone, value.user_timezone).instant
         total = milestone.required_buffer_minutes
@@ -131,7 +134,7 @@ def create_synthetic_buffers(
         ):
             if minutes <= 0:
                 continue
-            buffers.append(
+            buffers_by_milestone.setdefault(milestone.id, []).append(
                 SchedulableTask(
                     id=TaskId(uuid5(NAMESPACE_URL, f"buffer:{milestone.id.value.hex}:{kind}")),
                     priority_class=PriorityClass.P1,
@@ -150,7 +153,7 @@ def create_synthetic_buffers(
                     kind=kind,
                 )
             )
-    return tuple(buffers)
+    return {mid: tuple(items) for mid, items in buffers_by_milestone.items()}
 
 
 def _fresh_slots(value: PlannerInput) -> tuple[SlotLike, ...]:
@@ -171,8 +174,9 @@ def _is_required(deadline_type: DeadlineType) -> bool:
 def run_planning_passes(value: PlannerInput) -> PlanningPasses:
     analysis = build_graph_analysis(value)
     tasks = enrich_tasks(value, analysis)
-    buffers = create_synthetic_buffers(value)
-    schedulable = tasks + buffers
+    buffers_by_milestone = create_synthetic_buffers(value)
+    buffer_tasks = tuple(buffer for group in buffers_by_milestone.values() for buffer in group)
+    schedulable = tasks + buffer_tasks
 
     provisional = serial_schedule(
         tasks=schedulable,
@@ -199,6 +203,7 @@ def run_planning_passes(value: PlannerInput) -> PlanningPasses:
         base=base,
         safety=safety,
         promoted_task_count=promoted,
+        buffers_by_milestone=buffers_by_milestone,
     )
 
 
