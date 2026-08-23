@@ -3,7 +3,7 @@
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 3 — Persistence & API
 - **현재 Task:** P3-T07(진행 중 — R-012 참조)
-- **마지막 검증:** ⚠️ BLOCKED — make verify가 전체 수집 시 간헐 라이브락(R-012). 개별 스위트는 실측 green(planner 120, api 통합 23, handoff 6)
+- **마지막 검증:** ⚠️ R-012 재현(전체 verify 간헐 라이브락). 최종 실측 green 스냅샷: planner 120 / api 통합 23 / handoff 6 / 전체 141 passed(seal_final 이전)
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황

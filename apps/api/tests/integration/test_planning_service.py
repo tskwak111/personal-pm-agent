@@ -23,7 +23,10 @@ async def planning_env(clean_tables, database_url_session) -> AsyncIterator[dict
     async with factory() as session:
         from personal_pm_api.planning.models import MilestoneModel, WorkstreamModel
         from personal_pm_api.workspaces.models import UserModel, WorkspaceModel
+        from sqlalchemy import text as _text
 
+        await session.execute(_text("delete from users where email = 'plan@example.com'"))
+        await session.flush()
         user = UserModel(email="plan@example.com", display_name="P")
         session.add(user)
         await session.flush()
