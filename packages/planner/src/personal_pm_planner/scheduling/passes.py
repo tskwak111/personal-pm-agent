@@ -14,6 +14,7 @@ from uuid import NAMESPACE_URL, uuid5
 
 from personal_pm_planner.availability.slots import (
     AvailabilityContext,
+    Interval,
     build_unique_slots,
 )
 from personal_pm_planner.contracts.input import PlannerInput
@@ -156,10 +157,14 @@ def create_synthetic_buffers(
     return {mid: tuple(items) for mid, items in buffers_by_milestone.items()}
 
 
-def _fresh_slots(value: PlannerInput) -> tuple[SlotLike, ...]:
+def _fresh_slots(
+    value: PlannerInput,
+    extra_protected_intervals: tuple[Interval, ...] = (),
+) -> tuple[SlotLike, ...]:
     context = AvailabilityContext(
         availability_windows=value.availability_windows,
         calendar_events=value.calendar_events,
+        protected_focus_blocks=extra_protected_intervals,
         slot_minutes=value.slot_minutes,
         capacity_factor=0.80,
         user_timezone=value.user_timezone,
@@ -171,7 +176,11 @@ def _is_required(deadline_type: DeadlineType) -> bool:
     return deadline_type in (DeadlineType.HARD_DEADLINE, DeadlineType.EXTERNAL_COMMITMENT)
 
 
-def run_planning_passes(value: PlannerInput) -> PlanningPasses:
+def run_planning_passes(
+    value: PlannerInput,
+    *,
+    extra_protected_intervals: tuple[Interval, ...] = (),
+) -> PlanningPasses:
     analysis = build_graph_analysis(value)
     tasks = enrich_tasks(value, analysis)
     buffers_by_milestone = create_synthetic_buffers(value)
@@ -180,7 +189,7 @@ def run_planning_passes(value: PlannerInput) -> PlanningPasses:
 
     provisional = serial_schedule(
         tasks=schedulable,
-        slots=_fresh_slots(value),
+        slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="base_duration_minutes",
         pass_type="base",
     )
@@ -188,13 +197,13 @@ def run_planning_passes(value: PlannerInput) -> PlanningPasses:
 
     base = serial_schedule(
         tasks=final_tasks,
-        slots=_fresh_slots(value),
+        slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="base_duration_minutes",
         pass_type="base",
     )
     safety = serial_schedule(
         tasks=final_tasks,
-        slots=_fresh_slots(value),
+        slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="safety_duration_minutes",
         pass_type="safety",
     )
