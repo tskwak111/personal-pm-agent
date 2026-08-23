@@ -50,6 +50,7 @@ class SchedulableTask:
     context_switch_penalty: int
     created_at: datetime
     llm_score: float | None = None
+    kind: str = "TASK"
     base_duration_minutes: int = 0
     safety_duration_minutes: int = 0
     splittable: bool = True

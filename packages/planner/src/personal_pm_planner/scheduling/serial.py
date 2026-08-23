@@ -190,7 +190,7 @@ def _place_task(
                     start_at=start,
                     end_at=end,
                     chunk_index=chunk_index,
-                    kind="TASK",
+                    kind=task.kind,
                     source_slot_ids=slot_ids,
                 )
             )

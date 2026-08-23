@@ -14,7 +14,13 @@ CAPACITY_FACTORS = {
 
 
 def floor_to_slot(minutes: float, slot_minutes: int) -> int:
-    return int(math.floor(minutes / slot_minutes)) * slot_minutes
+    """Floor to slot boundary with a deterministic float-noise guard.
+
+    ``raw * factor`` can land epsilon below an exact multiple (e.g.
+    ``375 * 0.8 -> 299.999...``); rounding first keeps results stable
+    across platforms, which the determinism gate requires.
+    """
+    return int(math.floor(round(minutes / slot_minutes, 6)) * slot_minutes)
 
 
 def local_day(instant: datetime, user_timezone: str) -> date:
