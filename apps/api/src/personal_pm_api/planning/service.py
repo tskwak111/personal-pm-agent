@@ -30,7 +30,6 @@ from personal_pm_api.execution import models as _execution_m  # noqa: F401
 from personal_pm_api.identity import models as _identity_m  # noqa: F401
 from personal_pm_api.workspaces import models as _workspaces_m  # noqa: F401
 from personal_pm_api.planning.models import (
-
     AvailabilityWindowModel,
     MilestoneModel,
     PlanSnapshotModel,
