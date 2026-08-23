@@ -1,0 +1,25 @@
+{
+  "title": "Dependency cycle blocks all members",
+  "input": {
+    "tasks": [
+      {
+        "base": 60,
+        "safety": 90
+      },
+      {
+        "base": 60,
+        "safety": 90
+      },
+      {
+        "base": 60,
+        "safety": 90
+      }
+    ],
+    "cycle": true,
+    "availability_hours": 6.25
+  },
+  "expected": {
+    "risk_level": "CRITICAL",
+    "warning_contains": "DEPENDENCY_CYCLE"
+  }
+}

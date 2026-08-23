@@ -50,7 +50,7 @@ evals/planner-vectors/reference/
 - Consumes: Phase 1 `PlannerInput` and canonical IDs
 - Produces: `normalize_and_validate(input) -> NormalizedPlannerInput | InvalidPlannerInput`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from dataclasses import replace
@@ -68,7 +68,7 @@ def test_collection_order_does_not_change_hash(planner_input_factory) -> None:
     assert a.input_hash == b.input_hash
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -78,7 +78,7 @@ uv run pytest packages/planner/tests/normalization/test_validation.py -q
 
 Expected: FAIL because normalization does not exist.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def normalize_and_validate(value: PlannerInput) -> NormalizationResult:
@@ -96,7 +96,7 @@ def normalize_and_validate(value: PlannerInput) -> NormalizationResult:
     )
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/normalization/test_validation.py -q
@@ -104,13 +104,13 @@ uv run pytest packages/planner/tests/normalization/test_validation.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/normalization packages/planner/tests/contracts -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/normalization/validate.py packages/planner/src/personal_pm_planner/normalization/canonical.py packages/planner/tests/normalization/test_validation.py
@@ -128,7 +128,7 @@ git commit -m "feat(planner): normalize and validate Planner input"
 - Consumes: validated snapshots and user estimation profile
 - Produces: `effective_deadline`, `adjusted_base_minutes`, `safety_minutes` with slot rounding
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.normalization.dates import effective_deadline
@@ -145,7 +145,7 @@ def test_high_uncertainty_uses_160_percent_and_slot_rounding() -> None:
     assert result.safety_minutes == 120
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -155,7 +155,7 @@ uv run pytest packages/planner/tests/normalization/test_dates_and_estimates.py -
 
 Expected: FAIL because date and estimate rules are missing.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 UNCERTAINTY_MULTIPLIER = {"low": 1.15, "medium": 1.35, "high": 1.60}
@@ -169,7 +169,7 @@ def derive_estimate(raw_base_minutes: int, factor: float, uncertainty: str, slot
     return Estimate(base_minutes=adjusted, safety_minutes=max(adjusted, safety))
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/normalization/test_dates_and_estimates.py -q
@@ -177,13 +177,13 @@ uv run pytest packages/planner/tests/normalization/test_dates_and_estimates.py -
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/normalization -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/normalization/dates.py packages/planner/src/personal_pm_planner/normalization/estimates.py packages/planner/tests/normalization/test_dates_and_estimates.py
@@ -201,7 +201,7 @@ git commit -m "feat(planner): derive safe dates and durations"
 - Consumes: normalized availability windows, calendar events and capacity settings
 - Produces: `build_unique_slots()` with exactly one ownership state per slot
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.availability.slots import build_unique_slots
@@ -217,7 +217,7 @@ def test_every_slot_has_unique_id_and_one_state(availability_case) -> None:
     assert all(slot.state in {"FREE", "FIXED_EVENT", "PROTECTED_FOCUS_BLOCK", "BUFFER"} for slot in slots)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -227,7 +227,7 @@ uv run pytest packages/planner/tests/availability/test_slots.py -q
 
 Expected: FAIL because slot construction is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def build_unique_slots(context: AvailabilityContext) -> tuple[Slot, ...]:
@@ -238,7 +238,7 @@ def build_unique_slots(context: AvailabilityContext) -> tuple[Slot, ...]:
     return apply_daily_capacity_factor(marked, context.capacity_factor)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/availability/test_slots.py -q
@@ -246,13 +246,13 @@ uv run pytest packages/planner/tests/availability/test_slots.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/availability -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/availability/slots.py packages/planner/src/personal_pm_planner/availability/capacity.py packages/planner/tests/availability/test_slots.py
@@ -271,7 +271,7 @@ git commit -m "feat(planner): build unique availability slots"
 - Consumes: Task dependencies, effective deadlines and safety durations
 - Produces: stable cycles, `must_start_by_at`, unlock counts and `latest_safe_handoff_at`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.graph.build import build_graph_analysis
@@ -287,7 +287,7 @@ def test_external_handoff_is_computed_backwards(external_dependency_case) -> Non
     assert result.external_dependencies[0].latest_safe_handoff_at == external_dependency_case.expected_latest_safe
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -297,7 +297,7 @@ uv run pytest packages/planner/tests/graph/test_dependency_timing.py -q
 
 Expected: FAIL because graph timing is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def latest_start(task_id: TaskId, graph: Graph, deadline: datetime) -> datetime:
@@ -307,7 +307,7 @@ def latest_start(task_id: TaskId, graph: Graph, deadline: datetime) -> datetime:
     return latest_finish - timedelta(minutes=task.safety_duration_minutes)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/graph/test_dependency_timing.py -q
@@ -315,13 +315,13 @@ uv run pytest packages/planner/tests/graph/test_dependency_timing.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/graph packages/planner/tests/domain/test_dependencies.py -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/graph/build.py packages/planner/src/personal_pm_planner/graph/cycles.py packages/planner/src/personal_pm_planner/graph/critical_path.py packages/planner/tests/graph/test_dependency_timing.py
@@ -338,7 +338,7 @@ git commit -m "feat(planner): analyze dependency timing and cycles"
 - Consumes: graph analysis, user importance and prior plan position
 - Produces: `initial_priority_class`, P0 promotion and exact `priority_key` tuple
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.scheduling.priority import priority_key
@@ -353,7 +353,7 @@ def test_llm_score_is_not_part_of_key(priority_context, task_factory) -> None:
     assert priority_key(a, priority_context) == priority_key(b, priority_context)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -363,7 +363,7 @@ uv run pytest packages/planner/tests/scheduling/test_priority.py -q
 
 Expected: FAIL because stable priority is not implemented.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def priority_key(task: SchedulableTask, context: PriorityContext) -> tuple[object, ...]:
@@ -381,7 +381,7 @@ def priority_key(task: SchedulableTask, context: PriorityContext) -> tuple[objec
     )
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling/test_priority.py -q
@@ -389,13 +389,13 @@ uv run pytest packages/planner/tests/scheduling/test_priority.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/scheduling/priority.py packages/planner/tests/scheduling/test_priority.py
@@ -412,7 +412,7 @@ git commit -m "feat(planner): add deterministic priority ordering"
 - Consumes: unique slots, graph readiness and stable priority
 - Produces: `serial_schedule(tasks, slots, duration_field) -> ScheduleResult` without overlap
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.scheduling.serial import serial_schedule
@@ -428,7 +428,7 @@ def test_non_splittable_task_requires_contiguous_capacity(tv08_case) -> None:
     assert tv08_case.task_id in result.unallocated_task_ids
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -438,7 +438,7 @@ uv run pytest packages/planner/tests/scheduling/test_serial_schedule.py -q
 
 Expected: FAIL because scheduling is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def serial_schedule(tasks: tuple[SchedulableTask, ...], slots: tuple[Slot, ...], duration_field: str) -> ScheduleResult:
@@ -454,7 +454,7 @@ def serial_schedule(tasks: tuple[SchedulableTask, ...], slots: tuple[Slot, ...],
     return ScheduleResult.from_ledger(ledger, allocations, tasks)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling/test_serial_schedule.py -q
@@ -462,13 +462,13 @@ uv run pytest packages/planner/tests/scheduling/test_serial_schedule.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/scheduling/serial.py packages/planner/tests/scheduling/test_serial_schedule.py
@@ -485,7 +485,7 @@ git commit -m "feat(planner): allocate global schedule slots"
 - Consumes: serial scheduler and milestone buffer requirements
 - Produces: `run_planning_passes()` with one P0 promotion round and separate slot ledgers
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.scheduling.passes import run_planning_passes
@@ -501,7 +501,7 @@ def test_synthetic_buffers_consume_real_slots(buffer_case) -> None:
     assert {item.kind for item in result.safety.allocations} >= {"REVIEW_BUFFER", "SUBMISSION_BUFFER"}
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -511,7 +511,7 @@ uv run pytest packages/planner/tests/scheduling/test_passes.py -q
 
 Expected: FAIL because planning passes are absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def run_planning_passes(context: PlanningContext) -> PlanningPasses:
@@ -523,7 +523,7 @@ def run_planning_passes(context: PlanningContext) -> PlanningPasses:
     return PlanningPasses(provisional=provisional, base=base, safety=safety)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling/test_passes.py -q
@@ -531,13 +531,13 @@ uv run pytest packages/planner/tests/scheduling/test_passes.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/scheduling -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/scheduling/passes.py packages/planner/tests/scheduling/test_passes.py
@@ -556,7 +556,7 @@ git commit -m "feat(planner): run Base and Safety planning passes"
 - Consumes: Base/Safety results and graph timing
 - Produces: `calculate_risks()` with definitive Critical, Unknown, capacity Critical, High, Medium and Low order
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.risk.classify import calculate_risks
@@ -572,7 +572,7 @@ def test_date_only_current_deadline_remains_unknown(tv04_case) -> None:
     assert risk.level.value == "UNKNOWN"
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -582,7 +582,7 @@ uv run pytest packages/planner/tests/risk/test_risk_classification.py -q
 
 Expected: FAIL because risk classification is absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def classify_milestone(values: RiskInputs) -> RiskLevel:
@@ -599,7 +599,7 @@ def classify_milestone(values: RiskInputs) -> RiskLevel:
     return RiskLevel.LOW
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/risk/test_risk_classification.py -q
@@ -607,13 +607,13 @@ uv run pytest packages/planner/tests/risk/test_risk_classification.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/risk packages/planner/tests/scheduling -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/risk/coverage.py packages/planner/src/personal_pm_planner/risk/classify.py packages/planner/src/personal_pm_planner/risk/external.py packages/planner/tests/risk/test_risk_classification.py
@@ -634,7 +634,7 @@ git commit -m "feat(planner): classify global capacity risks"
 - Consumes: Base/Safety plans, risks, prior snapshot and permissions
 - Produces: `build_today_plan`, lexicographic `replan`, and simulated proposal impacts
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner.replanning.optimize import replan
@@ -650,7 +650,7 @@ def test_freeze_window_change_requires_proposal(tv07_case) -> None:
     assert result.proposals[0].approval_level.value == "APPROVAL"
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -660,7 +660,7 @@ uv run pytest packages/planner/tests/replanning/test_replanning.py -q
 
 Expected: FAIL because replanning and proposals are absent.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 LEXICOGRAPHIC_FIELDS = (
@@ -679,7 +679,7 @@ def choose_candidate(candidates: tuple[ReplanCandidate, ...]) -> ReplanCandidate
     return min(candidates, key=lambda item: tuple(getattr(item.metrics, field) for field in LEXICOGRAPHIC_FIELDS))
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/replanning/test_replanning.py -q
@@ -687,13 +687,13 @@ uv run pytest packages/planner/tests/replanning/test_replanning.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests/replanning packages/planner/tests/risk -q
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/today.py packages/planner/src/personal_pm_planner/replanning/diff.py packages/planner/src/personal_pm_planner/replanning/cost.py packages/planner/src/personal_pm_planner/replanning/optimize.py packages/planner/src/personal_pm_planner/proposals/overload.py packages/planner/tests/replanning/test_replanning.py
@@ -725,7 +725,7 @@ git commit -m "feat(planner): create stable today and replan outputs"
 - Consumes: all Planner modules and contracts
 - Produces: `plan(input) -> PlannerOutput` plus automated PLAN/PQ evidence
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 from personal_pm_planner import plan
@@ -741,7 +741,7 @@ def test_repeated_input_is_identical(planner_input_factory) -> None:
     assert len(set(cores)) == 1
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the intended failure**
+- [x] **Step 2: Run the focused test and confirm the intended failure**
 
 Run:
 
@@ -751,7 +751,7 @@ uv run pytest packages/planner/tests/vectors/test_reference_vectors.py -q
 
 Expected: FAIL until the orchestrator and all eleven fixtures are complete.
 
-- [ ] **Step 3: Implement the minimum contract**
+- [x] **Step 3: Implement the minimum contract**
 
 ```python
 def plan(value: PlannerInput) -> PlannerOutput:
@@ -766,7 +766,7 @@ def plan(value: PlannerInput) -> PlannerOutput:
     return build_planner_output(normalized, passes, risks, candidate)
 ```
 
-- [ ] **Step 4: Run the focused test and confirm it passes**
+- [x] **Step 4: Run the focused test and confirm it passes**
 
 ```bash
 uv run pytest packages/planner/tests/vectors/test_reference_vectors.py -q
@@ -774,13 +774,13 @@ uv run pytest packages/planner/tests/vectors/test_reference_vectors.py -q
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 5: Run adjacent verification**
+- [x] **Step 5: Run adjacent verification**
 
 ```bash
 uv run pytest packages/planner/tests -q && uv run mypy packages/planner/src && uv run ruff check packages/planner
 ```
 
-- [ ] **Step 6: Commit the reviewable unit**
+- [x] **Step 6: Commit the reviewable unit**
 
 ```bash
 git add packages/planner/src/personal_pm_planner/evidence.py packages/planner/src/personal_pm_planner/planner.py packages/planner/src/personal_pm_planner/__init__.py packages/planner/tests/vectors/test_reference_vectors.py packages/planner/tests/properties/test_planner_invariants.py packages/planner/tests/performance/test_planner_performance.py evals/planner-vectors/reference/tv-01.json evals/planner-vectors/reference/tv-02.json evals/planner-vectors/reference/tv-03.json evals/planner-vectors/reference/tv-04.json evals/planner-vectors/reference/tv-05.json evals/planner-vectors/reference/tv-06.json evals/planner-vectors/reference/tv-07.json evals/planner-vectors/reference/tv-08.json evals/planner-vectors/reference/tv-09.json evals/planner-vectors/reference/tv-10.json evals/planner-vectors/reference/tv-11.json
@@ -789,10 +789,10 @@ git commit -m "feat(planner): complete normative planning engine"
 
 ## Phase 2 Exit Criteria
 
-- [ ] TV-01 through TV-11 pass exactly.
-- [ ] Same input repeated 100 times has one canonical result.
-- [ ] Property tests prove slot uniqueness, fixed-event exclusion, dependency order and capacity bounds.
-- [ ] Planner output includes version, input hash, Rule IDs, evidence, unresolved items and prior-plan diff.
-- [ ] Invalid input and internal failure preserve the prior valid plan.
-- [ ] The 500-Task benchmark harness records P50/P95 and memory.
-- [ ] `IMPLEMENTATION_STATUS.md` advances to Phase 3.
+- [x] TV-01 through TV-11 pass exactly.
+- [x] Same input repeated 100 times has one canonical result.
+- [x] Property tests prove slot uniqueness, fixed-event exclusion, dependency order and capacity bounds.
+- [x] Planner output includes version, input hash, Rule IDs, evidence, unresolved items and prior-plan diff.
+- [x] Invalid input and internal failure preserve the prior valid plan.
+- [x] The 500-Task benchmark harness records P50/P95 and memory.
+- [x] `IMPLEMENTATION_STATUS.md` advances to Phase 3.

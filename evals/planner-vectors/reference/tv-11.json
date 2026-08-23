@@ -1,0 +1,26 @@
+{
+  "title": "Blocks Completion gates Done only; B remains schedulable",
+  "input": {
+    "tasks": [
+      {
+        "base": 60,
+        "safety": 90,
+        "status": "done"
+      },
+      {
+        "base": 60,
+        "safety": 90
+      }
+    ],
+    "blocks_completion": [
+      [
+        1,
+        2
+      ]
+    ],
+    "availability_hours": 4
+  },
+  "expected": {
+    "base_allocated_minutes": 60
+  }
+}

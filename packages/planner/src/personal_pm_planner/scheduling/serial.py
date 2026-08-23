@@ -211,24 +211,51 @@ def serial_schedule(
     slots: tuple[SlotLike, ...],
     duration_field: str,
     pass_type: str = "base",
+    start_gates: dict[TaskId, frozenset[TaskId]] | None = None,
 ) -> ScheduleResult:
+    """Serial Schedule Generation over shared slots.
+
+    ``start_gates`` maps a task to predecessors that must FULLY complete
+    before it may start (Blocks Start); a partially placed predecessor does
+    not open the gate.
+    """
     ledger = SlotLedger(slots)
     allocations: list[TaskAllocation] = []
     unallocated: set[TaskId] = set()
     total = 0
 
-    ordered = sorted(tasks, key=priority_key)
+    gates = start_gates or {}
+    placed_fully: set[TaskId] = set()
+    pending: list[SchedulableTask] = sorted(tasks, key=priority_key)
 
-    for task in ordered:
+    while pending:
+        ready_index = next(
+            (
+                index
+                for index, candidate in enumerate(pending)
+                if all(
+                    predecessor in placed_fully
+                    for predecessor in gates.get(candidate.id, frozenset())
+                )
+            ),
+            None,
+        )
+        if ready_index is None:
+            unallocated.update(candidate.id for candidate in pending)
+            break
+        task = pending.pop(ready_index)
         required = getattr(task, duration_field)
         if required <= 0:
+            placed_fully.add(task.id)
             continue
-        produced = _place_task(ledger, task, required, PassType(pass_type))
+        produced = _place_task(ledger, task, required, pass_type)
         placed = sum(int((item.end_at - item.start_at).total_seconds() // 60) for item in produced)
         allocations.extend(produced)
         total += placed
         if placed < required:
             unallocated.add(task.id)
+        else:
+            placed_fully.add(task.id)
 
     return ScheduleResult(
         allocations=tuple(allocations),

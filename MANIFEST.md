@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-23T06:56:12+09:00
+- **Manifest regenerated:** 2026-08-23T12:37:50+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -48,7 +48,7 @@
 | `docs/plans/00-master-implementation-roadmap.md` | 9610 | `7a44de857adfd143c65bb5c654098062f5602ee0b344d074e9652544b18d7c68` |
 | `docs/plans/01-phase-0-foundation.md` | 16689 | `cf79961f8831910e89834f71cd0b955fe75a6a068fe70e2ba1b04403e05ebf85` |
 | `docs/plans/02-phase-1-domain-core.md` | 19883 | `4032c9769795cb7716c07b8e0ca47563c78fb59f2887e611400e64d9741c7133` |
-| `docs/plans/03-phase-2-planner-engine.md` | 29827 | `11a8cc5c0b561fa375bfaae46e2216dd9e4a1bcccddd7e8152be2bb08832b211` |
+| `docs/plans/03-phase-2-planner-engine.md` | 29827 | `3b54e9b6e4dd844383d83d5df6d68fdd9faf148056d5692a1fd2c018f62853ad` |
 | `docs/plans/04-phase-3-persistence-api.md` | 26158 | `57b3061aa3bc94f7de015cfa937141773448bbf997b13e641bc07f64080c312e` |
 | `docs/plans/05-phase-4-intake-llm-files.md` | 23990 | `cbdecd55eed29abbdf5c2726f7017379ba2e0192b418777c673137af7726522d` |
 | `docs/plans/06-phase-5-calendar-execution.md` | 21616 | `3016a8cd11d853f1514f967c2c2845fe35cfe20419343f7133ac6ef45e6d6eb1` |
@@ -59,15 +59,15 @@
 | `docs/quality/metric-gate-index.md` | 8826 | `5ef6b789df5c2e7da30a8f2483cd68403977015574fc0c5902e33a91c3953f7e` |
 | `docs/quality/verification-command-matrix.md` | 2151 | `ef4ddc3267b3f63a936ad04e0128911fd40921aaaf82d8a4926a9e12338b934c` |
 | `docs/requirements/acceptance-scenarios.md` | 7087 | `b2c59be7f7d3812fa5833ef99bd3c8c0b60861508d65be82d595ea2a1b1a0dac` |
-| `docs/requirements/requirements-traceability.md` | 20922 | `ba8089914f3b0e41f1e9b8f313730f2018f460fe23bb01f0135d699ce1341bf3` |
+| `docs/requirements/requirements-traceability.md` | 20825 | `da27db501687ff30c8ab87b29cadf6b01369c376be3e1939e5e8e4b5edf8c4bf` |
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
-| `docs/status/DECISION_LOG.md` | 3814 | `5d28beef9584278abc67a56e2c5ec481a8490983bc1bd0574ed6b7ac4e462eb6` |
+| `docs/status/DECISION_LOG.md` | 4562 | `5de34ef6f73a0b5071ccdbda7c318f62e5b09565be615f1fff9db34fa5a5acad` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 3110 | `01d0674d5f9243eea56d8640fac98ab85b96f3b873f49d4e2bae8b0a2a191e6e` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 3672 | `715745e808156381ff2248ed8016b8f797fa57a9ddb90094450ceff31eaa66c4` |
 | `docs/status/RISK_REGISTER.md` | 1792 | `36e7ada9f43703e1bb42912ff489741ea095402b1a7eef0688ccf5413b2c7021` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 8594 | `aa414f864551be7ba482db7c6eb8852aeeac13ba618b9ccf4356179fb0c091c5` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 9556 | `fe810a3e5f1019b17102a6c573bd9cc5442590334a457d53f92e34cd0060ecf9` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |

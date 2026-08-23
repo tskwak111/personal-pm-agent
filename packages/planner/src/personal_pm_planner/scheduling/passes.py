@@ -18,7 +18,12 @@ from personal_pm_planner.availability.slots import (
     build_unique_slots,
 )
 from personal_pm_planner.contracts.input import PlannerInput
-from personal_pm_planner.domain.enums import DeadlineType, ImportanceLevel, TaskStatus
+from personal_pm_planner.domain.enums import (
+    DeadlineType,
+    DependencyType,
+    ImportanceLevel,
+    TaskStatus,
+)
 from personal_pm_planner.domain.identifiers import MilestoneId, TaskId
 from personal_pm_planner.domain.task import TaskSnapshot
 from personal_pm_planner.graph.build import GraphAnalysis, build_graph_analysis
@@ -176,6 +181,21 @@ def _is_required(deadline_type: DeadlineType) -> bool:
     return deadline_type in (DeadlineType.HARD_DEADLINE, DeadlineType.EXTERNAL_COMMITMENT)
 
 
+def _start_gates(value: PlannerInput) -> dict[TaskId, frozenset[TaskId]]:
+    gates: dict[TaskId, set[TaskId]] = {}
+    active = {
+        task.id
+        for task in value.tasks
+        if task.status not in (TaskStatus.DONE, TaskStatus.CANCELLED)
+    }
+    for item in value.task_dependencies:
+        if item.dependency_type is not DependencyType.BLOCKS_START:
+            continue
+        if item.successor_id in active:
+            gates.setdefault(item.successor_id, set()).add(item.predecessor_id)
+    return {task_id: frozenset(preds) for task_id, preds in gates.items()}
+
+
 def run_planning_passes(
     value: PlannerInput,
     *,
@@ -187,11 +207,13 @@ def run_planning_passes(
     buffer_tasks = tuple(buffer for group in buffers_by_milestone.values() for buffer in group)
     schedulable = tasks + buffer_tasks
 
+    gates = _start_gates(value)
     provisional = serial_schedule(
         tasks=schedulable,
         slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="base_duration_minutes",
         pass_type="base",
+        start_gates=gates,
     )
     final_tasks, promoted = _promote_infeasible_required_paths_once(schedulable, provisional, value)
 
@@ -200,12 +222,14 @@ def run_planning_passes(
         slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="base_duration_minutes",
         pass_type="base",
+        start_gates=gates,
     )
     safety = serial_schedule(
         tasks=final_tasks,
         slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="safety_duration_minutes",
         pass_type="safety",
+        start_gates=gates,
     )
     return PlanningPasses(
         provisional=provisional,

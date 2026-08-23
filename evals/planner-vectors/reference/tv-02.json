@@ -1,0 +1,24 @@
+{
+  "title": "Deterministic tie-break: identical tasks order stably",
+  "input": {
+    "tasks": [
+      {
+        "base": 60,
+        "safety": 75
+      },
+      {
+        "base": 60,
+        "safety": 75
+      },
+      {
+        "base": 60,
+        "safety": 75
+      }
+    ],
+    "availability_hours": 6.25
+  },
+  "expected": {
+    "base_allocated_minutes": 180,
+    "deterministic": true
+  }
+}

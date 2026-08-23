@@ -1,0 +1,16 @@
+{
+  "title": "Date-only deadline stays Unknown and never invents a time",
+  "input": {
+    "tasks": [
+      {
+        "base": 120,
+        "safety": 150
+      }
+    ],
+    "date_only_deadline": true,
+    "availability_hours": 3
+  },
+  "expected": {
+    "risk_level": "UNKNOWN"
+  }
+}

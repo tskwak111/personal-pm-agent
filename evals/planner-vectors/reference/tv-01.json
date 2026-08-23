@@ -1,0 +1,22 @@
+{
+  "title": "Shared capacity conflict: two 4h P1 tasks, one 4h effective capacity",
+  "input": {
+    "tasks": [
+      {
+        "base": 240,
+        "safety": 300
+      },
+      {
+        "base": 240,
+        "safety": 300
+      }
+    ],
+    "availability_hours": 5,
+    "buffer_minutes": 0
+  },
+  "expected": {
+    "risk_level": "CRITICAL",
+    "base_allocated_minutes": 240,
+    "min_unallocated_tasks": 1
+  }
+}

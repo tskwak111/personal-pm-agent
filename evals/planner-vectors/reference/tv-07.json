@@ -1,0 +1,20 @@
+{
+  "title": "Frozen/prior item inside protected horizon needs approval",
+  "input": {
+    "tasks": [
+      {
+        "base": 120,
+        "safety": 150
+      }
+    ],
+    "prior_first_minutes": 120,
+    "prior_start_offset_hours": 1,
+    "pinned": [
+      1
+    ],
+    "availability_hours": 6.25
+  },
+  "expected": {
+    "warning_contains": "PROPOSAL_REQUIRED"
+  }
+}

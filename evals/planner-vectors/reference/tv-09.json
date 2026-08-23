@@ -1,0 +1,21 @@
+{
+  "title": "Base feasible but Safety infeasible -> High",
+  "input": {
+    "tasks": [
+      {
+        "base": 120,
+        "safety": 180
+      },
+      {
+        "base": 120,
+        "safety": 180
+      }
+    ],
+    "availability_hours": 6.25,
+    "buffer_minutes": 30
+  },
+  "expected": {
+    "risk_level": "HIGH",
+    "base_allocated_minutes": 240
+  }
+}

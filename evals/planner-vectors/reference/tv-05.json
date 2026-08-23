@@ -1,0 +1,22 @@
+{
+  "title": "External dependency with comfortable delivery is not critical",
+  "input": {
+    "tasks": [
+      {
+        "base": 90,
+        "safety": 120
+      }
+    ],
+    "external": {
+      "affected_index": 1,
+      "delivery_offset_hours": -48,
+      "buffer_minutes": 60
+    },
+    "availability_hours": 4
+  },
+  "expected": {
+    "risk_level_not_in": [
+      "CRITICAL"
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 # 구현 상태
 
 - **전체 상태:** In Progress
-- **현재 Phase:** Phase 2 — Planner Engine
-- **현재 Task:** P2-T07
-- **마지막 검증:** make verify 전체 통과 + planner 88 테스트 통과
+- **현재 Phase:** Phase 3 — Persistence & API
+- **현재 Task:** P3-T01
+- **마지막 검증:** Phase 2 종료 — make verify 전체 통과, planner 120 테스트(TV-01~11 포함)
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -12,7 +12,7 @@
 |---|---|---|
 | 0. Foundation | Complete | 로컬·CI에서 공통 verify 명령 통과 |
 | 1. Domain Core | Complete | 상태·권한·의존성 도메인 테스트 통과 |
-| 2. Planner Engine | Not Started | 참조 벡터 100%, 불변 조건 위반 0건 |
+| 2. Planner Engine | Complete | 참조 벡터 100%, 불변 조건 위반 0건 |
 | 3. Persistence & API | Not Started | 소유권·버전·트랜잭션·OpenAPI E2E 통과 |
 | 4. Intake & LLM | Not Started | 구조화 계약과 출처·불확실성 검증 통과 |
 | 5. Calendar & Execution | Not Started | Outbox·멱등성·장애 주입 Gate 통과 |
@@ -28,6 +28,10 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P2-T10 plan() 오케스트레이터+TV-01~11+속성+성능 스모크 | 120 passed, ruff/mypy clean | 9bc79c4 |
+| 2026-08-23 | P2-T09 오늘 계획·최소변경 재계획·Proposal | 사전식 목적 순서·동결/Pin 보호 검증 | d1d518b |
+| 2026-08-23 | P2-T08 전역 배정 기반 위험 분류 | Definitive/Unknown/Capacity/High/Medium/Low 순서 테스트 | 57abc77 |
+| 2026-08-23 | P2-T07 Provisional/Base/Safety Pass+합성 버퍼 | 독립 슬롯 장부·P0 승격 1회·버퍼 실슬롯 점유 | 9eb4f10 |
 | 2026-08-23 | P2-T06 직렬 일정 생성(분할/비분할) | TV-01·TV-08 케이스 GREEN, 슬롯 단일 소유 검증 | d685f5a |
 | 2026-08-23 | P2-T05 우선순위 등급·동률 튜플 | focused RED→GREEN, LLM 점수 배제 검증 | 166ef81/d3853b0 |
 | 2026-08-23 | P2-T04 의존성 타이밍·사이클·핸드오프 역산 | latest_safe_handoff/must_start_by/unlock 검증 | 6605cf4 |

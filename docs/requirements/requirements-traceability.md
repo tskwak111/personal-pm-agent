@@ -6,9 +6,9 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 |---|---|---|---|---|
 | REQ-PRD-001 | Planning Core is the sole canonical state for projects, tasks, deadlines, approvals and plans. | Design §5.1 | P1-T02, P3-T02, P3-T07 | packages/planner/tests/unit/test_canonical_snapshots.py; apps/api/tests/integration/test_plan_snapshot_persistence.py |
 | REQ-PRD-002 | The user may capture unstructured text without first selecting a project or task type. | Design §6, §9 | P4-T03, P6-T02, P7-T08 | apps/api/tests/integration/test_freeform_capture.py; apps/web/e2e/agent-capture.spec.ts |
-| REQ-PRD-003 | The system shows one core result, mandatory tasks, next queue, optional work, excluded work and required decisions for Today. | Design §12.5, §16.1 | P2-T09, P7-T03 | packages/planner/tests/reference/test_today_output.py; apps/web/e2e/today-plan.spec.ts |
-| REQ-PRD-004 | Overload handling proposes removal, deferral, scope reduction and external negotiation before extra labor. | Design §13.6 | P2-T09, P6-T05, P7-T07 | packages/planner/tests/unit/test_overload_proposals.py; apps/web/e2e/overload-approval.spec.ts |
-| REQ-PRD-005 | Replanning minimizes changes and protects in-progress, pinned and frozen-horizon work. | Design §12.6; Planner Spec | P2-T09 | packages/planner/tests/reference/test_minimal_change.py |
+| REQ-PRD-003 | The system shows one core result, mandatory tasks, next queue, optional work, excluded work and required decisions for Today. | Design §12.5, §16.1 | P2-T09, P7-T03 | packages/planner/tests/vectors/test_reference_vectors.py; apps/web/e2e/today-plan.spec.ts |
+| REQ-PRD-004 | Overload handling proposes removal, deferral, scope reduction and external negotiation before extra labor. | Design §13.6 | P2-T09, P6-T05, P7-T07 | packages/planner/tests/replanning/test_replanning.py; apps/web/e2e/overload-approval.spec.ts |
+| REQ-PRD-005 | Replanning minimizes changes and protects in-progress, pinned and frozen-horizon work. | Design §12.6; Planner Spec | P2-T09 | packages/planner/tests/replanning/test_replanning.py |
 | REQ-PRD-006 | Team-member work is represented as an external dependency, not as controllable member tasks. | Design §3.2, §8.8 | P1-T05, P2-T08, P7-T05 | packages/planner/tests/domain/test_availability_snapshots.py |
 | REQ-PRD-007 | Progress percentage and deadline feasibility are distinct outputs. | Design §8.10 | P1-T02, P2-T08, P7-T05 | packages/planner/tests/unit/test_progress_vs_feasibility.py |
 | REQ-PRD-008 | The system never evaluates the user with moralizing productivity language. | Design §17.3 | P6-T07, P7-T03 | apps/api/tests/unit/test_briefing_copy_policy.py; apps/web/tests/copy-policy.test.ts |
@@ -21,7 +21,7 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-PRD-015 | Normal-day notification output is deduplicated, validity-checked and bounded by policy. | Design §17 | P6-T08, P7-T09 | apps/api/tests/unit/test_notification_policy.py |
 | REQ-CORE-001 | All canonical IDs are typed and workspace-scoped. | Design §8; Architecture contract | P1-T01, P3-T04 | packages/planner/tests/domain/test_primitives.py; apps/api/tests/security/test_workspace_scope.py |
 | REQ-CORE-002 | All stored instants are UTC while original expression and user timezone are preserved. | Design §11; Planner Spec §date rules | P1-T01, P2-T02, P3-T02 | packages/planner/tests/domain/test_primitives.py |
-| REQ-CORE-003 | A date-only deadline retains time_known=false and no invented time. | Planner Spec; PLAN-008 | P2-T02, P4-T05 | packages/planner/tests/reference/test_date_only_deadline.py |
+| REQ-CORE-003 | A date-only deadline retains time_known=false and no invented time. | Planner Spec; PLAN-008 | P2-T02, P4-T05 | packages/planner/tests/vectors/tv-04.json |
 | REQ-CORE-004 | Task transitions follow the explicit state machine and emit audit events. | Design §8.6; Domain state machines | P1-T03, P3-T06 | packages/planner/tests/domain/test_task_state_machine.py; apps/api/tests/integration/test_task_audit.py |
 | REQ-CORE-005 | Dependency types Blocks Start, Blocks Completion, Waiting External and Related remain semantically distinct. | Design §8.9 | P1-T04, P2-T04 | packages/planner/tests/domain/test_dependencies.py |
 | REQ-CORE-006 | Dependency cycles are unresolved input and cannot be scheduled. | Planner Spec; PLAN-007 | P1-T04, P2-T04 | packages/planner/tests/domain/test_dependencies.py |
@@ -36,17 +36,17 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-CORE-015 | Every canonical mutation records actor, before/after, reason, authority basis and trace ID. | Design §19.5 | P1-T06, P3-T06 | apps/api/tests/integration/test_audit_event_contract.py |
 | REQ-PLN-001 | Planner is a pure deterministic package with no FastAPI, ORM, Redis, network or LLM dependency. | Design §5.3; Planner Spec | P0-T03, P2-T10 | tests/handoff/test_planner_import_boundaries.py |
 | REQ-PLN-002 | Planner receives now, timezone and policy as input and never reads wall-clock time internally. | Planner Spec input contract | P1-T07, P2-T01 | packages/planner/tests/unit/test_explicit_clock.py |
-| REQ-PLN-003 | Availability normalization creates unique slots and reserves fixed busy, transition and protected buffer capacity. | Planner Spec slot model | P2-T03 | packages/planner/tests/reference/test_slot_normalization.py |
-| REQ-PLN-004 | Within one pass each slot has at most one task owner. | Planner Spec; PLAN-001 | P2-T03, P2-T06 | packages/planner/tests/property/test_slot_single_owner.py |
-| REQ-PLN-005 | Global scheduling prevents two deadlines from independently consuming the same capacity. | Planner Spec global allocation | P2-T06, P2-T07 | packages/planner/tests/reference/test_shared_capacity.py |
-| REQ-PLN-006 | Base and Safety passes are independent allocations over the same normalized capacity. | Planner Spec pass model | P2-T07 | packages/planner/tests/reference/test_base_safety_independence.py |
-| REQ-PLN-007 | Safety pass includes validation, submission and uncertainty buffers as synthetic work. | Planner Spec buffer rules | P2-T07 | packages/planner/tests/unit/test_synthetic_buffers.py |
-| REQ-PLN-008 | Priority class precedes scoring and uses the normative stable tie-break tuple. | Planner Spec priority tuple | P2-T05 | packages/planner/tests/reference/test_priority_ties.py |
-| REQ-PLN-009 | Split and non-split tasks obey minimum chunk and contiguity rules. | Planner Spec scheduling | P2-T06 | packages/planner/tests/reference/test_split_non_split.py |
-| REQ-PLN-010 | Blocks Start and Blocks Completion constrain different schedule points. | Planner Spec dependencies | P2-T04, P2-T06 | packages/planner/tests/reference/test_dependency_timing.py |
-| REQ-PLN-011 | External dependency risk uses latest_safe_handoff_at, expected delivery, fallback and recovery time. | Planner Spec external dependency risk | P2-T04, P2-T08 | packages/planner/tests/reference/test_latest_safe_handoff.py |
-| REQ-PLN-012 | Critical risk is based on allocated feasibility, not only due-date distance. | Planner Spec risk rules | P2-T08 | packages/planner/tests/reference/test_risk_from_allocation.py |
-| REQ-PLN-013 | Unknown inputs yield Unknown/unresolved outcomes rather than Low risk. | Design §13.4 | P2-T01, P2-T08 | packages/planner/tests/reference/test_unknown_risk.py |
+| REQ-PLN-003 | Availability normalization creates unique slots and reserves fixed busy, transition and protected buffer capacity. | Planner Spec slot model | P2-T03 | packages/planner/tests/availability/test_slots.py |
+| REQ-PLN-004 | Within one pass each slot has at most one task owner. | Planner Spec; PLAN-001 | P2-T03, P2-T06 | packages/planner/tests/properties/test_planner_invariants.py |
+| REQ-PLN-005 | Global scheduling prevents two deadlines from independently consuming the same capacity. | Planner Spec global allocation | P2-T06, P2-T07 | packages/planner/tests/vectors/tv-01.json |
+| REQ-PLN-006 | Base and Safety passes are independent allocations over the same normalized capacity. | Planner Spec pass model | P2-T07 | packages/planner/tests/scheduling/test_passes.py |
+| REQ-PLN-007 | Safety pass includes validation, submission and uncertainty buffers as synthetic work. | Planner Spec buffer rules | P2-T07 | packages/planner/tests/scheduling/test_passes.py |
+| REQ-PLN-008 | Priority class precedes scoring and uses the normative stable tie-break tuple. | Planner Spec priority tuple | P2-T05 | packages/planner/tests/scheduling/test_priority.py |
+| REQ-PLN-009 | Split and non-split tasks obey minimum chunk and contiguity rules. | Planner Spec scheduling | P2-T06 | packages/planner/tests/vectors/tv-08.json |
+| REQ-PLN-010 | Blocks Start and Blocks Completion constrain different schedule points. | Planner Spec dependencies | P2-T04, P2-T06 | packages/planner/tests/graph/test_dependency_timing.py |
+| REQ-PLN-011 | External dependency risk uses latest_safe_handoff_at, expected delivery, fallback and recovery time. | Planner Spec external dependency risk | P2-T04, P2-T08 | packages/planner/tests/graph/test_dependency_timing.py |
+| REQ-PLN-012 | Critical risk is based on allocated feasibility, not only due-date distance. | Planner Spec risk rules | P2-T08 | packages/planner/tests/risk/test_risk_classification.py |
+| REQ-PLN-013 | Unknown inputs yield Unknown/unresolved outcomes rather than Low risk. | Design §13.4 | P2-T01, P2-T08 | packages/planner/tests/risk/test_risk_classification.py |
 | REQ-PLN-014 | Today plan limits high-focus workstreams and reports explicit excluded work. | Design §12.5 | P2-T09 | packages/planner/tests/reference/test_today_workstream_limit.py |
 | REQ-PLN-015 | Replanning uses lexicographic safety/feasibility objectives before change minimization. | Planner Spec replanning objective | P2-T09 | packages/planner/tests/reference/test_lexicographic_replan.py |
 | REQ-PLN-016 | In-progress, user-pinned and frozen-horizon items cannot move without the defined exception. | Planner Spec frozen rules | P2-T09 | packages/planner/tests/property/test_frozen_items.py |

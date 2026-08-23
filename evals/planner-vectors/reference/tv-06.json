@@ -1,0 +1,20 @@
+{
+  "title": "Late external delivery raises risk without fallback",
+  "input": {
+    "tasks": [
+      {
+        "base": 90,
+        "safety": 120
+      }
+    ],
+    "external": {
+      "affected_index": 1,
+      "delivery_offset_hours": 12,
+      "fallback": false
+    },
+    "availability_hours": 4
+  },
+  "expected": {
+    "warning_or_risk_higher_than_low": true
+  }
+}

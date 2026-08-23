@@ -1,0 +1,17 @@
+{
+  "title": "Non-splittable task cannot use split runs (45+45)",
+  "input": {
+    "tasks": [
+      {
+        "base": 90,
+        "safety": 110,
+        "splittable": false
+      }
+    ],
+    "availability_hours": 0
+  },
+  "expected": {
+    "base_allocated_minutes": 0,
+    "unallocated_task_count_min": 1
+  }
+}

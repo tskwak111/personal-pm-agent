@@ -11,6 +11,7 @@ dev = [
     "mypy>=1.18",
     "pyyaml>=6.0,<7",
     "httpx>=0.28",
+    "hypothesis>=6.13",
     "personal-pm-planner",
     "personal-pm-api",
     "personal-pm-worker",

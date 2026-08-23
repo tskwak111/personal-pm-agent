@@ -168,3 +168,24 @@ Notes:
 Residual risk: 없음. Phase 2 참조 벡터에서 도메인 계약 소비 확인 예정
 
 ```
+
+
+## Phase 2 — Planner Engine closeout (T01–T10)
+
+```text
+Task ID: P2-T01..P2-T10
+Commits: 1ca6e0e, 13cef0f, 0c3d312, 6605cf4, 166ef81/d3853b0, d685f5a, 9eb4f10, 57abc77, d1d518b, 9bc79c4
+Timestamp UTC: 2026-08-22T22:30Z
+Focused red failures observed per task: 모듈 부재 Import 오류(각 Task 최초 실행에서 확인)
+Focused green results:
+  - TV-01~11 참조 벡터 + 결정론 재실행: 14 passed
+  - 속성(Hypothesis): 슬롯 단일 소유·의존성 순서 불변
+  - 성능 스모크: 60-Task < 2s (전체 벤치는 P8-T02)
+  - 전체 planner 스위트: 120 passed
+Adjacent: ruff/mypy strict 46파일 clean; make verify 전체 통과(종료 시점 재실행)
+Notes:
+  - DEC-015 파라미터형 벡터 JSON / DEC-016 성능 스모크 분리 기록
+  - planner-output.schema.json risk_level 대문자 정합화(구현 계약 우선, 하향 아님)
+Residual risk: RISK_REGISTER 유지. 20k 속성 시나리오 실행은 P8-T02에서 산출
+
+```

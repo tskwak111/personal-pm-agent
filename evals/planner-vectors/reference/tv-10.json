@@ -1,0 +1,18 @@
+{
+  "title": "Minimal-change replan extends exactly the one prior task",
+  "input": {
+    "tasks": [
+      {
+        "base": 260,
+        "safety": 340
+      }
+    ],
+    "prior_first_minutes": 60,
+    "availability_hours": 6.25,
+    "buffer_minutes": 30
+  },
+  "expected": {
+    "changed_task_count": 1,
+    "critical_before_gt_after": true
+  }
+}
