@@ -217,3 +217,13 @@ Adjacent: alembic downgrade base → upgrade head 사이클 실측 OK; ruff/mypy
 Residual risk: 없음. T03 UoW 테스트부터는 커밋 경로 정리를 별도 admin 연결로 수행(conftest 반영됨)
 
 ```
+
+### P3-T03
+
+```text
+Commit: 1f0313c
+Focused red: uow.workstreams 부재 AttributeError
+Focused green: 원자적 커밋试(도메인+감사 동시 존재) / 예외 시 WorkstreamModel 0행
+Adjacent: ruff/mypy strict clean; api 통합 스위트 8 passed
+Notes: 이벤트 루프 교체 대응 reset_engine() 공개 API 추가(테스트 자동화 품질)
+```

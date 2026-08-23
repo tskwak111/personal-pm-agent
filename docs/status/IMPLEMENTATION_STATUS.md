@@ -2,8 +2,8 @@
 
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 3 — Persistence & API
-- **현재 Task:** P3-T03
-- **마지막 검증:** make verify 전체 통과 + planner 120/API 통합 6 테스트
+- **현재 Task:** P3-T04
+- **마지막 검증:** API 통합 8 테스트(UoW 원자성 포함) 통과
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -28,6 +28,7 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P3-T03 리포지토리+Unit of Work | 도메인+감사 원자적 커밋/예외 시 전부 롤백 검증 | 1f0313c |
 | 2026-08-23 | P3-T02 Planning Core 스키마+마이그레이션 | FK/CHECK/partial-unique 제약 테스트, upgrade/downgrade 사이클 | 45f3bdc |
 | 2026-08-23 | P3-T01 비동기 DB 세션·Alembic 기반 | 롤백 원자성 테스트, upgrade head 실측 | 3af5f58 |
 | 2026-08-23 | P2-T10 plan() 오케스트레이터+TV-01~11+속성+성능 스모크 | 120 passed, ruff/mypy clean | 9bc79c4 |
