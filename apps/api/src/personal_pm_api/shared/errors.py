@@ -22,6 +22,10 @@ def install_error_handlers(app: FastAPI) -> None:
     async def _not_found(_: Request, exc: NotFoundError) -> JSONResponse:
         return JSONResponse(status_code=404, content={"code": "NOT_FOUND"})
 
+    @app.exception_handler(DomainRuleError)
+    async def _domain_rule(_: Request, exc: DomainRuleError) -> JSONResponse:
+        return JSONResponse(status_code=422, content={"code": exc.code, "detail": exc.message})
+
     @app.exception_handler(StaleObjectVersionError)
     async def _stale(_: Request, exc: StaleObjectVersionError) -> JSONResponse:
         return JSONResponse(
@@ -34,3 +38,12 @@ def install_error_handlers(app: FastAPI) -> None:
                 },
             },
         )
+
+
+class DomainRuleError(Exception):
+    """A domain rule rejected the command; surfaced as typed 422."""
+
+    def __init__(self, code: str, message: str) -> None:
+        self.code = code
+        self.message = message
+        super().__init__(message)

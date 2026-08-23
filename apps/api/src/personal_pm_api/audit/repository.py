@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -27,8 +28,8 @@ class AuditRepository:
         trace_id: str,
         reversible: bool,
         occurred_at: datetime,
-        before_state: dict[str, object] | None = None,
-        after_state: dict[str, object] | None = None,
+        before_state: Mapping[str, object] | None = None,
+        after_state: Mapping[str, object] | None = None,
         approval_id: UUID | None = None,
     ) -> AuditEventModel:
         model = AuditEventModel(

@@ -36,3 +36,13 @@ def updated_at() -> Mapped[datetime]:
         server_default=func.now(),
         onupdate=lambda: datetime.now(UTC),
     )
+
+
+class VersionedModel(Base):
+    """Typed surface for workspace-scoped, optimistic-versioned models."""
+
+    __abstract__ = True
+
+    id: Mapped[UUID]
+    workspace_id: Mapped[UUID]
+    version: Mapped[int]

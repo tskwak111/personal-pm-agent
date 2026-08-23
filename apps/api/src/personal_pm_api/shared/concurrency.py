@@ -5,19 +5,19 @@ from __future__ import annotations
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from personal_pm_api.planning.models import TaskModel
 from personal_pm_api.shared.errors import StaleObjectVersionError
+from personal_pm_api.shared.orm import VersionedModel
 
 
-async def update_with_version(
+async def update_with_version[ModelT: VersionedModel](
     session: AsyncSession,
-    model: type[TaskModel],
+    model: type[ModelT],
     object_id: str,
     expected_version: int,
     values: dict[str, object],
     *,
     workspace_id: str | None = None,
-) -> TaskModel:
+) -> ModelT:
     """Update only when the stored version matches; bump version atomically."""
     from uuid import UUID
 

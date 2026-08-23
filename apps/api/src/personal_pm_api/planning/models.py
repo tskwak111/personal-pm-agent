@@ -21,7 +21,13 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from personal_pm_api.shared.orm import Base, created_at, pk_uuid, updated_at
+from personal_pm_api.shared.orm import (
+    Base,
+    VersionedModel,
+    created_at,
+    pk_uuid,
+    updated_at,
+)
 
 
 class AreaModel(Base):
@@ -53,7 +59,7 @@ class WorkstreamModel(Base):
     updated_at: Mapped[datetime] = updated_at()
 
 
-class MilestoneModel(Base):
+class MilestoneModel(VersionedModel):
     __tablename__ = "milestones"
     __table_args__ = (
         CheckConstraint(
@@ -87,7 +93,7 @@ class MilestoneModel(Base):
     updated_at: Mapped[datetime] = updated_at()
 
 
-class TaskModel(Base):
+class TaskModel(VersionedModel):
     __tablename__ = "tasks"
     __table_args__ = (
         CheckConstraint("base_duration_minutes > 0", name="base_positive"),

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from pydantic import BaseModel
 
 from personal_pm_api.identity.router import current_actor
@@ -116,3 +116,99 @@ async def update_task(
         status=updated.status,
         version=updated.version,
     )
+
+
+class TaskTransitionBody(BaseModel):
+    expected_version: int
+    target_status: str
+    completion_confirmed: bool = False
+    waiting_resolved: bool = False
+    blocker_resolved: bool = False
+    waiting_reason: str | None = None
+
+
+@router.post("/tasks/{task_id}/transition", response_model=TaskResponse)
+async def transition_task(
+    task_id: str,
+    request: TaskTransitionBody,
+    actor: Annotated[CurrentActor, Depends(current_actor)],
+) -> TaskResponse:
+    from personal_pm_api.workspaces.schemas import TaskTransitionRequest
+    from personal_pm_api.workspaces.service import WorkspaceService
+
+    service_request = TaskTransitionRequest(
+        expected_version=request.expected_version,
+        target_status=request.target_status,
+        completion_confirmed=request.completion_confirmed,
+        waiting_resolved=request.waiting_resolved,
+        blocker_resolved=request.blocker_resolved,
+        waiting_reason=request.waiting_reason,
+    )
+    async with database_session() as session:
+        updated = await WorkspaceService(session).transition_task(
+            actor_user_id=actor.user_id,
+            workspace_id=actor.workspace_id,
+            session_id=actor.session_id,
+            task_id=task_id,
+            request=service_request,
+        )
+    return TaskResponse(
+        id=str(updated.id),
+        title=updated.title,
+        status=updated.status,
+        version=updated.version,
+    )
+
+
+class MilestonePatchBody(BaseModel):
+    expected_version: int
+    deadline_date: str | None = None
+
+
+class ProposalSummary(BaseModel):
+    id: str
+    authorization_level: str
+    status: str
+
+
+class MilestoneChangeResponse(BaseModel):
+    applied: bool
+    proposal: ProposalSummary | None
+
+
+@router.patch("/milestones/{milestone_id}")
+async def patch_milestone(
+    milestone_id: str,
+    request: MilestonePatchBody,
+    actor: Annotated[CurrentActor, Depends(current_actor)],
+) -> Response:
+    import datetime as dt
+
+    from personal_pm_api.workspaces.service import WorkspaceService
+
+    deadline_date = dt.date.fromisoformat(request.deadline_date) if request.deadline_date else None
+    async with database_session() as session:
+        applied, proposal = await WorkspaceService(session).request_milestone_deadline_change(
+            actor_user_id=actor.user_id,
+            workspace_id=actor.workspace_id,
+            session_id=actor.session_id,
+            milestone_id=milestone_id,
+            expected_version=request.expected_version,
+            deadline_date=deadline_date,
+        )
+    if proposal is not None:
+        from fastapi.responses import JSONResponse
+
+        return JSONResponse(
+            status_code=202,
+            content={
+                "applied": False,
+                "proposal": {
+                    "id": str(proposal.id),
+                    "authorization_level": proposal.approval_level,
+                    "status": proposal.status,
+                },
+            },
+        )
+    assert applied is not None
+    return JSONResponse(status_code=200, content={"applied": True, "proposal": None})
