@@ -18,6 +18,10 @@ from sqlalchemy.ext.asyncio import (
 
 if TYPE_CHECKING:
     from personal_pm_api.audit.repository import AuditRepository
+    from personal_pm_api.execution.repository import (
+        ExternalExecutionRepository,
+        OutboxRepository,
+    )
     from personal_pm_api.planning.repository import PlanningRepository
     from personal_pm_api.workspaces.repository import WorkstreamRepository
 
@@ -40,17 +44,25 @@ class SqlAlchemyUnitOfWork:
         self.session: AsyncSession | None = None
         self.workstreams: WorkstreamRepository | None = None
         self.planning: PlanningRepository | None = None
+        self.outbox: OutboxRepository | None = None
+        self.external_state: ExternalExecutionRepository | None = None
         self.audit: AuditRepository | None = None
 
     async def __aenter__(self) -> SqlAlchemyUnitOfWork:
         self.session = self._session_factory()
         # Late imports keep repository modules free of circular dependencies.
         from personal_pm_api.audit.repository import AuditRepository
+        from personal_pm_api.execution.repository import (
+            ExternalExecutionRepository,
+            OutboxRepository,
+        )
         from personal_pm_api.planning.repository import PlanningRepository
         from personal_pm_api.workspaces.repository import WorkstreamRepository
 
         self.workstreams = WorkstreamRepository(self.session)
         self.planning = PlanningRepository(self.session)
+        self.outbox = OutboxRepository(self.session)
+        self.external_state = ExternalExecutionRepository(self.session)
         self.audit = AuditRepository(self.session)
         return self
 
