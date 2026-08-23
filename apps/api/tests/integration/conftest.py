@@ -1,5 +1,3 @@
-"""Integration test fixtures backed by the local compose PostgreSQL."""
-
 from __future__ import annotations
 
 import os
@@ -8,19 +6,19 @@ from pathlib import Path
 
 import pytest
 import pytest_asyncio
-from sqlalchemy import text
-
-DEFAULT_DATABASE_URL = (
-    "postgresql+asyncpg://personal_pm:local_only_password@localhost:15432/personal_pm"
-)
 
 
 def database_url() -> str:
-    return os.environ.get("PM_DATABASE_URL", DEFAULT_DATABASE_URL)
+    return os.environ.get(
+        "PM_DATABASE_URL",
+        "postgresql+asyncpg://personal_pm:local_only_password@localhost:15432/personal_pm",
+    )
 
 
 @pytest.fixture(scope="session")
 def database_url_session() -> str:
+    # Application engine (personal_pm_api.shared.db) reads DATABASE_URL.
+    os.environ.setdefault("DATABASE_URL", database_url())
     return database_url()
 
 
@@ -51,6 +49,22 @@ def migrated_database(database_url_session: str):
     command.downgrade(config, "base")
 
 
+TABLES = (
+    "audit_events, outbox_events, external_executions, approvals, proposals, "
+    "plan_snapshots, task_dependencies, tasks, milestones, calendar_events, "
+    "availability_windows, workstreams, areas, workspaces, users"
+)
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _reset_app_engine_per_test():
+    """Each async test runs on a fresh event loop; drop pooled connections."""
+    from personal_pm_api.shared import db as app_db
+
+    yield
+    await app_db.reset_engine()
+
+
 @pytest_asyncio.fixture
 async def clean_tables(migrated_database, database_url_session):  # noqa: ANN201
     """Reset planning-core tables around each integration test.
@@ -58,18 +72,27 @@ async def clean_tables(migrated_database, database_url_session):  # noqa: ANN201
     Uses a dedicated admin connection so a poisoned test session cannot leak
     into cleanup.
     """
+    from sqlalchemy import text
     from sqlalchemy.ext.asyncio import create_async_engine
 
     yield
 
     engine = create_async_engine(database_url_session)
     async with engine.begin() as connection:
-        await connection.execute(
-            text(
-                "TRUNCATE TABLE audit_events, outbox_events, external_executions, "
-                "approvals, proposals, plan_snapshots, task_dependencies, tasks, "
-                "milestones, calendar_events, availability_windows, workstreams, "
-                "areas, workspaces, users CASCADE"
-            )
-        )
+        await connection.execute(text(f"TRUNCATE TABLE {TABLES} CASCADE"))
+    await engine.dispose()
+
+
+@pytest_asyncio.fixture
+async def uow_factory(database_url_session: str) -> AsyncIterator:
+    from personal_pm_api.shared.unit_of_work import SqlAlchemyUnitOfWork
+    from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
+    engine = create_async_engine(database_url_session, pool_pre_ping=True)
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+
+    def make() -> SqlAlchemyUnitOfWork:
+        return SqlAlchemyUnitOfWork(factory)
+
+    yield make
     await engine.dispose()

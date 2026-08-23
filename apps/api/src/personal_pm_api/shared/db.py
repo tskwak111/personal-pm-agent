@@ -34,6 +34,15 @@ def session_factory() -> async_sessionmaker[AsyncSession]:
     return _session_factory
 
 
+async def reset_engine() -> None:
+    """Dispose the cached engine (used by tests that change event loops)."""
+    global _engine, _session_factory
+    if _engine is not None:
+        await _engine.dispose()
+    _engine = None
+    _session_factory = None
+
+
 @asynccontextmanager
 async def database_session() -> AsyncIterator[AsyncSession]:
     """Yield a session; roll back on exception so callers never half-commit."""
