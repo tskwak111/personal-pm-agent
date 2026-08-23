@@ -240,3 +240,14 @@ Notes:
 Residual risk: Google OIDC는 Phase 5에서 동일 포트 뒤에 연결
 
 ```
+
+### P3-T05
+
+```text
+Commit: 43434a1
+Focused red: PATCH 엔드포인트 부재(404) 및 idempotency 모듈 부재
+Focused green: 첫 PATCH 200(version=2)/재시도 동일 버전 409 STALE_OBJECT_VERSION/
+               감사 이벤트 동일 트랜잭션 기록/멱등키 재사용 False(SAVEPOINT 복구)
+Adjacent: ruff/mypy strict clean; api 통합 15 passed; planner+handoff 126 passed
+Notes: update_with_version은 현재 Task 전용 타입으로 고정, 일반화는 사용처 확장 시 수행
+```
