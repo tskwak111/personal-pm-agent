@@ -2,8 +2,8 @@
 
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 3 — Persistence & API
-- **현재 Task:** P3-T01
-- **마지막 검증:** Phase 2 종료 — make verify 전체 통과, planner 120 테스트(TV-01~11 포함)
+- **현재 Task:** P3-T03
+- **마지막 검증:** make verify 전체 통과 + planner 120/API 통합 6 테스트
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -13,7 +13,7 @@
 | 0. Foundation | Complete | 로컬·CI에서 공통 verify 명령 통과 |
 | 1. Domain Core | Complete | 상태·권한·의존성 도메인 테스트 통과 |
 | 2. Planner Engine | Complete | 참조 벡터 100%, 불변 조건 위반 0건 |
-| 3. Persistence & API | Not Started | 소유권·버전·트랜잭션·OpenAPI E2E 통과 |
+| 3. Persistence & API | In Progress | 소유권·버전·트랜잭션·OpenAPI E2E 통과 |
 | 4. Intake & LLM | Not Started | 구조화 계약과 출처·불확실성 검증 통과 |
 | 5. Calendar & Execution | Not Started | Outbox·멱등성·장애 주입 Gate 통과 |
 | 6. Agent & Briefing | Not Started | Orchestrator 권한·승인·알림 테스트 통과 |
@@ -28,6 +28,8 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P3-T02 Planning Core 스키마+마이그레이션 | FK/CHECK/partial-unique 제약 테스트, upgrade/downgrade 사이클 | 45f3bdc |
+| 2026-08-23 | P3-T01 비동기 DB 세션·Alembic 기반 | 롤백 원자성 테스트, upgrade head 실측 | 3af5f58 |
 | 2026-08-23 | P2-T10 plan() 오케스트레이터+TV-01~11+속성+성능 스모크 | 120 passed, ruff/mypy clean | 9bc79c4 |
 | 2026-08-23 | P2-T09 오늘 계획·최소변경 재계획·Proposal | 사전식 목적 순서·동결/Pin 보호 검증 | d1d518b |
 | 2026-08-23 | P2-T08 전역 배정 기반 위험 분류 | Definitive/Unknown/Capacity/High/Medium/Low 순서 테스트 | 57abc77 |

@@ -203,3 +203,17 @@ Proof: 수정 전 실패 재현(29 failed) → 수정 후 packages/planner/tests
        make verify exit=0 (커밋 2feaba9)
 Rule IDs: PLAN-002, REQ-PLN-010
 ```
+
+## Phase 3 진행 (P3-T01–T02)
+
+```text
+Commits: 3af5f58, 45f3bdc
+Focused red failures: shared.db 부재 → 모델/제약 부재로 IntegrityError 미발생
+Focused green:
+  - test_database_bootstrap: 세션 롤백 원자성(TEMP DDL+INSERT+rollback→0행), settings 기본 URL
+  - test_schema_constraints: workstream FK 위반 거부, 활성 provider identity partial unique,
+    done 작업 잔여시간 CHECK 위반 거부, outbox idempotency unique — 4 passed
+Adjacent: alembic downgrade base → upgrade head 사이클 실측 OK; ruff/mypy strict clean
+Residual risk: 없음. T03 UoW 테스트부터는 커밋 경로 정리를 별도 admin 연결로 수행(conftest 반영됨)
+
+```

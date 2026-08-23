@@ -1,6 +1,13 @@
+import os
+
 import sqlalchemy as sa
 
-from tests.integration.conftest import database_url
+
+def database_url() -> str:
+    return os.environ.get(
+        "PM_DATABASE_URL",
+        "postgresql+asyncpg://personal_pm:local_only_password@localhost:15432/personal_pm",
+    )
 
 
 async def test_database_session_rolls_back_uncommitted_change(
