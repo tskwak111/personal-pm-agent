@@ -22,7 +22,7 @@ test-unit:
 	pnpm -r test --run
 
 test-integration:
-	uv run pytest -m integration
+	APP_ENVIRONMENT=test PM_DATABASE_URL="postgresql+asyncpg://personal_pm:local_only_password@localhost:15432/personal_pm" uv run pytest apps/api/tests/integration packages/planner/tests -q -m "integration or not integration"
 
 test-e2e:
 	pnpm -r e2e

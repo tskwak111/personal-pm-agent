@@ -40,6 +40,11 @@ select = [
     "B",   # flake8-bugbear
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# pytestmark must precede imports in integration suites
+"apps/api/tests/integration/*.py" = ["E402"]
+"packages/*/tests/**/*.py" = ["E402"]
+
 [tool.mypy]
 python_version = "3.13"
 strict = true

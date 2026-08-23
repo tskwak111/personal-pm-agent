@@ -198,7 +198,7 @@ class AvailabilityWindowModel(Base):
     )
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    tags_json: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default=dict)
+    tags_json: Mapped[dict[str, list[str]]] = mapped_column(JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = created_at()
 
 

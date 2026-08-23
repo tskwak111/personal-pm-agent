@@ -3,7 +3,7 @@
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 3 — Persistence & API
 - **현재 Task:** P3-T07(진행 중 — R-012 참조)
-- **마지막 검증:** API 통합 23 passed(T08 포함) / planner+handoff 126 passed / T07 유효 경로 OK·무효 경로 조사 중
+- **마지막 검증:** ⚠️ BLOCKED — make verify가 전체 수집 시 간헐 라이브락(R-012). 개별 스위트는 실측 green(planner 120, api 통합 23, handoff 6)
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황

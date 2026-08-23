@@ -32,3 +32,7 @@ packages = ["src/personal_pm_api"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "integration: requires PostgreSQL via compose",
+]
+addopts = "-m 'not integration'"

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import pytest
+
+pytestmark = pytest.mark.integration
+
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
-
-import pytest
 
 
 async def _seed_workspace_id(uow_factory) -> UUID:

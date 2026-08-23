@@ -1,3 +1,9 @@
+from __future__ import annotations
+
+import pytest
+
+pytestmark = pytest.mark.integration
+
 import os
 
 import sqlalchemy as sa

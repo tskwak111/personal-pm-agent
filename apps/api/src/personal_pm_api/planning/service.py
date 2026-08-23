@@ -6,12 +6,13 @@ current snapshot (PLAN-009); only fully valid outputs append history.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 from personal_pm_planner.contracts.input import PlannerInput
 from personal_pm_planner.contracts.output import PlannerOutput
 from personal_pm_planner.domain.availability import AvailabilityWindow
+from personal_pm_planner.domain.enums import DeadlineType, TaskStatus, Uncertainty
 from personal_pm_planner.domain.identifiers import (
     MilestoneId,
     TaskId,
@@ -22,6 +23,7 @@ from personal_pm_planner.domain.task import TaskSnapshot
 from personal_pm_planner.domain.work import MilestoneSnapshot
 from personal_pm_planner.normalization.validate import normalize_and_validate
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # Full registry import: ORM FK resolution needs every mapped table loaded.
 from personal_pm_api.approvals import models as _approvals_m  # noqa: F401
@@ -49,7 +51,7 @@ def _task_snapshot_from_model(model: TaskModel) -> TaskSnapshot:
         workstream_id=WorkstreamId(model.workstream_id),
         milestone_id=MilestoneId(model.milestone_id) if model.milestone_id else None,
         title=model.title,
-        status=model.status,
+        status=TaskStatus(model.status),
         deadline_date=model.deadline_date,
         deadline_at=model.deadline_at,
         deadline_time_known=model.deadline_time_known,
@@ -58,7 +60,7 @@ def _task_snapshot_from_model(model: TaskModel) -> TaskSnapshot:
         safety_duration_minutes=model.safety_duration_minutes,
         remaining_base_minutes=model.remaining_base_minutes,
         remaining_safety_minutes=model.remaining_safety_minutes,
-        uncertainty=model.uncertainty,
+        uncertainty=Uncertainty(model.uncertainty),
         splittable=model.splittable,
         min_chunk_minutes=model.min_chunk_minutes,
         pinned=model.pinned,
@@ -77,14 +79,14 @@ def _milestone_snapshot_from_model(model: MilestoneModel) -> MilestoneSnapshot:
         deadline_at=model.deadline_at,
         deadline_date_known=model.deadline_date_known,
         deadline_time_known=model.deadline_time_known,
-        deadline_type=model.deadline_type,
+        deadline_type=DeadlineType(model.deadline_type),
         required_buffer_minutes=model.required_buffer_minutes,
         version=model.version,
     )
 
 
 class PlanningService:
-    def __init__(self, session) -> None:
+    def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
     async def _build_planner_input(self, workspace_id: UUID, now_utc: datetime) -> PlannerInput:
@@ -97,14 +99,18 @@ class PlanningService:
                 )
             ).scalars()
         )
-        availability = tuple(
-            AvailabilityWindow(
+
+        def _to_window(row: AvailabilityWindowModel) -> AvailabilityWindow:
+            raw_tags: list[str] = (
+                row.tags_json.get("tags", []) if isinstance(row.tags_json, dict) else []
+            )
+            return AvailabilityWindow(
                 start_at=row.start_at,
                 end_at=row.end_at,
-                tags=frozenset(row.tags_json.get("tags", [])),
+                tags=frozenset(raw_tags),
             )
-            for row in window_rows
-        )
+
+        availability = tuple(_to_window(row) for row in window_rows)
 
         task_rows = list(
             (
@@ -199,13 +205,13 @@ class PlanningService:
 
         return run_plan(planner_input)
 
-    async def latest_valid(self, workspace_id):
+    async def latest_valid(self, workspace_id: UUID | str) -> PlanSnapshotModel | None:
         repo = PlanningRepository(self._session)
         wid = workspace_id if isinstance(workspace_id, UUID) else UUID(str(workspace_id))
         return await repo.latest_valid_plan(wid)
 
 
-def _horizon_span(milestone_rows, now_utc: datetime):
+def _horizon_span(milestone_rows: list[MilestoneModel], now_utc: datetime) -> timedelta:
     from datetime import timedelta
 
     latest = [m.deadline_at or m.deadline_date for m in milestone_rows]

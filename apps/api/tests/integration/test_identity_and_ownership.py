@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
+pytestmark = pytest.mark.integration
+
 import secrets
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
