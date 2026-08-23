@@ -12,6 +12,7 @@
 | R-008 | 전체 기능 규모로 일정 지연 | High | Medium | Phase gate, 독립 Task, 우선 핵심 경로 구현 | Accepted |
 | R-009 | 실제 사용자가 체크인을 귀찮아함 | Medium | High | 30초 UX Gate, 묶음 알림, 파일럿 측정 | Open |
 | R-010 | 예상 시간 보정이 적은 표본에서 왜곡 | Medium | Medium | 표본별 반영 강도, factor clamp, reset | Open |
+| R-012 | PlanningService 무효 입력 경로에서 세션/플래너 라이브락 의심(2차 케이스 지연) | Medium | Medium | WIP 커밋으로 격리, 재개 시 faulthandler로 스택 덤프 후 원인 규명 후 진행 | Open |
 | R-011 | 로컬 컨테이너가 메이저 태그로 참조되어 재현성 저하 | Medium | Low | 레지스트리 접근 가능 시 불변 다이제스트로 고정(DEC-012), P8 배포 경화 전 필수 | Open |
 
 위험이 현실화되면 Incident ID와 관련 테스트를 연결한다.

@@ -2,8 +2,8 @@
 
 - **전체 상태:** In Progress
 - **현재 Phase:** Phase 3 — Persistence & API
-- **현재 Task:** P3-T06
-- **마지막 검증:** make verify 전체 통과(141 passed), STALE_OBJECT_VERSION 409 실측
+- **현재 Task:** P3-T07(진행 중 — R-012 참조)
+- **마지막 검증:** API 통합 23 passed(T08 포함) / planner+handoff 126 passed / T07 유효 경로 OK·무효 경로 조사 중
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -28,6 +28,8 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-23 | P3-T08 Transactional Outbox+실행 레코드 | 크래시 무기록·멱등 unique·검증 불변식 4 passed | fe289e7 |
+| 2026-08-23 | P3-T06 Planning Core 커맨드 API | DONE 잔여시간 422/Hard Deadline→202 RECONFIRM Proposal | ec9d750 |
 | 2026-08-23 | P3-T05 낙관적 동시성+멱등키 | PATCH v1→200/v2, 재시도 409, 감사 이벤트 동시 기록 | 43434a1 |
 | 2026-08-23 | P3-T04 신원 세션·소유권 가드 | 401/404/스코핑 3 passed, ORM relationship 삽입 순서 수정 | (본 커밋) |
 | 2026-08-23 | P3-T03 리포지토리+Unit of Work | 도메인+감사 원자적 커밋/예외 시 전부 롤백 검증 | 1f0313c |

@@ -251,3 +251,11 @@ Focused green: 첫 PATCH 200(version=2)/재시도 동일 버전 409 STALE_OBJECT
 Adjacent: ruff/mypy strict clean; api 통합 15 passed; planner+handoff 126 passed
 Notes: update_with_version은 현재 Task 전용 타입으로 고정, 일반화는 사용처 확장 시 수행
 ```
+
+### P3-T07 진행 상태 (WIP)
+
+```text
+유효 경로: create_plan → DTO OK, 스냅샷 is_current=True 실측 완료(직접 호출 프로브)
+미해결: 무효 입력(DONE+잔여) 두 번째 시나리오에서 실행 지연 관측(R-012)
+재개 절차: faulthandler 스택 확인 → normalize_and_validate/plan/replan 단계별 시간 측정 → 수정 후 RED→GREEN 마무리 → T08은 이미 완료(fe289e7)이므로 바로 T09로 진행 가능
+```
