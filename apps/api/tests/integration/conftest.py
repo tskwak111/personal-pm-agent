@@ -52,15 +52,24 @@ def migrated_database(database_url_session: str):
 
 
 @pytest_asyncio.fixture
-async def clean_tables(migrated_database, db_session):  # noqa: ANN201
-    """Truncate all planning-core tables between integration tests."""
+async def clean_tables(migrated_database, database_url_session):  # noqa: ANN201
+    """Reset planning-core tables around each integration test.
+
+    Uses a dedicated admin connection so a poisoned test session cannot leak
+    into cleanup.
+    """
+    from sqlalchemy.ext.asyncio import create_async_engine
+
     yield
-    await db_session.execute(
-        text(
-            "TRUNCATE TABLE audit_events, outbox_events, external_executions, "
-            "approvals, proposals, plan_snapshots, task_dependencies, tasks, "
-            "milestones, workstreams, areas, calendar_events, availability_windows, "
-            "workspaces, users CASCADE"
+
+    engine = create_async_engine(database_url_session)
+    async with engine.begin() as connection:
+        await connection.execute(
+            text(
+                "TRUNCATE TABLE audit_events, outbox_events, external_executions, "
+                "approvals, proposals, plan_snapshots, task_dependencies, tasks, "
+                "milestones, calendar_events, availability_windows, workstreams, "
+                "areas, workspaces, users CASCADE"
+            )
         )
-    )
-    await db_session.commit()
+    await engine.dispose()

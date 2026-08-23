@@ -6,14 +6,22 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
+from personal_pm_api.approvals import models as approvals_models  # noqa: F401
+from personal_pm_api.audit import models as audit_models  # noqa: F401
+from personal_pm_api.execution import models as execution_models  # noqa: F401
+from personal_pm_api.planning import models as planning_models  # noqa: F401
+from personal_pm_api.shared.orm import Base
+from personal_pm_api.workspaces import models as workspace_models  # noqa: F401
 from sqlalchemy import engine_from_config, pool
+
+target_metadata = Base.metadata
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = None  # Phase 3 T02 attaches versioned model metadata.
+target_metadata = None
 
 sync_url = os.environ.get(
     "PM_DATABASE_URL_SYNC",
