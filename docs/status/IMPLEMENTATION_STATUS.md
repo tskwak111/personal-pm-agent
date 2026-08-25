@@ -1,9 +1,9 @@
 # 구현 상태
 
 - **전체 상태:** In Progress
-- **현재 Phase:** Phase 5 — Calendar & Execution (Complete, Phase 6 준비)
-- **현재 Task:** P5-T08 완료 — 다음 Phase 6 Agent & Briefing
-- **마지막 검증:** make verify 전체 통과 EXIT=0 (test-unit 180 passed) + api 통합 56 passed + Stage C fault 게이트 all_passed=True — 2026-08-26 실측
+- **현재 Phase:** Phase 6 — Agent & Briefing (Complete, Phase 7 준비)
+- **현재 Task:** P6-T08 완료 — 다음 Phase 7 Web/PWA
+- **마지막 검증:** make verify 전체 통과 EXIT=0 (test-unit 194 passed) + api 통합 77 passed — 2026-08-26 실측
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -16,7 +16,7 @@
 | 3. Persistence & API | Complete | 소유권·버전·트랜잭션·OpenAPI E2E 통과 (25 passed + contract) |
 | 4. Intake & LLM | Complete | 구조화 계약과 출처·불확실성 검증 통과 (unit 17 + integration 14) |
 | 5. Calendar & Execution | Complete | Outbox·멱등성·장애 주입 Gate 통과 (Stage C 리포트 산출, 중복 0·거짓 성공 0) |
-| 6. Agent & Briefing | Not Started | Orchestrator 권한·승인·알림 테스트 통과 |
+| 6. Agent & Briefing | Complete | Orchestrator 권한·승인·알림 테스트 통과 (8 Tasks, 40+ 신규 테스트) |
 | 7. Web/PWA | Not Started | 핵심 사용자 흐름과 접근성 E2E 통과 |
 | 8. Evaluation & Release | Not Started | Stage A~C 자동 Gate와 배포 복구 검증 통과 |
 
@@ -28,6 +28,7 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-26 | P6-T01~T08 Agent & Briefing 전체 | make verify EXIT=0 (194 unit), api 통합 77 passed | (Phase 6 커밋들) |
 | 2026-08-26 | P5-T01~T08 Calendar & Execution 전체 | make verify EXIT=0 (180 unit), api 통합 56 passed, Stage C fault 리포트 all_passed=True | (Phase 5 커밋들) |
 | 2026-08-26 | P4-T01~T08 Intake·파일·LLM 전체 | make verify EXIT=0 (165 unit), api 통합 39 passed, golden eval AI-001/002 리포트 산출 | (Phase 4 커밋들) |
 | 2026-08-24 | P3-T09 OpenAPI+TS 클라이언트 | test_openapi 1 passed, export_openapi + pnpm generate + typecheck 통과, 7 paths | (본 커밋) |
@@ -60,5 +61,5 @@
 
 ## 다음 행동
 
-1. `docs/plans/07-phase-6-agent-briefing.md` 읽기
-2. P6-T01 실패 테스트부터 TDD 진행
+1. `docs/plans/08-phase-7-web-pwa.md` 읽기
+2. P7-T01 실패 테스트부터 TDD 진행

@@ -363,3 +363,25 @@ Notes:
   - Phase 5 Exit 6/6 충족: 스코프 분리, 토큰 암호화(AES-GCM versioned), 톰브스톤, 멱등 1-이벤트, 상태 분리(PENDING/SUCCEEDED/FAILED/NEEDS_REAUTHORIZATION), Stage C 0 중복·0 거짓 성공
 Residual risk: 실제 Google API 어댑터는 provider 접근 가능 환경에서 연결 필요(fake로 계약 고정)
 ```
+
+## Phase 6 — Agent & Briefing closeout (T01–T08)
+
+```text
+Task ID: P6-T01..P6-T08
+Commits: 410ea52, 902e54b, 2a69e77, c06479f, d4ee8e6, f96560a, 195e460, 01ef743, 99b386d, 27107db
+Timestamp UTC: 2026-08-26 (recorded after completion)
+Focused red failures observed per task:
+  P6-T01 테이블 부재 → 마이그레이션 0008(agent operations), env.py import 누락 재발견·수정
+  P6-T02 intent 미구현 → REVIEW 마커 우선 규칙 포함 5 passed
+  P6-T03 slots dataclass 클래스 접근 이슈 → frozen only로 수정, 5 passed
+  P6-T04 AUTHORIZE 누락(외부 행동 시 리스크 レベル 버그) → review()가 has_external_action 최우선 판정하도록 수정
+  P6-T05 approval 서비스 신규 → 4 passed(EXECUTED/SUPERSEDED/CONFLICT/REJECTED)
+  P6-T06 FK 위반(테스트가 임의 workspace uuid 사용) 수정 + blended_factor 기대값 정정(1.30) 후 5 passed
+  P6-T07 grounding 계약 4 passed / P6-T08 dedupe·quiet hours 5 passed
+Focused green results:
+  P6 합계 40+ passed; api 통합 77 passed; ruff/mypy strict clean
+Completion command: make verify → EXIT=0, test-unit 194 passed, build/verify-docs/verify-repo PASSED
+Notes:
+  - Exit 7/7 충족: 순서 강제(AUTHORIZE< ACT), 모호 언어 불변식, 버전 바운드 승인, 샘플 수 규칙, 근거 부분집합, 알림 dedupe
+Residual risk: SSE 스트림은 operations 순서 계약으로 고정, Redis pub/sub 연결은 Phase 8 경화에서 확인
+```
