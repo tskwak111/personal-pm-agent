@@ -179,7 +179,7 @@ class AgentOperationService:
 def _operation_model() -> type[Any]:
     from personal_pm_api.agent.models import AgentOperationModel
 
-    return AgentOperationModel  # type: ignore[return-value]
+    return AgentOperationModel
 
 
 __all__ = ["AgentOperationService", "InvalidOperationStepError", "OPERATION_STEPS"]
