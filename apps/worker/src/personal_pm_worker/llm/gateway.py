@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import Any, Generic, Protocol, TypeVar
+from typing import Any, Protocol
 
 from personal_pm_worker.llm.errors import PromptNotFoundError, StructuredLLMError
 from personal_pm_worker.llm.prompts import get_prompt_template
@@ -27,10 +27,12 @@ def render_request(request: StructuredLLMRequest[Any]) -> str:
         f"[page={chunk.page_number} block={chunk.block_index}] {chunk.text}"
         for chunk in request.untrusted_source_chunks
     )
-    facts = "\n".join(
-        f"- {fact.subject} {fact.predicate} {fact.obj}"
-        for fact in request.verified_facts
-    ) or "(none)"
+    facts = (
+        "\n".join(
+            f"- {fact.subject} {fact.predicate} {fact.obj}" for fact in request.verified_facts
+        )
+        or "(none)"
+    )
     return template.format(
         user_request=request.user_request,
         verified_facts=facts,
@@ -60,16 +62,11 @@ def _validate(raw: str, schema: type[Any]) -> Any:
     return schema(**parsed)
 
 
-T = TypeVar("T")
-
-
 @dataclass
-class LLMGateway(Generic[T]):
+class LLMGateway[T]:
     adapter: ProviderAdapter
 
-    async def generate_structured(
-        self, request: StructuredLLMRequest[T]
-    ) -> StructuredLLMResult[T]:
+    async def generate_structured(self, request: StructuredLLMRequest[T]) -> StructuredLLMResult[T]:
         rendered = render_request(request)
         raw_first = await self.adapter.complete(rendered)
         try:

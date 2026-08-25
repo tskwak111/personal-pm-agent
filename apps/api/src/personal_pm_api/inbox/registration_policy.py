@@ -25,9 +25,7 @@ def decide_registration(
     candidate: Any, *, evidence_score: float | None = None
 ) -> RegistrationDecision:
     """Decide Auto/Temporary/Needs Confirmation/Hold for one candidate."""
-    score = (
-        evidence_score if evidence_score is not None else float(candidate.evidence_score)
-    )
+    score = evidence_score if evidence_score is not None else float(candidate.evidence_score)
     kind = str(candidate.kind)
     has_conflict = bool(candidate.has_conflict)
     time_known = getattr(candidate, "time_known", True)

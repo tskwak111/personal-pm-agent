@@ -44,9 +44,7 @@ def test_decomposition_rejects_task_without_completion_condition() -> None:
 
 
 def test_rejects_task_outside_30_120_minutes() -> None:
-    small = DecompositionResult(
-        deliverable="보고서 초안", tasks=(_task(base_duration_minutes=15),)
-    )
+    small = DecompositionResult(deliverable="보고서 초안", tasks=(_task(base_duration_minutes=15),))
     large = DecompositionResult(
         deliverable="보고서 초안", tasks=(_task(base_duration_minutes=180),)
     )

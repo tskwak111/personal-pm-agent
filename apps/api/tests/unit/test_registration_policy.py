@@ -37,9 +37,7 @@ class _PolicyCandidate:
         from personal_pm_api.inbox.evidence import calculate_evidence_score
 
         self.evidence_score = (
-            evidence_score
-            if evidence_score is not None
-            else calculate_evidence_score(fact).value
+            evidence_score if evidence_score is not None else calculate_evidence_score(fact).value
         )
 
 

@@ -45,9 +45,7 @@ def calculate_evidence_score(candidate: CandidateFact) -> EvidenceScore:
     if candidate.has_conflict:
         points -= 0.50
         reasons.append("SOURCE_CONFLICT")
-    return EvidenceScore(
-        value=max(0.0, min(1.0, round(points, 6))), reasons=tuple(sorted(reasons))
-    )
+    return EvidenceScore(value=max(0.0, min(1.0, round(points, 6))), reasons=tuple(sorted(reasons)))
 
 
 __all__ = ["CandidateFact", "EvidenceScore", "calculate_evidence_score"]

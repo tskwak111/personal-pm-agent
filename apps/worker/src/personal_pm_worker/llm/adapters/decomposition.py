@@ -46,9 +46,7 @@ class DecompositionResult:
     tasks: tuple[DecompositionTask, ...]
 
 
-def validate_decomposition(
-    scope: ApprovedMilestoneScope, result: DecompositionResult
-) -> None:
+def validate_decomposition(scope: ApprovedMilestoneScope, result: DecompositionResult) -> None:
     if result.deliverable != scope.deliverable:
         raise ScopeExpansionError()
     for task in result.tasks:

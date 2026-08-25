@@ -2,7 +2,7 @@
 
 | ID | 위험 | 가능성 | 영향 | 현재 완화책 | 상태 |
 |---|---|---:|---:|---|---|
-| R-001 | LLM이 마감·일정을 잘못 자동 등록 | Medium | Critical | 출처, evidence score, 고위험 확인, 오등록 Gate | Open |
+| R-001 | LLM이 마감·일정을 잘못 자동 등록 | Medium | Critical | 구현됨: evidence.py(자신감 배제), registration_policy(충돌/시간미상/고피해 항상 확인), intake 어댑터 source span 바인딩, golden eval AI-001/002 | Mitigated (P8 평가에서 최종 확인) |
 | R-002 | Planner가 같은 가용 시간을 중복 사용 | Low after tests | Critical | 고유 슬롯, Base/Safety 독립 Pass, 속성 테스트 | Open |
 | R-003 | 의존성 사이클로 계획이 불가능 | Medium | High | SCC 탐지, 자동 수정 금지, Blocked 표시 | Open |
 | R-004 | 계획이 자주 바뀌어 사용자 신뢰 하락 | Medium | High | Freeze Window, 변경 비용, change ratio Gate | Open |

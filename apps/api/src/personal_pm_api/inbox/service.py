@@ -40,8 +40,7 @@ class InboxService:
                 size_bytes=len(text.encode("utf-8")),
                 sha256=None,
                 storage_key=(
-                    f"workspaces/{actor.workspace_id}/source-artifacts/"
-                    f"{uuid4()}/inline.txt"
+                    f"workspaces/{actor.workspace_id}/source-artifacts/{uuid4()}/inline.txt"
                 ),
                 status="READY",
             )

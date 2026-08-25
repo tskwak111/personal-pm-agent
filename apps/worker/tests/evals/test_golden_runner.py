@@ -6,7 +6,9 @@ from pathlib import Path
 from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-_spec = importlib.util.spec_from_file_location("run_intake_eval", _REPO_ROOT / "scripts" / "run_intake_eval.py")
+_spec = importlib.util.spec_from_file_location(
+    "run_intake_eval", _REPO_ROOT / "scripts" / "run_intake_eval.py"
+)
 assert _spec is not None and _spec.loader is not None
 _mod: Any = importlib.util.module_from_spec(_spec)
 sys.modules["run_intake_eval"] = _mod
@@ -26,7 +28,10 @@ def _sample_cases() -> list[dict[str, Any]]:
                 "title": "CS101 보고서 제출",
                 "due_date": "2026-09-01",
             },
-            "llm_raw": '{"kind": "HARD_DEADLINE", "title": "CS101 보고서 제출", "due_date": "2026-09-01"}',
+            "llm_raw": (
+                '{"kind": "HARD_DEADLINE", "title": "CS101 보고서 제출", '
+                '"due_date": "2026-09-01"}'
+            ),
             "repair_raw": None,
         },
         {
@@ -70,11 +75,7 @@ def test_report_separates_first_pass_and_repaired_success() -> None:
 
 def test_load_cases_reads_jsonl_fixture() -> None:
     fixture = (
-        Path(__file__).resolve().parents[4]
-        / "evals"
-        / "golden"
-        / "fixtures"
-        / "sample-cases.jsonl"
+        Path(__file__).resolve().parents[4] / "evals" / "golden" / "fixtures" / "sample-cases.jsonl"
     )
     cases = load_cases(fixture)
     assert len(cases) >= 1

@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Generic, TypeVar
-
-T = TypeVar("T")
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,7 +20,7 @@ class SourceChunk:
 
 
 @dataclass(frozen=True, slots=True)
-class StructuredLLMRequest(Generic[T]):
+class StructuredLLMRequest[T]:
     task_type: str
     prompt_version: str
     schema: type[T]
@@ -33,7 +30,7 @@ class StructuredLLMRequest(Generic[T]):
 
 
 @dataclass(frozen=True, slots=True)
-class StructuredLLMResult(Generic[T]):
+class StructuredLLMResult[T]:
     value: T | None
     repair_count: int
     raw_response: str

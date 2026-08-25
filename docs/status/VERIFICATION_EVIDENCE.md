@@ -305,3 +305,35 @@ Commands:
   PM_DATABASE_URL_SYNC=... uv run alembic -c apps/api/alembic.ini upgrade head → head=0003
 Notes: Phase 3 7/7 Tasks 완료, R-012 Closed, 다음 Phase 4 진행 가능
 ```
+
+## Phase 4 — Intake & LLM closeout (T01–T08)
+
+```text
+Task ID: P4-T01..P4-T08
+Commits: f663f2f, 45819bc, 6337f1e, fb00b8d(T03 fixups), d1e39a1, a4f52cb, 8aee2dd, 5e9f95c, d4874fd
+Timestamp UTC: 2026-08-26 (recorded after completion)
+Focused red failures observed per task:
+  P4-T01 test_source_upload 4 failed(모듈 부재)
+  P4-T02 test_extraction_pipeline 3 errors(모듈 부재) → async strict 모드로 1 failed 후 GREEN
+  P4-T03 test_inbox_lifecycle 5 failed → 마이그레이션/전이 규칙 구현 후 GREEN
+     - PendingRollbackError 발견: reserve_key 충돌 후 만료 객체 접근 → 상태 선(先)캡처+rollback로 수정
+  P4-T04 gateway contract 4 failed(circular import 발견·해소: errors.py 분리)
+  P4-T05 evidence score 5 failed → float 정밀도(0.8999999) 발견 → round(6)로 계약 충족
+  P4-T06 registration policy 6 failed
+  P4-T07 decomposition validation 0 red(테스트와 구현 동시 확정 전 실패 확인은 match 패턴으로 수행)
+  P4-T08 golden runner ModuleNotFoundError → importlib 로딩 + 케이스 데이터 정합화
+Focused green results:
+  P4-T01 4 passed / P4-T02 3 passed / P4-T03 5 passed / P4-T04 4 passed
+  P4-T05 unit 5 + worker llm 8 passed / P4-T06 unit 6 + integration 2 passed
+  P4-T07 integration 3 passed / P4-T08 evals 3 passed
+Adjacent:
+  APP_ENVIRONMENT=test PM_DATABASE_URL=... pytest apps/api/tests/integration --override-ini="addopts=" -q → 39 passed
+  pytest apps/worker/tests packages/planner/tests tests -q → 146 passed
+  alembic upgrade head → 0005(inbox items and candidates) 적용
+Completion command: make verify → EXIT=0, test-unit 165 passed, build/verify-docs/verify-repo PASSED
+Generated report/artifact paths: evals/reports/intake-sample.json, prompts/runtime/*.md
+Notes:
+  - PLAN-009 연계: LLM 출력은 Planning Core 명령이 아니라 후보이며 registration_policy가 자동 등록을 최소화
+  - R-001/R-007 Mitigated로 갱신(P8 평가에서 최종 확인)
+Residual risk: 실제 공급자 어댑터는 Phase 6 이후 연결 예정(fake 게이트웨이로 계약 고정)
+```

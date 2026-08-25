@@ -95,9 +95,7 @@ class FailingProcessingJob(ProcessingJob):
         service = InboxService(self._factory)
         # Move to PROCESSING first (valid transition), then simulate the crash.
         async with self._factory() as session:
-            statement = select(InboxItemModel).where(
-                InboxItemModel.id == UUID(str(item_id))
-            )
+            statement = select(InboxItemModel).where(InboxItemModel.id == UUID(str(item_id)))
             model = (await session.execute(statement)).scalar_one()
             if model.status == "NEW":
                 model.status = "PROCESSING"

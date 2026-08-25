@@ -47,7 +47,6 @@ async def reg_env(clean_tables, database_url_session) -> AsyncIterator[dict[str,
 async def test_job_records_candidate_with_policy_decision(reg_env: dict[str, Any]) -> None:
     from personal_pm_api.inbox.models import CandidateFactModel
     from personal_pm_worker.files.jobs import ProcessingJob
-    from sqlalchemy.ext.asyncio import AsyncSession
 
     service: Any = reg_env["service"]
     item = await service.create_from_text(reg_env["actor"], "금요일까지 보고서 제출")
@@ -55,14 +54,12 @@ async def test_job_records_candidate_with_policy_decision(reg_env: dict[str, Any
     job = ProcessingJob(reg_env["factory"], operation_id=uuid4())
     await job.run(item.id)
 
-    factory: async_sessionmaker[AsyncSession] = reg_env["factory"]
+    factory: Any = reg_env["factory"]
     async with factory() as session:
         rows = (
             (
                 await session.execute(
-                    select(CandidateFactModel).where(
-                        CandidateFactModel.inbox_item_id == item.id
-                    )
+                    select(CandidateFactModel).where(CandidateFactModel.inbox_item_id == item.id)
                 )
             )
             .scalars()
@@ -79,7 +76,6 @@ async def test_duplicate_operation_keeps_single_candidate_row(
 ) -> None:
     from personal_pm_api.inbox.models import CandidateFactModel
     from personal_pm_worker.files.jobs import ProcessingJob
-    from sqlalchemy.ext.asyncio import AsyncSession
 
     service: Any = reg_env["service"]
     item = await service.create_from_text(reg_env["actor"], "월요일 회의 준비")
@@ -88,14 +84,12 @@ async def test_duplicate_operation_keeps_single_candidate_row(
     await job.run(item.id)
     await job.run(item.id)
 
-    factory: async_sessionmaker[AsyncSession] = reg_env["factory"]
+    factory: Any = reg_env["factory"]
     async with factory() as session:
         rows = (
             (
                 await session.execute(
-                    select(CandidateFactModel).where(
-                        CandidateFactModel.inbox_item_id == item.id
-                    )
+                    select(CandidateFactModel).where(CandidateFactModel.inbox_item_id == item.id)
                 )
             )
             .scalars()
