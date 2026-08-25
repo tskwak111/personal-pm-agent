@@ -10,6 +10,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
     app = FastAPI(title="Personal PM Agent API", version="0.1.0")
 
     from personal_pm_api.approvals.router import router as approvals_router
+    from personal_pm_api.calendar.router import router as calendar_router
     from personal_pm_api.identity.router import router as identity_router
     from personal_pm_api.inbox.router import router as inbox_router
     from personal_pm_api.planning.router import router as planning_router
@@ -21,6 +22,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
     app.include_router(planning_router)
     app.include_router(approvals_router)
     app.include_router(inbox_router)
+    app.include_router(calendar_router)
     install_error_handlers(app)
 
     @app.get("/health/live", include_in_schema=False)

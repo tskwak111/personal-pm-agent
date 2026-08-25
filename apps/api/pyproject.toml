@@ -12,6 +12,7 @@ dependencies = [
     "asyncpg>=0.30",
     "alembic>=1.16",
     "psycopg[binary]>=3.2",
+    "cryptography>=44",
 ]
 
 [dependency-groups]
