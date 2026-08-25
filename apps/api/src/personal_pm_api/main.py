@@ -11,6 +11,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
 
     from personal_pm_api.approvals.router import router as approvals_router
     from personal_pm_api.identity.router import router as identity_router
+    from personal_pm_api.inbox.router import router as inbox_router
     from personal_pm_api.planning.router import router as planning_router
     from personal_pm_api.shared.errors import install_error_handlers
     from personal_pm_api.workspaces.router import router as workspaces_router
@@ -19,6 +20,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
     app.include_router(workspaces_router)
     app.include_router(planning_router)
     app.include_router(approvals_router)
+    app.include_router(inbox_router)
     install_error_handlers(app)
 
     @app.get("/health/live", include_in_schema=False)

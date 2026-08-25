@@ -10,7 +10,9 @@ from personal_pm_api.approvals import models as approvals_models  # noqa: F401
 from personal_pm_api.audit import models as audit_models  # noqa: F401
 from personal_pm_api.execution import models as execution_models  # noqa: F401
 from personal_pm_api.identity import models as identity_models  # noqa: F401
+from personal_pm_api.inbox import models as inbox_models  # noqa: F401
 from personal_pm_api.planning import models as planning_models  # noqa: F401
+from personal_pm_api.shared.idempotency import IdempotencyRecordModel  # noqa: F401
 from personal_pm_api.shared.orm import Base
 from personal_pm_api.workspaces import models as workspace_models  # noqa: F401
 from sqlalchemy import engine_from_config, pool
