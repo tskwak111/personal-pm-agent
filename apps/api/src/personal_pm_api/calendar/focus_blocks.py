@@ -168,7 +168,11 @@ class FocusBlockApprovalService:
                 .scalars()
                 .one_or_none()
             )
-            if task is None or task.version != int(target["target_version"]):
+            target_version_raw = target.get("target_version")
+            target_version = (
+                int(target_version_raw) if isinstance(target_version_raw, (int, str)) else -1
+            )
+            if task is None or task.version != target_version:
                 # Version-bound approval: the world changed under this approval.
                 proposal.status = "superseded"
                 proposal.resolved_at = datetime.now(UTC)
