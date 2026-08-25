@@ -8,6 +8,7 @@ from logging.config import fileConfig
 from alembic import context
 from personal_pm_api.approvals import models as approvals_models  # noqa: F401
 from personal_pm_api.audit import models as audit_models  # noqa: F401
+from personal_pm_api.calendar import models as calendar_models  # noqa: F401
 from personal_pm_api.execution import models as execution_models  # noqa: F401
 from personal_pm_api.identity import models as identity_models  # noqa: F401
 from personal_pm_api.inbox import models as inbox_models  # noqa: F401

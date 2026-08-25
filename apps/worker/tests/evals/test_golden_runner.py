@@ -29,8 +29,7 @@ def _sample_cases() -> list[dict[str, Any]]:
                 "due_date": "2026-09-01",
             },
             "llm_raw": (
-                '{"kind": "HARD_DEADLINE", "title": "CS101 보고서 제출", '
-                '"due_date": "2026-09-01"}'
+                '{"kind": "HARD_DEADLINE", "title": "CS101 보고서 제출", "due_date": "2026-09-01"}'
             ),
             "repair_raw": None,
         },
