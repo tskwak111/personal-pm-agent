@@ -75,9 +75,10 @@ class AgentContext:
     @classmethod
     def build_sync(cls, request: dict[str, object]) -> AgentContext:
         """Deterministic build from a request dict (no I/O)."""
-        relevant_ids = request.get("relevant_workstream_ids", set())
-        assert isinstance(relevant_ids, (set, frozenset, list))
-        sources_raw = request.get("untrusted_sources", ())
+        relevant_ids_raw: Any = request.get("relevant_workstream_ids", set())
+        assert isinstance(relevant_ids_raw, (set, frozenset, list))
+        relevant_ids: Any = relevant_ids_raw
+        sources_raw: Any = request.get("untrusted_sources", ())
         # Least context: only chunks from relevant workstreams enter the context.
         filtered = tuple(chunk for chunk in sources_raw if chunk.workstream_id in set(relevant_ids))
         return cls(
