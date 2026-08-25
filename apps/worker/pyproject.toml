@@ -8,6 +8,7 @@ dependencies = []
 [dependency-groups]
 dev = [
     "pytest>=8.4,<9",
+    "pytest-asyncio>=1.2",
 ]
 
 [build-system]
@@ -19,3 +20,4 @@ packages = ["src/personal_pm_worker"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
