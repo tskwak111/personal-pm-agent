@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Golden intake source case",
+  "type": "object",
+  "required": ["case_id", "source_text", "expected", "llm_raw"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "source_text": {"type": "string"},
+    "expected": {
+      "type": "object",
+      "required": ["kind", "title"],
+      "properties": {
+        "kind": {"enum": ["HARD_DEADLINE", "FIXED_EVENT", "REFERENCE_NOTE"]},
+        "title": {"type": "string"},
+        "due_date": {"type": ["string", "null"]}
+      }
+    },
+    "llm_raw": {"type": "string"},
+    "repair_raw": {"type": ["string", "null"]}
+  }
+}

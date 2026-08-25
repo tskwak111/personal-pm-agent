@@ -1,0 +1,22 @@
+{
+  "AI-001": {
+    "denominator": 3,
+    "numerator": 1,
+    "rate": 0.3333
+  },
+  "AI-002": {
+    "denominator": 3,
+    "numerator": 2,
+    "rate": 0.6667
+  },
+  "AI-010": {
+    "denominator": 3,
+    "numerator": 2,
+    "rate": 0.6667
+  },
+  "AI-011": {
+    "denominator": 3,
+    "numerator": 2,
+    "rate": 0.6667
+  }
+}
