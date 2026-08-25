@@ -1,7 +1,6 @@
-@import "tailwindcss";
-
 /* Design tokens (light/dark aware via system preference). */
 :root {
+  color-scheme: light dark;
   --color-bg: #ffffff;
   --color-surface: #f7f7f8;
   --color-border: #e4e4e7;
@@ -24,7 +23,16 @@
   }
 }
 
+html,
 body {
+  margin: 0;
+  padding: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    sans-serif;
 }
