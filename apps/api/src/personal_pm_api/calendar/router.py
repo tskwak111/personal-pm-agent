@@ -36,6 +36,8 @@ async def create_connection(
     actor: Annotated[CurrentActor, Depends(current_actor)],
 ) -> ConnectionResponse:
     if request.mode not in ("READ_ONLY", "READ_WRITE"):
+        from personal_pm_api.shared.errors import DomainRuleError
+
         raise DomainRuleError("UNSUPPORTED_CONNECTION_MODE", f"mode {request.mode}")
     state = _state_store.issue(workspace_id=str(actor.workspace_id))
     url = build_authorization_url(mode=request.mode, state=state)
