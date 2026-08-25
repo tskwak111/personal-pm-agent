@@ -113,8 +113,8 @@ async def test_duplicate_job_delivery_does_not_duplicate_candidates(
 
 
 async def test_invalid_transition_is_rejected(inbox_env: dict[str, Any]) -> None:
-    from personal_pm_api.shared.errors import DomainRuleError
     from personal_pm_api.inbox.models import transition_inbox
+    from personal_pm_api.shared.errors import DomainRuleError
 
     # STRUCTURED is terminal
     with pytest.raises(DomainRuleError):

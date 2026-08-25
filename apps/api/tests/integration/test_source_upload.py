@@ -116,9 +116,8 @@ async def test_source_artifact_key_is_workspace_scoped(
 async def test_upload_record_is_persisted_and_immutable_source_identity(
     upload_env: dict[str, Any], database_url_session: str
 ) -> None:
-    from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
     from personal_pm_api.inbox.models import SourceArtifactModel
+    from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
     client: AsyncClient = upload_env["client"]
     created = await client.post(
