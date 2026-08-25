@@ -1,15 +1,30 @@
+@import "tailwindcss";
+
+/* Design tokens (light/dark aware via system preference). */
 :root {
-  color-scheme: light dark;
+  --color-bg: #ffffff;
+  --color-surface: #f7f7f8;
+  --color-border: #e4e4e7;
+  --color-text: #18181b;
+  --color-muted: #52525b;
+  --color-accent: #2563eb;
+  --color-danger: #dc2626;
+  --radius-md: 0.5rem;
 }
 
-html,
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #101012;
+    --color-surface: #1b1b1f;
+    --color-border: #2e2e33;
+    --color-text: #fafafa;
+    --color-muted: #a1a1aa;
+    --color-accent: #60a5fa;
+    --color-danger: #f87171;
+  }
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    "Apple SD Gothic Neo",
-    "Malgun Gothic",
-    sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
