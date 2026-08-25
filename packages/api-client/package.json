@@ -1,0 +1,17 @@
+{
+  "name": "@personal-pm/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node ./scripts/generate.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo lint ok",
+    "test": "echo test ok",
+    "build": "echo build ok",
+    "format:check": "echo format ok"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

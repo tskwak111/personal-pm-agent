@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-23T20:53:05+09:00
+- **Manifest regenerated:** 2026-08-25T12:34:41+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -27,7 +27,7 @@
 | `SOURCE_SPEC_HASHES.sha256` | 1 |
 | `docs` | 33 |
 | `prompts` | 8 |
-| `scripts` | 3 |
+| `scripts` | 4 |
 
 ## File inventory before manifest files
 
@@ -65,9 +65,9 @@
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
 | `docs/status/DECISION_LOG.md` | 4562 | `5de34ef6f73a0b5071ccdbda7c318f62e5b09565be615f1fff9db34fa5a5acad` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 4658 | `45fb0f3567fd10cd8860885aff2ac60f90dfe4fe3f5f65c7a30bafcb509f6d30` |
-| `docs/status/RISK_REGISTER.md` | 2029 | `b916dda5d55b1f73c00571d7b64977c8328d948bd6db928bc702e162348f6f1b` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 12961 | `b99cd4f00f00ddc7085733546a1493e4c7dafd88e6c1b53b8819728ce0e18979` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 5203 | `fa6d433e21ffbf206d25ef97de01e0106fa8534401a21d984836780ab17df031` |
+| `docs/status/RISK_REGISTER.md` | 2444 | `3ba2dda6b229fd905268355585572a9c1eb9f5e5bd1a1a1a19e7526062160177` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 15210 | `f62ae14509dcb1aff94e7b8ec661b5212d487ee93c4f7491a1b506cf6c30907d` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |
@@ -81,6 +81,7 @@
 | `prompts/README.md` | 1332 | `2424412eb57776c961a4e5805e1425b21701f52aa3f139b73d2eed593b77d11d` |
 | `prompts/RELEASE_AUDIT_PROMPT.md` | 2318 | `3e15e593dba6326a77049cd34d559aee4ccef4ce1f655420172bc5e63a583994` |
 | `scripts/build_distribution_manifest.py` | 4044 | `715b4b50999d6f786cb278c91b1a7f24d5ad88884d58a3923330ed41dc4b77b2` |
+| `scripts/export_openapi.py` | 643 | `fe562d7111652eef49eb06c1435437e47b72364ba77d24ef7d69b4872077febc` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
 | `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |
 

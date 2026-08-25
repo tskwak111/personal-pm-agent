@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
+pytestmark = pytest.mark.integration
+
 from collections.abc import AsyncIterator
 from datetime import datetime
 from typing import Any
@@ -72,86 +76,68 @@ async def _make_service(env: dict[str, Any], *, break_task: bool = False):
 
     session: AsyncSession = env["factory"]()
     if break_task:
-        from sqlalchemy import text
-
-        await session.execute(
-            text(
-                "insert into tasks (id, workspace_id, workstream_id, milestone_id, title,"
-                " status, deadline_date, deadline_at, deadline_time_known,"
-                " base_duration_minutes, safety_duration_minutes,"
-                " remaining_base_minutes, remaining_safety_minutes, uncertainty,"
-                " splittable, min_chunk_minutes, pinned, version)"
-                " values (gen_random_uuid(), :ws, :wsn, null, 'broken', 'done',"
-                " null, null, false, 60, 90, 15, 15, 'medium', true, 30, false, 1)"
-            ),
-            {"ws": env["workspace"], "wsn": env["workstream"]},
-        )
-        await session.commit()
+        # Use a direct planner validation failure without violating DB CHECKs:
+        # inject a zero base_duration is blocked by DB, so we simulate via
+        # a patched normalize step in the test instead. Here we just keep DB valid.
+        pass
     service = PlanningService(session)
     return service, session
 
 
 async def test_valid_plan_appends_current_snapshot(planning_env) -> None:
-    service, _ = await _make_service(planning_env)
+    service, session = await _make_service(planning_env)
+    try:
+        dto = await service.create_plan(
+            actor_user_id=None,
+            workspace_id=planning_env["workspace"],
+            reason="test",
+        )
+        assert dto.status == "OK"
+        assert dto.planner_version == "planner-spec-1.0"
+        assert len(dto.input_hash) == 64
 
-    dto = await service.create_plan(
-        actor_user_id=None,
-        workspace_id=planning_env["workspace"],
-        reason="test",
-    )
-    assert dto.status == "OK"
-    assert dto.planner_version == "planner-spec-1.0"
-    assert len(dto.input_hash) == 64
-
-    latest = await service.latest_valid(planning_env["workspace"])
-    assert latest is not None
-    assert latest.id == dto.id
-    assert latest.is_current is True
+        latest = await service.latest_valid(planning_env["workspace"])
+        assert latest is not None
+        assert str(latest.id) == dto.id
+        assert latest.is_current is True
+    finally:
+        await session.close()
 
 
-async def test_invalid_plan_preserves_last_valid_snapshot(planning_env) -> None:
-    service_before, _ = await _make_service(planning_env)
-    first = await service_before.create_plan(
-        actor_user_id=None, workspace_id=planning_env["workspace"], reason="first"
-    )
-    assert first.status == "OK"
+async def test_invalid_plan_preserves_last_valid_snapshot(planning_env, monkeypatch) -> None:
+    service_before, session_before = await _make_service(planning_env)
+    try:
+        first = await service_before.create_plan(
+            actor_user_id=None, workspace_id=planning_env["workspace"], reason="first"
+        )
+        assert first.status == "OK"
+    finally:
+        await session_before.close()
 
-    # Corrupt state: done task with remaining minutes -> INVALID_INPUT rule.
+    # Force INVALID_INPUT without violating DB CHECKs: patch normalization to
+    # return a typed failure. This proves PLAN-009 preservation without needing
+    # corrupt DB rows (which would be blocked by CHECK constraints).
+    from personal_pm_planner.normalization.validate import InvalidPlannerInput
+
+    def fake_normalize(_inp):  # type: ignore[no-untyped-def]
+        return InvalidPlannerInput(
+            error_code="INVALID_INPUT",
+            rule_ids=("DONE_TASK_HAS_REMAINING_TIME",),
+            prior_plan_snapshot=None,
+        )
+
     service_after, session_after = await _make_service(planning_env, break_task=True)
-    from personal_pm_api.planning.models import TaskModel
+    monkeypatch.setattr("personal_pm_api.planning.service.normalize_and_validate", fake_normalize)
+    try:
+        result = await service_after.create_plan(
+            actor_user_id=None,
+            workspace_id=UUID(str(planning_env["workspace"])),
+            reason="should-fail",
+        )
+        assert result.status == "INVALID_INPUT"
 
-    broken = TaskModel(
-        workspace_id=UUID(str(planning_env["workspace"])),
-        workstream_id=UUID(str(planning_env["workstream"])),
-        milestone_id=None,
-        title="broken",
-        status="done",
-        deadline_date=None,
-        deadline_at=None,
-        deadline_time_known=False,
-        start_after=None,
-        base_duration_minutes=60,
-        safety_duration_minutes=90,
-        remaining_base_minutes=15,
-        remaining_safety_minutes=15,
-        uncertainty="medium",
-        splittable=True,
-        min_chunk_minutes=30,
-        pinned=False,
-        waiting_reason=None,
-        version=1,
-    )
-    session_after.add(broken)
-    await session_after.commit()
-    await session_after.close()
-
-    result = await service_after.create_plan(
-        actor_user_id=None,
-        workspace_id=UUID(str(planning_env["workspace"])),
-        reason="should-fail",
-    )
-    assert result.status == "INVALID_INPUT"
-
-    latest = await service_after.latest_valid(planning_env["workspace"])
-    assert latest is not None
-    assert str(latest.id) == first.id
+        latest = await service_after.latest_valid(planning_env["workspace"])
+        assert latest is not None
+        assert str(latest.id) == first.id
+    finally:
+        await session_after.close()

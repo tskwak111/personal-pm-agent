@@ -9,6 +9,8 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+# Ensure SA registry includes identity tables before mapper configure.
+from personal_pm_api.identity import models as _identity_models  # noqa: F401
 from personal_pm_api.shared.orm import Base, created_at, pk_uuid
 
 if TYPE_CHECKING:

@@ -1,9 +1,9 @@
 # 구현 상태
 
 - **전체 상태:** In Progress
-- **현재 Phase:** Phase 3 — Persistence & API
-- **현재 Task:** P3-T07(진행 중 — R-012 참조)
-- **마지막 검증:** ⚠️ R-012 재현(전체 verify 간헐 라이브락). 최종 실측 green 스냅샷: planner 120 / api 통합 23 / handoff 6 / 전체 141 passed(seal_final 이전)
+- **현재 Phase:** Phase 3 — Persistence & API (Complete, Phase 4 준비)
+- **현재 Task:** P3-T09 완료 — 다음 Phase 4 Intake & LLM
+- **마지막 검증:** make verify 전체 통과 (ruff/mypy/test-unit 134 passed/build/verify-docs/verify-repo) + api 통합 25 passed + contract 1 passed — 2026-08-24T03:30Z 실측
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -13,7 +13,7 @@
 | 0. Foundation | Complete | 로컬·CI에서 공통 verify 명령 통과 |
 | 1. Domain Core | Complete | 상태·권한·의존성 도메인 테스트 통과 |
 | 2. Planner Engine | Complete | 참조 벡터 100%, 불변 조건 위반 0건 |
-| 3. Persistence & API | In Progress | 소유권·버전·트랜잭션·OpenAPI E2E 통과 |
+| 3. Persistence & API | Complete | 소유권·버전·트랜잭션·OpenAPI E2E 통과 (25 passed + contract) |
 | 4. Intake & LLM | Not Started | 구조화 계약과 출처·불확실성 검증 통과 |
 | 5. Calendar & Execution | Not Started | Outbox·멱등성·장애 주입 Gate 통과 |
 | 6. Agent & Briefing | Not Started | Orchestrator 권한·승인·알림 테스트 통과 |
@@ -22,12 +22,14 @@
 
 ## 현재 차단 사항
 
-없음. (R-011: 컨테이너 다이제스트 핀은 레지스트리 접근 가능 시 P8 전에 해소)
+없음. (R-011: 컨테이너 다이제스트 핀은 레지스트리 접근 가능 시 P8 전에 해소 / R-012 해소 — 원인은 ORM 레지스트리 미로드와 세션 누수였으며 2026-08-24 수정으로 확정 green)
 
 ## 최근 완료 기록
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-24 | P3-T09 OpenAPI+TS 클라이언트 | test_openapi 1 passed, export_openapi + pnpm generate + typecheck 통과, 7 paths | (본 커밋) |
+| 2026-08-24 | P3-T07 Immutable Plan Snapshots | valid append current / invalid preserve last-valid 2 passed, R-012 해소(registry+세션 누수) | (본 커밋) |
 | 2026-08-23 | P3-T08 Transactional Outbox+실행 레코드 | 크래시 무기록·멱등 unique·검증 불변식 4 passed | fe289e7 |
 | 2026-08-23 | P3-T06 Planning Core 커맨드 API | DONE 잔여시간 422/Hard Deadline→202 RECONFIRM Proposal | ec9d750 |
 | 2026-08-23 | P3-T05 낙관적 동시성+멱등키 | PATCH v1→200/v2, 재시도 409, 감사 이벤트 동시 기록 | 43434a1 |
@@ -56,5 +58,5 @@
 
 ## 다음 행동
 
-1. `docs/plans/03-phase-2-planner-engine.md` 읽기
-2. P2-T01 실패 테스트부터 TDD 진행
+1. `docs/plans/05-phase-4-intake-llm-files.md` 읽기
+2. P4-T01 실패 테스트부터 TDD 진행

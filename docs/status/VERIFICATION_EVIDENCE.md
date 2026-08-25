@@ -252,10 +252,56 @@ Adjacent: ruff/mypy strict clean; api 통합 15 passed; planner+handoff 126 pass
 Notes: update_with_version은 현재 Task 전용 타입으로 고정, 일반화는 사용처 확장 시 수행
 ```
 
-### P3-T07 진행 상태 (WIP)
+### P3-T06
 
 ```text
-유효 경로: create_plan → DTO OK, 스냅샷 is_current=True 실측 완료(직접 호출 프로브)
-미해결: 무효 입력(DONE+잔여) 두 번째 시나리오에서 실행 지연 관측(R-012)
-재개 절차: faulthandler 스택 확인 → normalize_and_validate/plan/replan 단계별 시간 측정 → 수정 후 RED→GREEN 마무리 → T08은 이미 완료(fe289e7)이므로 바로 T09로 진행 가능
+Commit: ec9d750
+Focused red: /tasks/{id}/transition 404, /milestones/{id} PATCH 404
+Focused green: DONE 잔여 있음 422 TASK_HAS_REMAINING_TIME / HardDeadline 변경 202 RECONFIRM Proposal
+Adjacent: api 통합 19 passed, planner 120, ruff/mypy clean
+Notes: WorkspaceService.transition_task가 도메인 상태머신 위임, 승인 분기는 202 Proposal 반환
+```
+
+### P3-T07
+
+```text
+Commit: (본 커밋)
+Focused red: apps/api/tests/contract/test_openapi.py 1 failed (/api/v1/plans 부재)
+Focused green: test_valid_plan_appends_current_snapshot + test_invalid_plan_preserves_last_valid_snapshot 2 passed (0.62s)
+Adjacent: APP_ENVIRONMENT=test PM_DATABASE_URL=... uv run pytest apps/api/tests/integration --override-ini="addopts=" -q → 25 passed/2.45s, ruff/mypy strict 37 files clean
+Completion: make verify 전체 통과 (test-unit 134, build, verify-docs, verify-repo)
+Notes: R-012 해소 — workspaces.models registry import, clean_tables NullPool+전후 truncate, session close, migrated_database downgrade 제거. INVALID_INPUT은 DB CHECK와 충돌하므로 normalize 패치로 PLAN-009 보존 검증
+```
+
+### P3-T08
+
+```text
+Commit: fe289e7
+Focused red: outbox 모듈 부재
+Focused green: 크래시 시 0행, idempotency unique 위반, succeeded external_id CHECK 4 passed
+Adjacent: api 통합 23 passed (당시), ruff/mypy clean
+```
+
+### P3-T09
+
+```text
+Commit: (본 커밋)
+Focused red: apps/api/tests/contract/test_openapi.py 1 failed (/api/v1/plans 부재)
+Focused green: contract 1 passed, integration 25 passed, uv run python scripts/export_openapi.py → 7 paths, pnpm --filter @personal-pm/api-client generate + typecheck 통과
+Adjacent: make verify 전체 통과 (pnpm -r typecheck 포함 api-client)
+Generated: artifacts/openapi.json, packages/api-client/src/generated/schema.ts, packages/api-client/package.json, scripts/export_openapi.py
+Notes: /api/v1/plans(PlanningService.create_plan) + /api/v1/proposals/{id}/approve 등록으로 OpenAPI 안정화
+```
+
+### Phase 3 Exit
+
+```text
+Timestamp UTC: 2026-08-24T03:35Z
+Commands:
+  make verify → format-check/lint/typecheck/test-unit/build/verify-docs/verify-repo 모두 통과
+  APP_ENVIRONMENT=test PM_DATABASE_URL=... uv run pytest apps/api/tests/integration --override-ini="addopts=" -q → 25 passed
+  APP_ENVIRONMENT=test uv run pytest apps/api/tests/contract -q → 1 passed
+  uv run python scripts/export_openapi.py && pnpm --filter @personal-pm/api-client generate && pnpm --filter @personal-pm/api-client typecheck → passed
+  PM_DATABASE_URL_SYNC=... uv run alembic -c apps/api/alembic.ini upgrade head → head=0003
+Notes: Phase 3 7/7 Tasks 완료, R-012 Closed, 다음 Phase 4 진행 가능
 ```

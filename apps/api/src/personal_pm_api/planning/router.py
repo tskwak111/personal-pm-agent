@@ -171,6 +171,41 @@ class ProposalSummary(BaseModel):
     status: str
 
 
+class CreatePlanRequest(BaseModel):
+    reason: str = "manual"
+
+
+class PlanResponse(BaseModel):
+    id: str
+    status: str
+    planner_version: str
+    input_hash: str
+    is_current: bool
+
+
+@router.post("/plans", response_model=PlanResponse)
+async def create_plan(
+    request: CreatePlanRequest,
+    actor: Annotated[CurrentActor, Depends(current_actor)],
+) -> PlanResponse:
+    from personal_pm_api.planning.service import PlanningService
+
+    async with database_session() as session:
+        service = PlanningService(session)
+        dto = await service.create_plan(
+            actor_user_id=actor.user_id,
+            workspace_id=actor.workspace_id,
+            reason=request.reason,
+        )
+    return PlanResponse(
+        id=dto.id,
+        status=dto.status,
+        planner_version=dto.planner_version,
+        input_hash=dto.input_hash,
+        is_current=dto.is_current,
+    )
+
+
 class MilestoneChangeResponse(BaseModel):
     applied: bool
     proposal: ProposalSummary | None

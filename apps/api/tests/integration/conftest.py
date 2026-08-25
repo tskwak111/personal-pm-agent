@@ -35,7 +35,7 @@ async def db_session(database_url_session: str) -> AsyncIterator:
 
 @pytest.fixture(scope="session")
 def migrated_database(database_url_session: str):
-    """Run migrations to head; teardown rolls back to base for repeatability."""
+    """Run migrations to head; teardown truncates for repeatability (no downgrade)."""
     from alembic import command
     from alembic.config import Config
 
@@ -46,13 +46,15 @@ def migrated_database(database_url_session: str):
     config.set_main_option("sqlalchemy.url", url)
     command.upgrade(config, "head")
     yield
-    command.downgrade(config, "base")
+    # downgrade to base hangs with asyncpg pools; truncate is sufficient for isolation
+    # and keeps the schema at head for the next session.
 
 
 TABLES = (
     "audit_events, outbox_events, external_executions, approvals, proposals, "
     "plan_snapshots, task_dependencies, tasks, milestones, calendar_events, "
-    "availability_windows, workstreams, areas, workspaces, users"
+    "availability_windows, workstreams, areas, workspaces, users, "
+    "user_sessions, idempotency_records"
 )
 
 
@@ -74,10 +76,17 @@ async def clean_tables(migrated_database, database_url_session):  # noqa: ANN201
     """
     from sqlalchemy import text
     from sqlalchemy.ext.asyncio import create_async_engine
+    from sqlalchemy.pool import NullPool
+
+    # Truncate before (idempotent) so a crashed prior test does not leak.
+    engine = create_async_engine(database_url_session, poolclass=NullPool)
+    async with engine.begin() as connection:
+        await connection.execute(text(f"TRUNCATE TABLE {TABLES} CASCADE"))
+    await engine.dispose()
 
     yield
 
-    engine = create_async_engine(database_url_session)
+    engine = create_async_engine(database_url_session, poolclass=NullPool)
     async with engine.begin() as connection:
         await connection.execute(text(f"TRUNCATE TABLE {TABLES} CASCADE"))
     await engine.dispose()
