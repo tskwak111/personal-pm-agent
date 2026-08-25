@@ -74,6 +74,49 @@ class CalendarSyncService:
             await session.commit()
             return ImportedEvent.from_model(existing)
 
+    async def apply_provider_update(self, workspace_id: str | UUID, event: Any) -> Any:
+        """External edit to a managed focus block: record it, never force back.
+
+        Field ownership: start/end moves by the provider are surfaced as a
+        pending internal reconciliation instead of an outbound restore.
+        """
+        from personal_pm_api.calendar.models import ExternalCalendarEventModel
+
+        async with self._factory() as session:
+            statement = select(ExternalCalendarEventModel).where(
+                ExternalCalendarEventModel.workspace_id == UUID(str(workspace_id)),
+                ExternalCalendarEventModel.external_event_id == event.external_id,
+            )
+            model = (await session.execute(statement)).scalar_one_or_none()
+            if model is None:
+                from personal_pm_api.shared.errors import NotFoundError
+
+                raise NotFoundError()
+
+            moved = model.start_at != event.start_at or model.end_at != event.end_at
+            model.title = event.title  # PROVIDER-owned field
+            if moved:
+                model.start_at = event.start_at
+                model.end_at = event.end_at
+                model.pending_internal_reconciliation = True
+                model.outbound_restore_requested = False
+            if event.managed_focus_block and not model.managed_focus_block:
+                model.managed_focus_block = True
+            model.updated_at = datetime.now(UTC)
+            await session.commit()
+            return ImportedEvent.from_model(model)
+
+    async def active_events(self, workspace_id: str | UUID) -> list[Any]:
+        from personal_pm_api.calendar.models import ExternalCalendarEventModel
+
+        async with self._factory() as session:
+            statement = select(ExternalCalendarEventModel).where(
+                ExternalCalendarEventModel.workspace_id == UUID(str(workspace_id)),
+                ExternalCalendarEventModel.sync_status != "EXTERNALLY_DELETED",
+            )
+            rows = (await session.execute(statement)).scalars().all()
+            return [ImportedEvent.from_model(row) for row in rows]
+
     async def apply_provider_deletion(self, external_event_id: str) -> Any:
         from personal_pm_api.calendar.models import ExternalCalendarEventModel
 
