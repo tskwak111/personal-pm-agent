@@ -1,0 +1,14 @@
+# Stage C fault-injection scenarios for Calendar execution (EXT-001..EXT-007)
+required_scenarios:
+  - api-timeout
+  - rate-limit-429
+  - provider-5xx
+  - oauth-expired
+  - duplicate-worker-delivery
+  - crash-after-db-commit
+  - provider-success-response-lost
+
+invariants:
+  EXT-002: zero duplicate provider events across all scenarios
+  EXT-003: zero false-success executions (success requires verified external id)
+  EXT-006: oauth expiry always ends in NEEDS_REAUTHORIZATION, never transient retry

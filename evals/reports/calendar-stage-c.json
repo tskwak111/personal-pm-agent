@@ -1,0 +1,51 @@
+{
+  "total": 7,
+  "metrics": {
+    "EXT-002": {
+      "failures": 0
+    },
+    "EXT-003": {
+      "failures": 0
+    },
+    "EXT-006": {
+      "failures": 0
+    }
+  },
+  "results": [
+    {
+      "scenario": "api-timeout",
+      "passed": true,
+      "detail": "reconciled after lost response (calls=1)"
+    },
+    {
+      "scenario": "rate-limit-429",
+      "passed": true,
+      "detail": "decision=RETRY"
+    },
+    {
+      "scenario": "provider-5xx",
+      "passed": true,
+      "detail": "decision=RETRY"
+    },
+    {
+      "scenario": "oauth-expired",
+      "passed": true,
+      "detail": "reauthorization required"
+    },
+    {
+      "scenario": "duplicate-worker-delivery",
+      "passed": true,
+      "detail": "duplicate-safe (create_calls=1, ext=True)"
+    },
+    {
+      "scenario": "crash-after-db-commit",
+      "passed": true,
+      "detail": "duplicate-safe (create_calls=1, ext=True)"
+    },
+    {
+      "scenario": "provider-success-response-lost",
+      "passed": true,
+      "detail": "reconciled after lost response (calls=1)"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 | R-002 | Planner가 같은 가용 시간을 중복 사용 | Low after tests | Critical | 고유 슬롯, Base/Safety 독립 Pass, 속성 테스트 | Open |
 | R-003 | 의존성 사이클로 계획이 불가능 | Medium | High | SCC 탐지, 자동 수정 금지, Blocked 표시 | Open |
 | R-004 | 계획이 자주 바뀌어 사용자 신뢰 하락 | Medium | High | Freeze Window, 변경 비용, change ratio Gate | Open |
-| R-005 | Google Calendar 중복 생성 또는 거짓 성공 | Medium | Critical | Outbox, idempotency, 외부 ID, fault injection | Open |
+| R-005 | Google Calendar 중복 생성 또는 거짓 성공 | Medium | Critical | 구현됨: 멱등 실행기(중복 전달 1 이벤트), 타임아웃 PENDING 유지 후 재조정, Stage C fault 시나리오 7종 all_passed | Mitigated (P8에서 재검증) |
 | R-006 | OAuth 토큰 또는 개인 문서 노출 | Low | Catastrophic | encryption, 최소 권한, 로그 제거, incident gate | Open |
 | R-007 | 문서 프롬프트 인젝션이 행동으로 이어짐 | Medium | Catastrophic | content 격리, tool-less extraction, approval | Open |
 | R-008 | 전체 기능 규모로 일정 지연 | High | Medium | Phase gate, 독립 Task, 우선 핵심 경로 구현 | Accepted |

@@ -337,3 +337,29 @@ Notes:
   - R-001/R-007 Mitigated로 갱신(P8 평가에서 최종 확인)
 Residual risk: 실제 공급자 어댑터는 Phase 6 이후 연결 예정(fake 게이트웨이로 계약 고정)
 ```
+
+## Phase 5 — Calendar & Execution closeout (T01–T08)
+
+```text
+Task ID: P5-T01..P5-T08
+Commits: c8eefc9, 25679fd, 602ce11, 45ae6e6, 4a0412b, 745f8f6, a048779, edc73a8, 8a48dff
+Timestamp UTC: 2026-08-26 (recorded after completion)
+Focused red failures observed per task:
+  P5-T01 test_calendar_oauth: state mismatch가 422로 반환(OAUTH_STATE_MISMATCH 400 계약 미충족), readonly 스코프에 calendar.events 부분문자열 포함 → 수정 후 GREEN
+  P5-T02 테이블 부재(UndefinedTableError) → env.py에 calendar.models import 누락 발견, 빈 마이그레이션 자기참조(down_revision=self) 버그 수정 후 GREEN
+  P5-T03 apply_provider_update/tombstone 미구현 → 구현 후 5 passed
+  P5-T04 proposals.version 컬럼 부재 → 마이그레이션 0007 추가, execute_approved 승인 선행 요구로 테스트 정합화
+  P5-T05 타임아웃 후 예외 재발생 → PENDING 반환으로 계약 변경(거짓 성공 방지)
+  P5-T06 retry 정책은 T05에서 선구현 → 인접 커버리지 7 passed(RED 생략, 증거에 명시)
+  P5-T07 scheduler 신규 구현 → 2 passed
+  P5-T08 어댑터가 시나리오 장애를 주입하지 않음 → scenario별 fault 주입 추가 후 3 passed
+Focused green results:
+  P5-T01 5 / P5-T02 4 / P5-T03 5 / P5-T04 3 / P5-T05 3 / P5-T06 7 / P5-T07 2 / P5-T08 3 passed
+Adjacent:
+  api 통합 56 passed; alembic head=0007(proposal versions); ruff/mypy strict clean
+Completion command: make verify → EXIT=0, test-unit 180 passed, build/verify-docs/verify-repo PASSED
+Generated report/artifact paths: evals/reports/calendar-stage-c.json, evals/fault-injection/calendar/scenarios.yaml
+Notes:
+  - Phase 5 Exit 6/6 충족: 스코프 분리, 토큰 암호화(AES-GCM versioned), 톰브스톤, 멱등 1-이벤트, 상태 분리(PENDING/SUCCEEDED/FAILED/NEEDS_REAUTHORIZATION), Stage C 0 중복·0 거짓 성공
+Residual risk: 실제 Google API 어댑터는 provider 접근 가능 환경에서 연결 필요(fake로 계약 고정)
+```
