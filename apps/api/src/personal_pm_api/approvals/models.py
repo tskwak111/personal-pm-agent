@@ -32,6 +32,7 @@ class ProposalModel(Base):
         JSONB, nullable=False, default=list
     )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     milestone_id: Mapped[UUID | None] = mapped_column(
         Uuid, ForeignKey("milestones.id", ondelete="SET NULL")
     )
