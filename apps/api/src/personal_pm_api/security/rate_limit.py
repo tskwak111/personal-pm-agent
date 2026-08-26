@@ -25,7 +25,7 @@ class RateLimiter:
     """Fixed-window counter keyed by (actor, bucket name)."""
 
     def __init__(self) -> None:
-        self._counts: dict[tuple[str, str], int] = {}
+        self._counts: dict[tuple[str, int], int] = {}
 
     def allow(self, actor_id: str, *, bucket: RateLimit) -> bool:
         key = (actor_id, id(bucket))
