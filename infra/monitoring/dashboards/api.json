@@ -1,0 +1,8 @@
+{
+  "title": "API SLO",
+  "panels": [
+    {"name": "request rate", "expr": "sum(rate(http_requests_total[5m])) by (route)"},
+    {"name": "error ratio", "expr": "rate(http_requests_total{status=~\"5..\"}[5m])"},
+    {"name": "p99 latency", "expr": "histogram_quantile(0.99, http_request_duration_seconds_bucket)"}
+  ]
+}

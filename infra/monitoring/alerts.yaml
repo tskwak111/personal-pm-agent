@@ -1,0 +1,14 @@
+# SLO alert rules (evaluation plan §SLO)
+alerts:
+  - name: api-error-rate-high
+    condition: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.01
+    severity: page
+  - name: planner-p95-latency
+    condition: histogram_quantile(0.95, planner_latency_seconds_bucket) > 2
+    severity: ticket
+  - name: external-write-failure
+    condition: increase(external_executions_failed_total[15m]) > 0
+    severity: page
+  - name: oauth-reauthorization-spike
+    condition: increase(oauth_reauthorization_total[1h]) > 3
+    severity: ticket
