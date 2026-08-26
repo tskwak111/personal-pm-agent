@@ -11,7 +11,6 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from personal_pm_planner import plan
 from personal_pm_planner.domain.identifiers import TaskId
-
 from tests.vectors.builders import build_vector_input
 
 

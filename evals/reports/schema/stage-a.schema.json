@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Stage A evaluation report",
+  "type": "object",
+  "required": ["overall", "scenarios", "gates", "environment"],
+  "properties": {
+    "overall": {"enum": ["PASS", "FAIL"]},
+    "scenarios": {"type": "integer", "minimum": 1},
+    "gates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["failures", "passed"],
+        "properties": {
+          "failures": {"type": "integer", "minimum": 0},
+          "passed": {"type": "boolean"}
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": ["python_version", "cpu_model", "memory_bytes"],
+      "properties": {
+        "python_version": {"type": "string"},
+        "cpu_model": {"type": "string"},
+        "memory_bytes": {"type": "integer"}
+      }
+    }
+  }
+}

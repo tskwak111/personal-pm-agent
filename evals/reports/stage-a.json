@@ -1,0 +1,71 @@
+{
+  "overall": "PASS",
+  "scenarios": 25,
+  "environment": {
+    "python_version": "3.13.15",
+    "cpu_model": "arm",
+    "memory_bytes": 25769803776
+  },
+  "gates": {
+    "SAFE-001": {
+      "failures": 0,
+      "passed": true
+    },
+    "SAFE-002": {
+      "failures": 0,
+      "passed": true
+    },
+    "SAFE-003": {
+      "failures": 0,
+      "passed": true
+    },
+    "SAFE-004": {
+      "failures": 0,
+      "passed": true
+    },
+    "SAFE-005": {
+      "failures": 0,
+      "passed": true
+    },
+    "SAFE-006": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-001": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-002": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-003": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-004": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-005": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-006": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-007": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-008": {
+      "failures": 0,
+      "passed": true
+    },
+    "PLAN-009": {
+      "failures": 0,
+      "passed": true
+    }
+  }
+}
