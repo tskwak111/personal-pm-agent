@@ -10,9 +10,11 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))),
-    ),
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))),
+      ),
   );
   self.clients.claim();
 });
@@ -28,8 +30,7 @@ self.addEventListener("fetch", (event) => {
         fetch(event.request).then((response) => {
           const isStatic =
             event.request.method === "GET" &&
-            (url.pathname.startsWith("/_next/static") ||
-              url.pathname.startsWith("/icons"));
+            (url.pathname.startsWith("/_next/static") || url.pathname.startsWith("/icons"));
           if (isStatic) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
