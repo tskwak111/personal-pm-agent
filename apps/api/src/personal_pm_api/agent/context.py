@@ -90,10 +90,6 @@ class AgentContext:
         )
 
 
-def _unused_type_guard() -> None:  # pragma: no cover
-    _ = Any
-
-
 __all__ = [
     "AgentContext",
     "SourceChunk",

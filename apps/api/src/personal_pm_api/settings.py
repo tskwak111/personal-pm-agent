@@ -17,3 +17,14 @@ class ApiSettings(BaseSettings):
         ),
         validation_alias="DATABASE_URL",
     )
+
+    def model_post_init(self, __context: object) -> None:
+        # Invariant: the local-only default credential must never reach
+        # a non-local environment.
+        if self.environment not in ("local", "test") and (
+            "local_only_password" in self.database_url or "localhost" in self.database_url
+        ):
+            raise ValueError(
+                f"environment={self.environment!r} requires a real DATABASE_URL; "
+                "the local default is forbidden outside local/test"
+            )

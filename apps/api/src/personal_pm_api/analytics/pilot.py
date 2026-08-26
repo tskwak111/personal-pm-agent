@@ -11,8 +11,13 @@ from dataclasses import dataclass, field
 MANDATORY_OUTCOMES = frozenset({"OUT-001", "OUT-002", "OUT-005", "OUT-006"})
 
 
-def week_four_active(*, days_used: int, task_actions: int, plan_views: int) -> bool:
+def is_active(*, days_used: int, task_actions: int, plan_views: int) -> bool:
+    """Single source of truth for the behavioral active-user definition."""
     return days_used >= 3 and task_actions >= 5 and plan_views >= 2
+
+
+def week_four_active(*, days_used: int, task_actions: int, plan_views: int) -> bool:
+    return is_active(days_used=days_used, task_actions=task_actions, plan_views=plan_views)
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,9 +32,7 @@ class PilotMetrics:
     mandatory_outcomes: frozenset[str] = field(default=MANDATORY_OUTCOMES)
 
     def week_four_active(self, *, days_used: int, task_actions: int, plan_views: int) -> bool:
-        return week_four_active(
-            days_used=days_used, task_actions=task_actions, plan_views=plan_views
-        )
+        return is_active(days_used=days_used, task_actions=task_actions, plan_views=plan_views)
 
     async def build_outcome_report(
         self,
@@ -52,4 +55,10 @@ class PilotMetrics:
         )
 
 
-__all__ = ["MANDATORY_OUTCOMES", "PilotMetrics", "PilotOutcomeReport", "week_four_active"]
+__all__ = [
+    "MANDATORY_OUTCOMES",
+    "PilotMetrics",
+    "PilotOutcomeReport",
+    "is_active",
+    "week_four_active",
+]

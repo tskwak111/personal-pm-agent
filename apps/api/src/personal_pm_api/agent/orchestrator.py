@@ -149,10 +149,9 @@ class AgentOrchestrator:
                 )
 
         await step("EXPLAIN")
+        # Flow reaches here only when nothing failed; failures returned early.
         return OperationResult(
-            status="SUCCEEDED"
-            if (executed or not has_external or intent.may_mutate)
-            else "SUCCEEDED",
+            status="SUCCEEDED",
             events=tuple(events),
             mutated=bool(intent.may_mutate),
             external_action_executed=executed,

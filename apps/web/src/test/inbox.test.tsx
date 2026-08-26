@@ -48,3 +48,29 @@ it("renders original evidence snippets", () => {
   expect(screen.getByText("근거 원본")).toBeVisible();
   expect(screen.getByText(/9월 20일 제출/)).toBeVisible();
 });
+
+import { InboxList } from "../features/inbox/inbox-list";
+import { fireEvent } from "@testing-library/react";
+
+it("filters candidates by processing status, not kind", () => {
+  const candidates = [
+    { ...dateOnlyDeadlineCandidate, status: "NEEDS_CONFIRMATION" },
+    {
+      id: "cand-ok",
+      title: "정리됨",
+      kind: "HARD_DEADLINE",
+      status: "STRUCTURED",
+      deadlineDate: null,
+      timeKnown: false,
+      sources: [],
+    },
+  ];
+  render(<InboxList candidates={candidates} />);
+  // Both visible under ALL
+  expect(screen.getByText("CS101 과제")).toBeVisible();
+  expect(screen.getByText("정리됨")).toBeVisible();
+  // Switch to STRUCTURED: only the structured one remains
+  fireEvent.click(screen.getByRole("tab", { name: "STRUCTURED" }));
+  expect(screen.queryByText("CS101 과제")).not.toBeInTheDocument();
+  expect(screen.getByText("정리됨")).toBeVisible();
+});

@@ -25,10 +25,12 @@ class RateLimiter:
     """Fixed-window counter keyed by (actor, bucket name)."""
 
     def __init__(self) -> None:
-        self._counts: dict[tuple[str, int], int] = {}
+        self._counts: dict[tuple[str, int, timedelta], int] = {}
 
     def allow(self, actor_id: str, *, bucket: RateLimit) -> bool:
-        key = (actor_id, id(bucket))
+        # Key on the LIMIT CONFIG, not the object identity: two equal limits
+        # must share a bucket, and id() is not stable across interpreters.
+        key = (actor_id, bucket.max_requests, bucket.window)
         current = self._counts.get(key, 0)
         if current >= bucket.max_requests:
             return False

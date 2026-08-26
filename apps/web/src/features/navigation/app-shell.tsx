@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "../../components/ui/button";
@@ -24,12 +25,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ul>
           {DESTINATIONS.map((d) => (
             <li key={d.href}>
-              <a
+              <Link
                 href={d.href}
                 className="block rounded px-3 py-2 text-sm hover:bg-[var(--color-surface)]"
               >
                 {d.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -56,9 +57,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className="fixed inset-x-0 bottom-0 flex justify-around border-t border-[var(--color-border)] bg-[var(--color-bg)] p-2 md:hidden"
       >
         {DESTINATIONS.map((d) => (
-          <a key={d.href} href={d.href} className="px-2 py-1 text-xs">
+          <Link key={d.href} href={d.href} className="px-2 py-1 text-xs">
             {d.label}
-          </a>
+          </Link>
         ))}
         <Button
           variant="ghost"

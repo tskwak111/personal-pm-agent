@@ -26,11 +26,11 @@ class TelemetryEmitter:
         latency_ms: int,
         result: str | dict[str, Any],
     ) -> PlannerRunEvent:
+        # Screen the fixed dimensions AND any structured result keys.
         validate_no_sensitive_fields(
             {
                 "trace_id": trace_id,
                 "workspace_hash": workspace_hash,
-                "planner_version": planner_version,
             }
         )
         if isinstance(result, dict):

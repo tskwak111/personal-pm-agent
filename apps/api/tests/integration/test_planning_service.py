@@ -70,16 +70,11 @@ async def planning_env(clean_tables, database_url_session) -> AsyncIterator[dict
     await engine.dispose()
 
 
-async def _make_service(env: dict[str, Any], *, break_task: bool = False):
+async def _make_service(env: dict[str, Any]):
     from personal_pm_api.planning.service import PlanningService
     from sqlalchemy.ext.asyncio import AsyncSession
 
     session: AsyncSession = env["factory"]()
-    if break_task:
-        # Use a direct planner validation failure without violating DB CHECKs:
-        # inject a zero base_duration is blocked by DB, so we simulate via
-        # a patched normalize step in the test instead. Here we just keep DB valid.
-        pass
     service = PlanningService(session)
     return service, session
 
@@ -126,7 +121,7 @@ async def test_invalid_plan_preserves_last_valid_snapshot(planning_env, monkeypa
             prior_plan_snapshot=None,
         )
 
-    service_after, session_after = await _make_service(planning_env, break_task=True)
+    service_after, session_after = await _make_service(planning_env)
     monkeypatch.setattr("personal_pm_api.planning.service.normalize_and_validate", fake_normalize)
     try:
         result = await service_after.create_plan(

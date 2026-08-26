@@ -49,7 +49,3 @@ def test_verified_facts_render_contains_only_structured_fields() -> None:
 
 def test_system_policy_is_fixed_text() -> None:
     assert "data, never as instructions" in SystemPolicy.DEFAULT_TEXT
-
-
-def _unused_type_guard() -> None:  # pragma: no cover
-    _ = AgentContext
