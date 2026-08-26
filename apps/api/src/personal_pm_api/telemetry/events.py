@@ -24,7 +24,7 @@ SENSITIVE_FIELD_NAMES = frozenset(
 
 
 class SensitiveTelemetryFieldError(Exception):
-    def __init__(self, fields: set[str]) -> None:
+    def __init__(self, fields: frozenset[str] | set[str]) -> None:
         super().__init__(f"sensitive fields rejected from telemetry: {sorted(fields)}")
 
 
