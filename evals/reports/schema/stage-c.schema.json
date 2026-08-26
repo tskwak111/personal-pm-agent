@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Stage C external & resilience report",
+  "type": "object",
+  "required": ["overall", "zero_failure_gates_pass", "success_rate", "recovery_p95_seconds"],
+  "properties": {
+    "overall": {"enum": ["PASS", "FAIL"]},
+    "zero_failure_gates_pass": {"type": "boolean"},
+    "success_rate": {"type": "number"},
+    "recovery_p95_seconds": {"type": "integer"}
+  }
+}

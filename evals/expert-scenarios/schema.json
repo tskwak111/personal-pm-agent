@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Expert scenario annotation",
+  "type": "object",
+  "required": ["scenario_id", "text", "expected_kind", "annotator"],
+  "properties": {
+    "scenario_id": {"type": "string"},
+    "text": {"type": "string"},
+    "expected_kind": {"enum": ["HARD_DEADLINE", "FIXED_EVENT", "REFERENCE_NOTE", "AMBIGUOUS"]},
+    "expected_time_known": {"type": ["boolean", "null"]},
+    "risk_level": {"enum": ["P0", "P1", "P2", null]},
+    "annotator": {"type": "string"}
+  }
+}

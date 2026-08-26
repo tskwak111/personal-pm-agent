@@ -1,0 +1,2 @@
+{"scenario_id": "exp-001", "text": "금요일 18시까지 세금 신고서 제출", "expected_kind": "HARD_DEADLINE", "expected_time_known": true, "risk_level": "P0", "annotator": "expert-a"}
+{"scenario_id": "exp-002", "text": "언젠가 창고 정리를 해야 하는데 어떨까", "expected_kind": "AMBIGUOUS", "expected_time_known": null, "risk_level": null, "annotator": "expert-a"}
