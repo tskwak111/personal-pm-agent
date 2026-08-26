@@ -409,3 +409,30 @@ Notes:
   - Playwright 스펙 6종 작성 완료. 브라우저 바이너리 설치(npx playwright install) 후 e2e 실행은 P8 경화에서 수행
 Residual risk: axe 통합(@axe-core/playwright)은 P8에서 연결
 ```
+
+## Phase 8 — Evaluation & Release closeout (T01–T10)
+
+```text
+Task ID: P8-T01..P8-T10
+Commits: 4f02be7, 983c226, c012f38, ea67579, bb40310, dbf0302, cfc5e8a, d11effd, 5e92f1c, 3d1a594, f244b8e
+Timestamp UTC: 2026-08-26 (recorded after completion)
+Focused red failures observed per task:
+  P8-T01 텔레메트리 부재 / 민감필드 거부 / 버전 차원 검증 → 4 passed
+  P8-T02 Stage A 러너 부재 → 메모리 스냅샷 폴백 수정 후 4 passed; 리포트 산출 PASS
+  P8-T03 precision/recall 공식 + 임계값 게이트 → 3 passed
+  P8-T04 frozen dataclass 변경 시도/딕셔너리 정규화 오류 수정 → 3 passed
+  P8-T05 CSRF/rate-limit/upload-scan/주입 격리 → 7 passed
+  P8-T06 REDACTED 필터·워크스페이스 해싱·TraceContext → 4 passed
+  P8-T07 root 사용자 이미지/migrate 분리 계약 → 3 passed(main argv 수정 포함)
+  P8-T08 restore 카운트 일치·보존 만료 → 3 passed(모듈명 충돌 수정)
+  P8-T09 활동 정의=행동 기반, S1 지연 평균화 금지 → 4 passed
+  P8-T10 S0/사후 임계값 변경 강제 FAIL, 8 미만 CONDITIONAL_PASS → 6 passed
+Adjacent:
+  api 통합 81 passed; unit+security+worker+planner+handoff 208 passed
+Completion command: make verify → EXIT=0, test-unit 235 passed, build/verify-docs/verify-repo PASSED
+Generated artifacts: evals/reports/stage-a.json, evals/reports/calendar-stage-c.json
+Notes:
+  - 전체 8개 Phase의 구현·테스트·문서가 저장소에 존재. 실제 파일럿(Stage D 실데이터), CI 첫 실행,
+    브라우저 E2E 실실행, 이미지 다이제스트 핀(R-011)은 운영 환경에서 수행해야 하는 남은 외부 의존
+Residual risk: RISK_REGISTER 참조 — 파일럿 전까지 OUT 지표는 미검증 상태로 유지
+```

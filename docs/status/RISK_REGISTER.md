@@ -7,7 +7,7 @@
 | R-003 | 의존성 사이클로 계획이 불가능 | Medium | High | SCC 탐지, 자동 수정 금지, Blocked 표시 | Open |
 | R-004 | 계획이 자주 바뀌어 사용자 신뢰 하락 | Medium | High | Freeze Window, 변경 비용, change ratio Gate | Open |
 | R-005 | Google Calendar 중복 생성 또는 거짓 성공 | Medium | Critical | 구현됨: 멱등 실행기(중복 전달 1 이벤트), 타임아웃 PENDING 유지 후 재조정, Stage C fault 시나리오 7종 all_passed | Mitigated (P8에서 재검증) |
-| R-006 | OAuth 토큰 또는 개인 문서 노출 | Low | Catastrophic | encryption, 최소 권한, 로그 제거, incident gate | Open |
+| R-006 | OAuth 토큰 또는 개인 문서 노출 | Low | Catastrophic | 구현됨: AES-GCM 볼트, 로그 REDACTED 필터(테스트), 워크스페이스 해싱, 텔레메트리 민감필드 거부, 백업 암호화 | Mitigated |
 | R-007 | 문서 프롬프트 인젝션이 행동으로 이어짐 | Medium | Catastrophic | content 격리, tool-less extraction, approval | Open |
 | R-008 | 전체 기능 규모로 일정 지연 | High | Medium | Phase gate, 독립 Task, 우선 핵심 경로 구현 | Accepted |
 | R-009 | 실제 사용자가 체크인을 귀찮아함 | Medium | High | 구현됨: 원액션 작업 시작, 2탭 이내 완료/부분/막힘, UX-001..006 계측으로 파일럿 측정 준비 | Mitigated (P8 파일럿에서 측정) |

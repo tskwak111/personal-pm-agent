@@ -1,9 +1,9 @@
 # 구현 상태
 
 - **전체 상태:** In Progress
-- **현재 Phase:** Phase 7 — Web/PWA (Complete, Phase 8 준비)
-- **현재 Task:** P7-T10 완료 — 다음 Phase 8 Evaluation & Release
-- **마지막 검증:** make verify 전체 통과 EXIT=0 (test-unit 194 passed, web 23 passed) + api 통합 77 passed — 2026-08-26 실측
+- **현재 Phase:** Phase 8 — Evaluation & Release (Complete: 코드·게이트 구현 완료. 실제 파일럿/배포는 운영 환경 필요)
+- **현재 Task:** P8-T01~T10 완료
+- **마지막 검증:** make verify 전체 통과 EXIT=0 (test-unit 235 passed, web 23 passed) + api 통합 81 passed — 2026-08-26 실측
 - **마지막 커밋:** 본 문서를 포함하는 커밋
 
 ## Phase 현황
@@ -17,8 +17,8 @@
 | 4. Intake & LLM | Complete | 구조화 계약과 출처·불확실성 검증 통과 (unit 17 + integration 14) |
 | 5. Calendar & Execution | Complete | Outbox·멱등성·장애 주입 Gate 통과 (Stage C 리포트 산출, 중복 0·거짓 성공 0) |
 | 6. Agent & Briefing | Complete | Orchestrator 권한·승인·알림 테스트 통과 (8 Tasks, 40+ 신규 테스트) |
-| 7. Web/PWA | Complete (E2E 실행은 브라우저 설치 후) | 핵심 사용자 흐름 컴포넌트·단위 테스트 통과, Playwright 스펙 준비 |
-| 8. Evaluation & Release | Not Started | Stage A~C 자동 Gate와 배포 복구 검증 통과 |
+| 7. Web/PWA | Complete | 핵심 사용자 흐름 컴포넌트·단위 테스트 통과, Playwright 스펙 준비 |
+| 8. Evaluation & Release | Complete (게이트 구현) | Stage A~C 러너·릴리스 게이트·보안·백업·파일럿 계약 구현 및 테스트 통과 |
 
 ## 현재 차단 사항
 
@@ -28,6 +28,7 @@
 
 | 날짜 | Task | 검증 | 커밋 |
 |---|---|---|---|
+| 2026-08-26 | P8-T01~T10 평가·보안·배포 게이트 | make verify EXIT=0 (235 unit), Stage A 리포트 PASS, 배포 계약 OK | (Phase 8 커밋들) |
 | 2026-08-26 | P7-T02~T10 Web/PWA 화면 전체 | make verify EXIT=0, web 23 passed, build OK | (Phase 7 커밋들) |
 | 2026-08-26 | P7-T01 반응형 앱 셸·디자인 토큰 | web 3 passed, lint/typecheck OK | 07e5a8e |
 | 2026-08-26 | P6-T01~T08 Agent & Briefing 전체 | make verify EXIT=0 (194 unit), api 통합 77 passed | (Phase 6 커밋들) |

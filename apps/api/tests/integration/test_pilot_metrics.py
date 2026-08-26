@@ -4,6 +4,8 @@ import pytest
 
 pytestmark = pytest.mark.integration
 
+from typing import Any  # noqa: E402
+
 import pytest_asyncio
 
 

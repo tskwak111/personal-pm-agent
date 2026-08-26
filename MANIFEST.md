@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-26T13:40:51+09:00
+- **Manifest regenerated:** 2026-08-26T14:10:01+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -25,9 +25,9 @@
 | `PACKAGE_SUMMARY.json` | 1 |
 | `README.md` | 1 |
 | `SOURCE_SPEC_HASHES.sha256` | 1 |
-| `docs` | 33 |
+| `docs` | 41 |
 | `prompts` | 10 |
-| `scripts` | 6 |
+| `scripts` | 12 |
 
 ## File inventory before manifest files
 
@@ -44,7 +44,15 @@
 | `docs/architecture/engineering-standards.md` | 4030 | `e8815da6f970d88c070c464f311c2a5d16543feb97e1b71a85fd6b6df6b21115` |
 | `docs/architecture/repository-and-module-contract.md` | 4165 | `5d6f67a04f1e2b554671d101245bb95931405343f103edd5ecfce8e4e75fe2f2` |
 | `docs/architecture/toolchain-baseline.md` | 2476 | `1dcce647e77946e6595143e8bc237bed3fb569463effa7f1e5e8c50de84b4408` |
+| `docs/operations/backup-and-restore.md` | 465 | `1a38b2b7b93a1aed23fbc987cec5904a394eb3cadd760c5b876452a0dead9dce` |
+| `docs/operations/event-catalog.md` | 602 | `39a5aa927c325433307f218355ee17953e6404c9e211e49dfd7e291b5ef5a223` |
+| `docs/operations/release-runbook.md` | 435 | `29b9ca5dce74165e093db87e656b08c24513dbc9249c63428bc63b7b04011100` |
 | `docs/operations/security-privacy-and-runbook.md` | 4789 | `34ad3a9ba0cddffd9d9a87eb4280b7fdfc608d7d183fb621929ddb95936769e3` |
+| `docs/pilot/annotation-guide.md` | 351 | `0e88e3d9c4732d96754a11c6f33533735dbd60fdfecebf50cb3f42d7713e446a` |
+| `docs/pilot/baseline-questionnaire.md` | 196 | `946bcfb6273b0c4108cb395f944c26799846fbd82fc2a1b13e080173bb536518` |
+| `docs/pilot/incident-procedure.md` | 329 | `0d1b8323003199ad0dce292df83da9abeec78145939994aacaa0cf4e626955b7` |
+| `docs/pilot/participant-protocol.md` | 288 | `4f7472af4299dd5f5762827f18df1da8e4a10e43ccbc489b589a1a712717ec14` |
+| `docs/pilot/weekly-survey.md` | 215 | `77034ae2ac6c28ef14fdb902f7b98b8b70c7f0557a846b09c558bc770a806aac` |
 | `docs/plans/00-master-implementation-roadmap.md` | 9610 | `7a44de857adfd143c65bb5c654098062f5602ee0b344d074e9652544b18d7c68` |
 | `docs/plans/01-phase-0-foundation.md` | 16689 | `cf79961f8831910e89834f71cd0b955fe75a6a068fe70e2ba1b04403e05ebf85` |
 | `docs/plans/02-phase-1-domain-core.md` | 19883 | `4032c9769795cb7716c07b8e0ca47563c78fb59f2887e611400e64d9741c7133` |
@@ -65,9 +73,9 @@
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
 | `docs/status/DECISION_LOG.md` | 4562 | `5de34ef6f73a0b5071ccdbda7c318f62e5b09565be615f1fff9db34fa5a5acad` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 6023 | `de8dd60177104e78c5570dba52c9bb743708a3ba24b13d114650e74eb6b76db7` |
-| `docs/status/RISK_REGISTER.md` | 2820 | `38fccd8191b51cd93d683342646e8a1476b279647eb4f6664b5cc705740f288b` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 22313 | `e7ce337999468c18b9fa82fc66ecac7850965b42b3a62ba321a8473827b6ec8c` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 6246 | `c4bc2ea6cd7a43987aae5ded00297230e4fe8898cc7822841f575982aadf7d04` |
+| `docs/status/RISK_REGISTER.md` | 2912 | `5279f9fcca7d9eb79a5a090e11ca68ed0078b3897a367036a7ea15bc3edd3a5d` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 24093 | `8e2ddd58ea9fad162a5b58100dc96f315a5864f9f940e07fb773ff7e3aba60b5` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |
@@ -86,7 +94,13 @@
 | `scripts/export_openapi.py` | 643 | `fe562d7111652eef49eb06c1435437e47b72364ba77d24ef7d69b4872077febc` |
 | `scripts/run_calendar_faults.py` | 6738 | `b757ac64ea9fa7403f7bf0874414e4f021e426f1866581135e6a1128d7259480` |
 | `scripts/run_intake_eval.py` | 4275 | `d079f48f2c10c334437f2b7b29a4ff8ce1cd41eb4bfa78904aeb531d0f45e853` |
+| `scripts/run_stage_a.py` | 4763 | `1167d9022dd8ea75f66e1bf603db93af5c52ac54504901dff33cb76be98e44eb` |
+| `scripts/run_stage_b.py` | 2689 | `25a9252882fb55127be9f4757ef21843424247320dd5808eb91c263395fb2d5e` |
+| `scripts/run_stage_c.py` | 3683 | `cf5b6304631470555597f1ac6ed9e011cb9c54a557c88bb55c65acecf707dd71` |
+| `scripts/smoke_deployment.py` | 2409 | `5b57e949da4ae9090c748e6b62993a3f4a649fe1e160e54a7f72cc20d989918b` |
+| `scripts/test_backup_restore.py` | 1728 | `d167968084e57674e2a92b2d15de6e15a73913b8d18a8512a25b966253633623` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
+| `scripts/verify_release.py` | 2971 | `95e66a4afe80eef9432215dc398e87f046c13df6521b60cdac66feefdda9c251` |
 | `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |
 
 ## Verification

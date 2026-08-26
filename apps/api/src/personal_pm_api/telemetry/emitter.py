@@ -26,13 +26,13 @@ class TelemetryEmitter:
         latency_ms: int,
         result: str | dict[str, Any],
     ) -> PlannerRunEvent:
-        payload: dict[str, Any] = {
-            "trace_id": trace_id,
-            "workspace_hash": workspace_hash,
-            "planner_version": planner_version,
-            "input_size": input_size,
-            "latency_ms": latency_ms,
-        }
+        validate_no_sensitive_fields(
+            {
+                "trace_id": trace_id,
+                "workspace_hash": workspace_hash,
+                "planner_version": planner_version,
+            }
+        )
         if isinstance(result, dict):
             # Structured result payloads are screened like any other source.
             validate_no_sensitive_fields({k: None for k in result.keys() if isinstance(k, str)})
