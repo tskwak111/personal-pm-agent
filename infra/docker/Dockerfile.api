@@ -1,0 +1,17 @@
+# Personal PM Agent API — non-root reproducible runtime.
+FROM python:3.13-slim AS builder
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+COPY apps/api ./apps/api
+COPY packages ./packages
+RUN pip install --no-cache-dir uv && uv sync --package personal-pm-api --frozen --no-dev
+
+FROM python:3.13-slim AS runtime
+RUN useradd --create-home --uid 10001 app
+WORKDIR /app
+COPY --from=builder /app/.venv /app/.venv
+COPY apps/api/src /app/apps/api/src
+ENV PATH="/app/.venv/bin:$PATH"
+USER app
+EXPOSE 8000
+CMD ["uvicorn", "personal_pm_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

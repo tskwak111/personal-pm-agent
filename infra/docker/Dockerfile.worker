@@ -1,0 +1,14 @@
+FROM python:3.13-slim AS builder
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+COPY apps/worker ./apps/worker
+RUN pip install --no-cache-dir uv && uv sync --package personal-pm-worker --frozen --no-dev
+
+FROM python:3.13-slim AS runtime
+RUN useradd --create-home --uid 10002 worker
+WORKDIR /app
+COPY --from=builder /app/.venv /app/.venv
+COPY apps/worker/src /app/apps/worker/src
+ENV PATH="/app/.venv/bin:$PATH"
+USER worker
+CMD ["python", "-m", "personal_pm_worker.main"]

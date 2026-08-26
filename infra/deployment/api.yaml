@@ -1,0 +1,15 @@
+# API deployment (no migrations here — see migrate.yaml)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pma-api
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/personal-pm/api:latest
+          ports: [{containerPort: 8000}]
+          readinessProbe:
+            httpGet: {path: /health/ready, port: 8000}
