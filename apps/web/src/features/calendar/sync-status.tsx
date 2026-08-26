@@ -16,5 +16,10 @@ export function SyncStatus({ status }: { status: CalendarSyncStatus }) {
   if (status.external === "PENDING") {
     return <p aria-live="polite">Google Calendar 반영 대기 중…</p>;
   }
-  return <p>{`앱 내부 저장 완료 · Google Calendar 반영 완료`}</p>;
+  return (
+    <div>
+      <p>앱 내부 저장 완료</p>
+      <p>Google Calendar 반영 완료</p>
+    </div>
+  );
 }
