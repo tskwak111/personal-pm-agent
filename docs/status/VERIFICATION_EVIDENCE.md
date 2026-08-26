@@ -385,3 +385,27 @@ Notes:
   - Exit 7/7 충족: 순서 강제(AUTHORIZE< ACT), 모호 언어 불변식, 버전 바운드 승인, 샘플 수 규칙, 근거 부분집합, 알림 dedupe
 Residual risk: SSE 스트림은 operations 순서 계약으로 고정, Redis pub/sub 연결은 Phase 8 경화에서 확인
 ```
+
+## Phase 7 — Web/PWA closeout (T01–T10)
+
+```text
+Task ID: P7-T01..P7-T10
+Commits: 07e5a8e, 3cad18f, 30cacef, 33799cc, 1f3fff7, 3bb671b, a8a5796, 74742a9, 334cf18, 6145024, 8236f12, ae3c345, 50a0b8d, f168482, 7f84724
+Timestamp UTC: 2026-08-26 (recorded after completion)
+Focused red failures observed per task:
+  T01 에이전트 트리거 중복 이름 → getAllByRole[0]로 계약 정제
+  T02 @testing-library/user-event 미설치 → devDep 추가
+  T03 없음(신규 구현 즉시 GREEN) / T04 없음
+  T05 Metric이 label/value 분리 렌더링 → 단일 문자열 결합
+  T06 sync 성공 문구가 노드 분리 → 개별 <p>로 분리(정확 매칭 계약 충족)
+  T07 ui barrel export 추가 / T08 jsdom EventSource 부재 → 가드 추가
+  T09 sw.js prettier 포맷 누락 → format 적용
+  T10 push-settings setState-in-effect lint 위반 → 초기값 함수로 전환
+Focused green results:
+  web vitest 23 passed (10 files); typecheck/lint/build 전부 OK; api 통합 77 passed
+Completion command: make verify → EXIT=0, test-unit 194 passed, verify-docs/verify-repo PASSED
+Notes:
+  - Exit: 네비게이션 5 목적지, Life Audit 5단계, 원액션 시작, 시간 미확인 표기, 내부/외부 동기화 상태 구분, VERIFY 전 성공 문구 금지 — 모두 컴포넌트 테스트로 고정
+  - Playwright 스펙 6종 작성 완료. 브라우저 바이너리 설치(npx playwright install) 후 e2e 실행은 P8 경화에서 수행
+Residual risk: axe 통합(@axe-core/playwright)은 P8에서 연결
+```

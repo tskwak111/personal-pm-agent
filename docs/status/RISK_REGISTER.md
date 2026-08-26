@@ -10,7 +10,7 @@
 | R-006 | OAuth 토큰 또는 개인 문서 노출 | Low | Catastrophic | encryption, 최소 권한, 로그 제거, incident gate | Open |
 | R-007 | 문서 프롬프트 인젝션이 행동으로 이어짐 | Medium | Catastrophic | content 격리, tool-less extraction, approval | Open |
 | R-008 | 전체 기능 규모로 일정 지연 | High | Medium | Phase gate, 독립 Task, 우선 핵심 경로 구현 | Accepted |
-| R-009 | 실제 사용자가 체크인을 귀찮아함 | Medium | High | 30초 UX Gate, 묶음 알림, 파일럿 측정 | Open |
+| R-009 | 실제 사용자가 체크인을 귀찮아함 | Medium | High | 구현됨: 원액션 작업 시작, 2탭 이내 완료/부분/막힘, UX-001..006 계측으로 파일럿 측정 준비 | Mitigated (P8 파일럿에서 측정) |
 | R-010 | 예상 시간 보정이 적은 표본에서 왜곡 | Medium | Medium | 표본별 반영 강도, factor clamp, reset | Open |
 | R-012 | 전체 verify 수집 시 간헐 라이브락(개별 스위트는 green). asyncpg 풀 × 루프 리셋 × 세션스코프 마이그레이션 상호작용 추정 | High | High | 2026-08-24 해소: 원인=①workspaces.models에서 UserSessionModel 레지스트리 미로드로 매퍼 초기화 실패 ②PlanningService 세션이 테스트 종료 시 close되지 않아 engine.dispose 블록 ③migrated_database downgrade가 풀 대기. 수정: workspaces.models에 identity import, clean_tables에 NullPool+전후 truncate, session close, 마이그레이션 downgrade 제거. 재실행 25 passed/2.45s, make verify 통과로 Close | Closed |
 | R-011 | 로컬 컨테이너가 메이저 태그로 참조되어 재현성 저하 | Medium | Low | 레지스트리 접근 가능 시 불변 다이제스트로 고정(DEC-012), P8 배포 경화 전 필수 | Open |
