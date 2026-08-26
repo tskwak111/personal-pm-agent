@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "../../components/ui";
 
 type PushState = "unsupported" | "default" | "subscribed";
 
-export function PushSettings() {
-  const [state, setState] = useState<PushState>("default");
+function initialPushState(): PushState {
+  if (typeof window === "undefined") return "default";
+  if (typeof Notification === "undefined" || !("serviceWorker" in navigator)) {
+    return "unsupported";
+  }
+  return Notification.permission === "granted" ? "subscribed" : "default";
+}
 
-  useEffect(() => {
-    if (typeof Notification === "undefined" || !("serviceWorker" in navigator)) {
-      setState("unsupported");
-    }
-  }, []);
+export function PushSettings() {
+  // Capability detection is deterministic at hydration; no effect needed.
+  const [state, setState] = useState<PushState>(initialPushState);
 
   async function optIn() {
     const permission = await Notification.requestPermission();
@@ -29,7 +32,7 @@ export function PushSettings() {
   if (state === "unsupported") return null;
   if (state === "subscribed") return <p>알림이 켜졌습니다</p>;
   return (
-    <Button variant="ghost" onClick={optIn}>
+    <Button variant="ghost" onClick={() => void optIn()}>
       푸시 알림 받기(선택)
     </Button>
   );
