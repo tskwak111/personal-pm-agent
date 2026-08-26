@@ -33,3 +33,7 @@ pnpm-store/
 
 # Reports (generated artifacts are committed intentionally under reports/)
 *.log
+
+# playwright artifacts
+test-results/
+playwright-report/

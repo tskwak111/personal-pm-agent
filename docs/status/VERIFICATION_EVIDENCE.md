@@ -436,3 +436,21 @@ Notes:
     브라우저 E2E 실실행, 이미지 다이제스트 핀(R-011)은 운영 환경에서 수행해야 하는 남은 외부 의존
 Residual risk: RISK_REGISTER 참조 — 파일럿 전까지 OUT 지표는 미검증 상태로 유지
 ```
+
+## 운영 검증 — E2E 실측 + axe 통합 (Phase 7/8 후속)
+
+```text
+Date: 2026-08-26
+Event: P7-T10에서 연기했던 브라우저 E2E 실측 및 axe 접근성 스캔 수행
+Commands:
+  playwright install chromium → Chromium 143 headless 설치
+  next build + next start -p 3100 → 8개 라우트 전부 200
+  playwright test --reporter=line → 15 passed (10/10 초기, /review main 누락 수정 후 15/15)
+  @axe-core/playwright 통합 → critical/serious 위반 0건 (today의 p[aria-label] 금지 위반 발견·수정)
+  scripts/run_stage_a.py --scenarios 20000 → overall=PASS, gates 15/15
+Fixes during verification:
+  - /review 페이지 main 랜드마크 누락
+  - TodayView 빈 <p aria-label> aria-prohibited-attr serious 위반
+  - playwright 산출물(test-results/) prettier/gitignore 제외
+Residual: 실제 Google API 어댑터·파일럿 Stage D는 외부 의존으로 남음(RISK_REGISTER)
+```

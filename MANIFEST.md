@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-26T14:10:01+09:00
+- **Manifest regenerated:** 2026-08-26T18:03:25+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -75,7 +75,7 @@
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
 | `docs/status/IMPLEMENTATION_STATUS.md` | 6246 | `c4bc2ea6cd7a43987aae5ded00297230e4fe8898cc7822841f575982aadf7d04` |
 | `docs/status/RISK_REGISTER.md` | 2912 | `5279f9fcca7d9eb79a5a090e11ca68ed0078b3897a367036a7ea15bc3edd3a5d` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 24093 | `8e2ddd58ea9fad162a5b58100dc96f315a5864f9f940e07fb773ff7e3aba60b5` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 25016 | `761acdb6ca6ea16bc388628fa2ad19ef3b717d2ad508a7619d25fa539dc9af1d` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |

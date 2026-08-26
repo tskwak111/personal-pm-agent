@@ -26,10 +26,14 @@ export function TodayView({
       <Card>
         <h2>오늘의 핵심 결과</h2>
         <p>{plan.coreOutcome}</p>
-        <p aria-label="선정 이유">{plan.selectionReason}</p>
+        <p>
+          <span className="font-medium">선정 이유: </span>
+          {plan.selectionReason || "아직 계획이 없습니다"}
+        </p>
       </Card>
 
       <section aria-label="고정 일정">
+        <h2>고정 일정</h2>
         {plan.fixedEvents.map((e) => (
           <p key={e.title}>
             {e.title} ({e.minutes}분)
@@ -38,6 +42,7 @@ export function TodayView({
       </section>
 
       <section aria-label="반드시 할 일">
+        <h2>반드시 할 일</h2>
         {plan.mustDo.map((task) => (
           <div key={task.id}>
             {task.risks?.map((r) => (

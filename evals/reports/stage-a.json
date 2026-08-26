@@ -1,6 +1,6 @@
 {
   "overall": "PASS",
-  "scenarios": 25,
+  "scenarios": 20000,
   "environment": {
     "python_version": "3.13.15",
     "cpu_model": "arm",
