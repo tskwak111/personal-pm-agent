@@ -31,7 +31,7 @@ export function OnboardingFlow({ initialAnalysis }: Props) {
     [initialAnalysis],
   );
   const [stepIndex, setStepIndex] = useState(0);
-  const step = ONBOARDING_STEPS[stepIndex];
+  const step: OnboardingStep = ONBOARDING_STEPS[stepIndex] ?? ONBOARDING_STEPS[0]!;
 
   // Facts already discovered from imported sources are never asked again.
   const timezoneKnown = analysis.foundFacts.some((f) => f.startsWith("timezone:"));
