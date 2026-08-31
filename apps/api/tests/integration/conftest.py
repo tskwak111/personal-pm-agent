@@ -52,6 +52,7 @@ def migrated_database(database_url_session: str):
 
 TABLES = (
     "audit_events, outbox_events, external_executions, approvals, proposals, "
+    "calendar_connections, "
     "plan_snapshots, external_dependency_tasks, external_dependencies, "
     "workspace_excluded_dates, task_dependencies, tasks, milestones, calendar_events, "
     "availability_windows, workstreams, areas, workspaces, users, "

@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T11:17:58+09:00
+- **Manifest regenerated:** 2026-08-31T11:30:46+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 

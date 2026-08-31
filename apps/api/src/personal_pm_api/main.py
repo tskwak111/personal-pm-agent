@@ -52,6 +52,7 @@ def create_app(
 ) -> FastAPI:
     app_settings = settings if settings is not None else ApiSettings()
     app = FastAPI(title="Personal PM Agent API", version="0.1.0")
+    app.state.settings = app_settings
     limiter = RateLimiter()
     limits = RATE_LIMITS if rate_limits is None else rate_limits
 
