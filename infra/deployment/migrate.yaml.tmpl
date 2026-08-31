@@ -1,0 +1,26 @@
+# One-off migration job: runs alembic upgrade head before API rollout.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pma-migrate
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: migrate
+          image: @@API_IMAGE@@
+          command: ["python", "-m", "alembic", "-c", "apps/api/alembic.ini", "upgrade", "head"]
+          envFrom:
+            - configMapRef: {name: pma-config}
+            - secretRef: {name: pma-secrets}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: 1000m, memory: 1Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}

@@ -144,7 +144,7 @@ git commit -m "chore(images): align production build artifacts"
 - Consumes: three digests matching `sha256:[0-9a-f]{64}`
 - Produces: rendered YAML with selectors, matching labels, probes, resources, security context, and immutable images
 
-- [ ] **Step 1: Write invalid-template and rendered-contract tests**
+- [x] **Step 1: Write invalid-template and rendered-contract tests**
 
 ```python
 def test_render_requires_real_digest(tmp_path) -> None:
@@ -156,19 +156,19 @@ def test_rendered_deployment_selectors_match_pod_labels(rendered) -> None:
         assert deployment["spec"]["selector"]["matchLabels"] == deployment["spec"]["template"]["metadata"]["labels"]
 ```
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest apps/api/tests/evals/test_deployment_contract.py -q`
 
-- [ ] **Step 3: Render with strict string replacement**
+- [x] **Step 3: Render with strict string replacement**
 
 Templates contain `@@API_IMAGE@@`, `@@WORKER_IMAGE@@`, and `@@WEB_IMAGE@@`. `render_deployment.py` validates digests with `re.fullmatch(r"sha256:[0-9a-f]{64}")`, substitutes full image references, parses all YAML documents, and writes only after successful validation.
 
-- [ ] **Step 4: Complete Deployment contracts**
+- [x] **Step 4: Complete Deployment contracts**
 
 Every Deployment has `spec.selector`, matching pod labels, readiness/liveness probes where applicable, resource requests/limits, `runAsNonRoot`, read-only root filesystem where supported, dropped capabilities, and explicit configuration/secret references. Migration remains a separate Job.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 uv run pytest apps/api/tests/evals/test_deployment_contract.py -q

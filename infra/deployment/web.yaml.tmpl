@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pma-web
+  labels: {app: pma-web}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: pma-web}
+  template:
+    metadata:
+      labels: {app: pma-web}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: web
+          image: @@WEB_IMAGE@@
+          ports: [{name: http, containerPort: 3000}]
+          envFrom:
+            - configMapRef: {name: pma-config}
+          readinessProbe:
+            httpGet: {path: /sign-in, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /sign-in, port: http}
+            periodSeconds: 30
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pma-web
+spec:
+  selector: {app: pma-web}
+  ports: [{name: http, port: 3000, targetPort: http}]

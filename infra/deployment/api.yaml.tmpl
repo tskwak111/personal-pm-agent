@@ -1,0 +1,44 @@
+# API deployment (migrations run only in migrate.yaml.tmpl).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pma-api
+  labels: {app: pma-api}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: pma-api}
+  template:
+    metadata:
+      labels: {app: pma-api}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: api
+          image: @@API_IMAGE@@
+          ports: [{name: http, containerPort: 8000}]
+          envFrom:
+            - configMapRef: {name: pma-config}
+            - secretRef: {name: pma-secrets}
+          readinessProbe:
+            httpGet: {path: /health/ready, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health/live, port: http}
+            periodSeconds: 30
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: 1000m, memory: 1Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pma-api
+spec:
+  selector: {app: pma-api}
+  ports: [{name: http, port: 8000, targetPort: http}]
