@@ -4,12 +4,58 @@
       "ApproveProposalRequest": {
         "properties": {
           "decision": {
-            "default": "approve",
+            "enum": [
+              "approve",
+              "reject"
+            ],
             "title": "Decision",
+            "type": "string"
+          },
+          "expected_version": {
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "decision",
+          "expected_version"
+        ],
+        "title": "ApproveProposalRequest",
+        "type": "object"
+      },
+      "ConnectionResponse": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
             "type": "string"
           }
         },
-        "title": "ApproveProposalRequest",
+        "required": [
+          "authorization_url",
+          "state",
+          "mode"
+        ],
+        "title": "ConnectionResponse",
+        "type": "object"
+      },
+      "CreateConnectionRequest": {
+        "properties": {
+          "mode": {
+            "default": "READ_ONLY",
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "title": "CreateConnectionRequest",
         "type": "object"
       },
       "CreatePlanRequest": {
@@ -102,6 +148,17 @@
           "id": {
             "title": "Id",
             "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
           },
           "status": {
             "title": "Status",
@@ -244,6 +301,79 @@
         "title": "TestSessionRequest",
         "type": "object"
       },
+      "UploadInitiationRequest": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "filename": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          },
+          "size_bytes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "filename",
+          "content_type",
+          "size_bytes"
+        ],
+        "title": "UploadInitiationRequest",
+        "type": "object"
+      },
+      "UploadInitiationResponse": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "storage_key": {
+            "title": "Storage Key",
+            "type": "string"
+          },
+          "upload_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upload Url"
+          }
+        },
+        "required": [
+          "id",
+          "storage_key",
+          "status"
+        ],
+        "title": "UploadInitiationResponse",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -336,6 +466,128 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/calendar/connections": {
+      "post": {
+        "operationId": "create_connection_api_v1_calendar_connections_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Connection",
+        "tags": [
+          "calendar"
+        ]
+      }
+    },
+    "/api/v1/calendar/oauth/callback": {
+      "get": {
+        "operationId": "oauth_callback_api_v1_calendar_oauth_callback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Oauth Callback",
+        "tags": [
+          "calendar"
+        ]
+      }
+    },
     "/api/v1/identity/test-session": {
       "post": {
         "operationId": "create_test_session_api_v1_identity_test_session_post",
@@ -374,6 +626,66 @@
         "summary": "Create Test Session",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/inbox/sources": {
+      "post": {
+        "operationId": "upload_source_api_v1_inbox_sources_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "title": "Filename",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadInitiationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Source",
+        "tags": [
+          "source-artifacts"
         ]
       }
     },
@@ -511,6 +823,7 @@
             "name": "proposal_id",
             "required": true,
             "schema": {
+              "format": "uuid",
               "title": "Proposal Id",
               "type": "string"
             }
@@ -567,6 +880,66 @@
         "summary": "Approve Proposal",
         "tags": [
           "proposals"
+        ]
+      }
+    },
+    "/api/v1/source-artifacts/uploads": {
+      "post": {
+        "deprecated": true,
+        "operationId": "initiate_upload_api_v1_source_artifacts_uploads_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadInitiationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadInitiationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Initiate Upload",
+        "tags": [
+          "source-artifacts"
         ]
       }
     },
