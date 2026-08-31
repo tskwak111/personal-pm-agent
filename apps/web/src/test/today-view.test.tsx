@@ -14,6 +14,7 @@ const todayPlanFixture = {
       title: "ERD 작성",
       minutes: 90,
       status: "ready",
+      version: 1,
       risks: [{ label: "마감 임박", ruleId: "PLAN-004" }],
     },
   ],
@@ -32,10 +33,27 @@ it("starts a ready task with one action", async () => {
   render(<TodayView plan={todayPlanFixture} onStartSession={startSessionMock} />);
   await userEvent.click(screen.getByRole("button", { name: "ERD 작성 시작" }));
   expect(startSessionMock).toHaveBeenCalledTimes(1);
-  expect(startSessionMock).toHaveBeenCalledWith("t1");
+  expect(startSessionMock).toHaveBeenCalledWith(todayPlanFixture.mustDo[0]);
 });
 
 it("renders risk cards from planner rule ids", () => {
   render(<TodayView plan={todayPlanFixture} onStartSession={vi.fn()} />);
   expect(screen.getByText("마감 임박")).toBeVisible();
+});
+
+it("disables duplicate starts while the mutation is pending", async () => {
+  let finish: () => void = () => {};
+  const pending = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  const start = vi.fn(() => pending);
+  render(<TodayView plan={todayPlanFixture} onStartSession={start} />);
+
+  await userEvent.click(screen.getByRole("button", { name: "ERD 작성 시작" }));
+
+  const button = screen.getByRole("button", { name: "시작 중…" });
+  expect(button).toBeDisabled();
+  await userEvent.click(button);
+  expect(start).toHaveBeenCalledTimes(1);
+  finish();
 });

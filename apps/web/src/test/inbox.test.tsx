@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { expect, it, vi } from "vitest";
 
 import { CandidateCard } from "../features/inbox/candidate-card";
 
@@ -47,6 +48,13 @@ it("renders original evidence snippets", () => {
   render(<CandidateCard candidate={dateOnlyDeadlineCandidate} />);
   expect(screen.getByText("근거 원본")).toBeVisible();
   expect(screen.getByText(/9월 20일 제출/)).toBeVisible();
+});
+
+it("confirms a candidate through the supplied mutation", async () => {
+  const decide = vi.fn();
+  render(<CandidateCard candidate={dateOnlyDeadlineCandidate} onDecision={decide} />);
+  await userEvent.click(screen.getByRole("button", { name: "확정" }));
+  expect(decide).toHaveBeenCalledWith("cand-1", "confirm");
 });
 
 import { InboxList } from "../features/inbox/inbox-list";

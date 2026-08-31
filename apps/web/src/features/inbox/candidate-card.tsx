@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+
+import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { SourceEvidence, type CandidateSource } from "./source-evidence";
 
@@ -15,7 +18,29 @@ export type InboxCandidate = {
   sources: CandidateSource[];
 };
 
-export function CandidateCard({ candidate }: { candidate: InboxCandidate }) {
+export function CandidateCard({
+  candidate,
+  onDecision,
+}: {
+  candidate: InboxCandidate;
+  onDecision?: (candidateId: string, decision: "confirm" | "ignore") => Promise<void> | void;
+}) {
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function decide(decision: "confirm" | "ignore") {
+    if (!onDecision || pending) return;
+    setPending(true);
+    setError(false);
+    try {
+      await onDecision(candidate.id, decision);
+    } catch {
+      setError(true);
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <Card aria-label={`후보 ${candidate.title}`}>
       <h3>{candidate.title}</h3>
@@ -37,6 +62,13 @@ export function CandidateCard({ candidate }: { candidate: InboxCandidate }) {
         </fieldset>
       )}
       <SourceEvidence sources={candidate.sources} />
+      <Button onClick={() => decide("confirm")} disabled={pending || !onDecision}>
+        {pending ? "처리 중…" : "확정"}
+      </Button>
+      <Button variant="ghost" onClick={() => decide("ignore")} disabled={pending || !onDecision}>
+        무시
+      </Button>
+      {error ? <p role="alert">후보를 처리하지 못했습니다</p> : null}
     </Card>
   );
 }

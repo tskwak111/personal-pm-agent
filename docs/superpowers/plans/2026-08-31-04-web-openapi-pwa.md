@@ -224,7 +224,7 @@ git commit -m "feat(web): connect shell and API session states"
 - Consumes: generated GET read models
 - Produces: task transitions, candidate decisions, proposal approve/reject, and calendar connection POST calls
 
-- [ ] **Step 1: Write one mutation test per trust boundary**
+- [x] **Step 1: Write one mutation test per trust boundary**
 
 ```typescript
 await user.click(screen.getByRole("button", { name: "승인" }));
@@ -236,15 +236,15 @@ expect(api.POST).toHaveBeenCalledWith("/api/v1/proposals/{proposal_id}/approve",
 
 Add task start, candidate confirmation, and calendar connect assertions. Each test also verifies pending disables duplicate clicks and failure remains visible.
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `pnpm --filter @personal-pm/web test --run`
 
-- [ ] **Step 3: Pass callbacks into existing views**
+- [x] **Step 3: Pass callbacks into existing views**
 
 Do not duplicate view components. Pages fetch read models through `api.ts`, map generated snake_case fields once, and pass callbacks. Successful mutations refetch; failed mutations retain prior visible data and show the API error code.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 ```bash
 pnpm --filter @personal-pm/web test --run
@@ -253,7 +253,7 @@ pnpm --filter @personal-pm/web typecheck
 pnpm --filter @personal-pm/web build
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/web/src/app apps/web/src/features apps/web/src/test

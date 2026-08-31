@@ -6,7 +6,13 @@ import { CandidateCard, type InboxCandidate } from "./candidate-card";
 
 const FILTERS = ["ALL", "NEW", "NEEDS_CONFIRMATION", "STRUCTURED", "FAILED"] as const;
 
-export function InboxList({ candidates }: { candidates: InboxCandidate[] }) {
+export function InboxList({
+  candidates,
+  onDecision,
+}: {
+  candidates: InboxCandidate[];
+  onDecision?: (candidateId: string, decision: "confirm" | "ignore") => Promise<void> | void;
+}) {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
   // Filter on processing STATUS (not candidate kind): kind is WHAT it is,
   // status is WHERE it is in review. Both are shown so neither is hidden.
@@ -30,7 +36,7 @@ export function InboxList({ candidates }: { candidates: InboxCandidate[] }) {
         {visible.length} / {candidates.length} 건
       </p>
       {visible.map((c) => (
-        <CandidateCard key={c.id} candidate={c} />
+        <CandidateCard key={c.id} candidate={c} onDecision={onDecision} />
       ))}
     </section>
   );

@@ -10,12 +10,16 @@ export type CalendarEvent = {
 export function CalendarView({
   events,
   flexibleTasks,
+  connectionAction,
 }: {
   events: CalendarEvent[];
   flexibleTasks: FlexibleTask[];
+  connectionAction?: React.ReactNode;
 }) {
   return (
     <main aria-label="캘린더 화면">
+      <h1>캘린더</h1>
+      {connectionAction}
       <section aria-label="캘린더 그리드">
         <ul>
           {events.map((e) => (

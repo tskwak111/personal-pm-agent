@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
-import { expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { expect, it, vi } from "vitest";
 
 import { ProposalCard } from "../features/review/proposal-card";
 import { WeeklyReview } from "../features/review/weekly-review";
 
 const overloadProposal = {
   id: "p1",
+  version: 1,
   beforeState: "High",
   proposedState: "Medium",
   minutesSavedOrAdded: 180,
@@ -15,6 +17,7 @@ const overloadProposal = {
 
 const irreversibleProposal = {
   id: "p2",
+  version: 1,
   beforeState: "Medium",
   proposedState: "Low",
   minutesSavedOrAdded: 0,
@@ -32,6 +35,13 @@ it("shows before, after, saved time and resulting risk", () => {
 it("does not show undo for irreversible proposal", () => {
   render(<ProposalCard proposal={irreversibleProposal} />);
   expect(screen.queryByRole("button", { name: "되돌리기" })).not.toBeInTheDocument();
+});
+
+it("submits the exact proposal and decision", async () => {
+  const decide = vi.fn();
+  render(<ProposalCard proposal={overloadProposal} onDecision={decide} />);
+  await userEvent.click(screen.getByRole("button", { name: "승인" }));
+  expect(decide).toHaveBeenCalledWith(overloadProposal, "approve");
 });
 
 it("weekly review compares planned vs actual capacity", () => {

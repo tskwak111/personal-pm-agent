@@ -18,7 +18,7 @@ export function TodayView({
   onStartSession,
 }: {
   plan: TodayPlan;
-  onStartSession?: (taskId: string) => void;
+  onStartSession?: (task: TodayTask) => Promise<void> | void;
 }) {
   return (
     <main aria-label="오늘 화면">
@@ -51,6 +51,20 @@ export function TodayView({
             <TaskActionBar task={task} onStartSession={onStartSession} />
           </div>
         ))}
+      </section>
+      <section aria-label="다음 작업 큐">
+        <h2>다음 작업 큐</h2>
+        {plan.queue.map((task) => (
+          <TaskActionBar key={task.id} task={task} onStartSession={onStartSession} />
+        ))}
+      </section>
+      <section aria-label="오늘 하지 않을 일">
+        <h2>오늘 하지 않을 일</h2>
+        <ul>
+          {plan.notToday.map((task) => (
+            <li key={task.id}>{task.title}</li>
+          ))}
+        </ul>
       </section>
     </main>
   );
