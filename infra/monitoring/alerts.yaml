@@ -9,6 +9,6 @@ alerts:
   - name: external-write-failure
     condition: increase(external_executions_failed_total[15m]) > 0
     severity: page
-  - name: oauth-reauthorization-spike
-    condition: increase(oauth_reauthorization_total[1h]) > 3
+  - name: oauth-exchange-failure-spike
+    condition: increase(oauth_exchange_failures_total[1h]) > 3
     severity: ticket

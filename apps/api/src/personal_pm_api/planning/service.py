@@ -6,6 +6,7 @@ current snapshot (PLAN-009); only fully valid outputs append history.
 
 from __future__ import annotations
 
+import time
 from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
@@ -61,6 +62,7 @@ from personal_pm_api.planning.models import (
 )
 from personal_pm_api.planning.repository import PlanningRepository
 from personal_pm_api.planning.schemas import PlanSnapshotDTO
+from personal_pm_api.telemetry.metrics import RUNTIME_METRICS
 from personal_pm_api.workspaces.models import WorkspaceModel
 
 PLANNER_VERSION = "planner-spec-1.0"
@@ -304,6 +306,33 @@ class PlanningService:
         )
 
     async def create_plan(
+        self,
+        *,
+        actor_user_id: UUID | None,
+        workspace_id: UUID | str,
+        reason: str = "manual",
+    ) -> PlanSnapshotDTO:
+        started = time.perf_counter()
+        result = "ERROR"
+        try:
+            snapshot = await self._create_plan(
+                actor_user_id=actor_user_id,
+                workspace_id=workspace_id,
+                reason=reason,
+            )
+            result = snapshot.status
+            if snapshot.is_current:
+                RUNTIME_METRICS.increment("plan_snapshots_appended_total")
+            return snapshot
+        finally:
+            RUNTIME_METRICS.increment("planner_runs_total", result=result)
+            RUNTIME_METRICS.observe(
+                "planner_latency_seconds",
+                max(0.0, time.perf_counter() - started),
+                result=result,
+            )
+
+    async def _create_plan(
         self,
         *,
         actor_user_id: UUID | None,

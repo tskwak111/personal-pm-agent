@@ -9,6 +9,7 @@ from uuid import UUID
 
 from personal_pm_api.execution.models import ExternalExecutionModel
 from personal_pm_api.execution.repository import OutboxRepository
+from personal_pm_api.telemetry.metrics import RUNTIME_METRICS
 from sqlalchemy import select
 
 
@@ -54,6 +55,7 @@ async def run_once(
                 break
             record = pending[0]
             claimed += 1
+            RUNTIME_METRICS.increment("outbox_jobs_total", result="claimed")
             record.attempts += 1
             execution = (
                 await session.execute(
@@ -66,6 +68,7 @@ async def run_once(
             if executor is None:
                 _mark_failed(record, execution, "executor unavailable")
                 failed += 1
+                _record_failed_verification("unavailable")
             else:
                 command = OutboxCommand(
                     id=record.id,
@@ -80,9 +83,11 @@ async def run_once(
                     record.status = "pending"
                     record.last_error = "provider outcome unknown"
                     failed += 1
+                    _record_failed_verification("unknown")
                 except Exception as error:  # provider adapters are an explicit trust boundary
                     _mark_failed(record, execution, f"provider error:{type(error).__name__}")
                     failed += 1
+                    _record_failed_verification("error")
                 else:
                     if execution is not None and result.verified and result.external_id:
                         record.status = "succeeded"
@@ -91,9 +96,14 @@ async def run_once(
                         execution.external_id = result.external_id
                         execution.verified = True
                         succeeded += 1
+                        RUNTIME_METRICS.increment("outbox_jobs_total", result="succeeded")
+                        RUNTIME_METRICS.increment(
+                            "external_execution_verifications_total", result="verified"
+                        )
                     else:
                         _mark_failed(record, execution, "provider result unverified")
                         failed += 1
+                        _record_failed_verification("unverified")
             await session.commit()
 
     return WorkerRunResult(claimed=claimed, succeeded=succeeded, failed=failed)
@@ -106,6 +116,12 @@ def _mark_failed(record: Any, execution: Any, reason: str) -> None:
         execution.result_status = "Failed"
         execution.external_id = None
         execution.verified = False
+
+
+def _record_failed_verification(result: str) -> None:
+    RUNTIME_METRICS.increment("outbox_jobs_total", result="failed")
+    RUNTIME_METRICS.increment("external_executions_failed_total")
+    RUNTIME_METRICS.increment("external_execution_verifications_total", result=result)
 
 
 __all__ = [

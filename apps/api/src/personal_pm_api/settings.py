@@ -19,6 +19,7 @@ class ApiSettings(BaseSettings):
     google_oauth_authorize_url: str = "https://accounts.google.com/o/oauth2/v2/auth"
     google_oauth_token_url: str = "https://oauth2.googleapis.com/token"
     token_encryption_key: SecretStr | None = Field(default=None, repr=False)
+    operator_metrics_token: SecretStr | None = Field(default=None, repr=False)
     database_url: str = Field(
         default=(
             "postgresql+asyncpg://personal_pm:local_only_password@localhost:15432/personal_pm"

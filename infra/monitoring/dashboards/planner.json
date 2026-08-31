@@ -3,6 +3,7 @@
   "panels": [
     {"name": "plan latency p95", "expr": "histogram_quantile(0.95, planner_latency_seconds_bucket)"},
     {"name": "invalid input ratio", "expr": "rate(planner_runs_total{result=\"INVALID_INPUT\"}[1h])"},
-    {"name": "snapshot appends", "expr": "increase(plan_snapshots_appended_total[24h])"}
+    {"name": "snapshot appends", "expr": "increase(plan_snapshots_appended_total[24h])"},
+    {"name": "planner run rate", "expr": "sum(rate(planner_runs_total[5m])) by (result)"}
   ]
 }

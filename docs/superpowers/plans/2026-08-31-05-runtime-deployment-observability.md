@@ -194,7 +194,7 @@ git commit -m "chore(deploy): render immutable valid manifests"
 - Produces: bounded-cardinality counters/histograms for API, planner, outbox, external verification, and failures
 - Produces: alert queries whose metric names exist in code
 
-- [ ] **Step 1: Write metric-name contract tests**
+- [x] **Step 1: Write metric-name contract tests**
 
 ```python
 def test_every_alert_metric_is_registered() -> None:
@@ -204,19 +204,19 @@ def test_every_alert_metric_is_registered() -> None:
 
 Add a test asserting workspace IDs, task IDs, provider event IDs, and raw error messages cannot be label keys.
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest apps/api/tests/unit/test_runtime_metrics.py -q`
 
-- [ ] **Step 3: Implement stdlib in-process registry**
+- [x] **Step 3: Implement stdlib in-process registry**
 
 Use a small locked counter/histogram registry with fixed metric names and fixed label allowlists; expose Prometheus text at `/internal/metrics` behind an operator token. Do not add an observability SDK until an actual collector is selected.
 
-- [ ] **Step 4: Instrument boundaries**
+- [x] **Step 4: Instrument boundaries**
 
 Record API status/duration, planner status/duration, outbox claimed/succeeded/failed, external verification status, and OAuth exchange failures. Keep trace/correlation IDs in logs, not metric labels.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 uv run pytest apps/api/tests/unit/test_runtime_metrics.py apps/api/tests/unit/test_telemetry_events.py apps/worker/tests/test_outbox_worker.py -q

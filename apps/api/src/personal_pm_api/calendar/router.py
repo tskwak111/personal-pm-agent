@@ -24,6 +24,7 @@ from personal_pm_api.identity.router import current_actor
 from personal_pm_api.identity.session import CurrentActor
 from personal_pm_api.settings import ApiSettings
 from personal_pm_api.shared.db import database_session
+from personal_pm_api.telemetry.metrics import RUNTIME_METRICS
 
 router = APIRouter(prefix="/api/v1/calendar", tags=["calendar"])
 _state_store = OAuthStateStore()
@@ -102,9 +103,11 @@ async def oauth_callback(
             code_verifier=state_value.code_verifier,
         )
     except OAuthExchangeError:
+        RUNTIME_METRICS.increment("oauth_exchange_failures_total")
         return JSONResponse(status_code=502, content={"code": "OAUTH_EXCHANGE_FAILED"})
     required_scopes = set(configured_scopes(state_value.mode))
     if not required_scopes.issubset(tokens.scopes):
+        RUNTIME_METRICS.increment("oauth_exchange_failures_total")
         return JSONResponse(status_code=502, content={"code": "OAUTH_SCOPE_MISMATCH"})
 
     try:
@@ -118,6 +121,7 @@ async def oauth_callback(
             )
             await session.commit()
     except ValueError:
+        RUNTIME_METRICS.increment("oauth_exchange_failures_total")
         return JSONResponse(
             status_code=503,
             content={"code": "OAUTH_PROVIDER_NOT_CONFIGURED"},

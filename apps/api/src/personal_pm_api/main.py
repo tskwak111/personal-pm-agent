@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import logging
 import time
@@ -18,6 +19,7 @@ from personal_pm_api.security.rate_limit import RATE_LIMITS, RateLimit, RateLimi
 from personal_pm_api.settings import ApiSettings
 from personal_pm_api.shared.db import get_engine
 from personal_pm_api.telemetry.logging import StructuredLogger
+from personal_pm_api.telemetry.metrics import RUNTIME_METRICS
 from personal_pm_api.telemetry.tracing import resolve_correlation_id
 
 REQUEST_LOGGER = logging.getLogger("personal_pm_api.requests")
@@ -106,12 +108,29 @@ def create_app(
             response.headers["X-Correlation-ID"] = correlation_id
             return response
         finally:
+            duration_seconds = max(0.0, time.perf_counter() - started)
+            route = request.scope.get("route")
+            route_path = str(getattr(route, "path", "unmatched"))
+            metric_labels = {
+                "method": request.method,
+                "route": route_path,
+                "status": str(status),
+            }
+            RUNTIME_METRICS.increment(
+                "http_requests_total",
+                method=metric_labels["method"],
+                route=metric_labels["route"],
+                status=metric_labels["status"],
+            )
+            RUNTIME_METRICS.observe(
+                "http_request_duration_seconds", duration_seconds, **metric_labels
+            )
             fields: dict[str, object] = {
                 "correlation_id": correlation_id,
                 "method": request.method,
                 "path": request.url.path,
                 "status": status,
-                "duration_ms": max(0, round((time.perf_counter() - started) * 1000)),
+                "duration_ms": round(duration_seconds * 1000),
             }
             workspace_id = getattr(request.state, "workspace_id", None)
             if workspace_id is not None:
@@ -154,6 +173,20 @@ def create_app(
         return JSONResponse(
             status_code=200,
             content={"status": "ok", "environment": app_settings.environment},
+        )
+
+    @app.get("/internal/metrics", include_in_schema=False)
+    async def metrics(request: Request) -> Response:
+        configured = app_settings.operator_metrics_token
+        if configured is None:
+            return JSONResponse(status_code=404, content={"detail": "not found"})
+        authorization = request.headers.get("Authorization", "")
+        expected = f"Bearer {configured.get_secret_value()}"
+        if not hmac.compare_digest(authorization, expected):
+            return JSONResponse(status_code=401, content={"detail": "unauthorized"})
+        return Response(
+            RUNTIME_METRICS.render(),
+            media_type="text/plain; version=0.0.4",
         )
 
     return app
