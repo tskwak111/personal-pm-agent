@@ -42,4 +42,7 @@ class WorkspaceModel(Base):
         Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(120), nullable=False)
+    timezone: Mapped[str] = mapped_column(
+        String(64), nullable=False, default="Asia/Seoul", server_default="Asia/Seoul"
+    )
     created_at: Mapped[datetime] = created_at()

@@ -146,6 +146,95 @@ async def test_done_task_cannot_keep_remaining_minutes(clean_tables, db_session)
         await db_session.flush()
 
 
+async def test_task_with_unknown_deadline_time_cannot_store_instant(
+    clean_tables, db_session
+) -> None:
+    from datetime import UTC, datetime
+
+    from personal_pm_api.planning.models import TaskModel
+
+    _, workspace = await _seed_workspace(db_session)
+    workstream = await _seed_workstream(db_session, workspace.id)
+    db_session.add(
+        TaskModel(
+            workspace_id=workspace.id,
+            workstream_id=workstream.id,
+            title="시간 미확정",
+            status="ready",
+            deadline_date=datetime(2026, 9, 10).date(),
+            deadline_at=datetime(2026, 9, 10, 9, tzinfo=UTC),
+            deadline_time_known=False,
+            start_after=None,
+            base_duration_minutes=60,
+            safety_duration_minutes=90,
+            remaining_base_minutes=60,
+            remaining_safety_minutes=90,
+            uncertainty="medium",
+            splittable=True,
+            min_chunk_minutes=30,
+            pinned=False,
+            waiting_reason=None,
+            version=1,
+        )
+    )
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+
+async def test_task_dependency_rejects_cross_workspace_endpoints(clean_tables, db_session) -> None:
+    from personal_pm_api.planning.models import TaskDependencyModel, TaskModel
+
+    _, first_workspace = await _seed_workspace(db_session)
+    first_workstream = await _seed_workstream(db_session, first_workspace.id)
+
+    from personal_pm_api.workspaces.models import UserModel, WorkspaceModel
+
+    other_user = UserModel(email="other@example.com", display_name="Other")
+    db_session.add(other_user)
+    await db_session.flush()
+    second_workspace = WorkspaceModel(owner_user_id=other_user.id, name="other")
+    db_session.add(second_workspace)
+    await db_session.flush()
+    second_workstream = await _seed_workstream(db_session, second_workspace.id)
+
+    def task(workspace_id, workstream_id, title):  # noqa: ANN001, ANN202
+        return TaskModel(
+            workspace_id=workspace_id,
+            workstream_id=workstream_id,
+            title=title,
+            status="ready",
+            deadline_date=None,
+            deadline_at=None,
+            deadline_time_known=False,
+            start_after=None,
+            base_duration_minutes=60,
+            safety_duration_minutes=90,
+            remaining_base_minutes=60,
+            remaining_safety_minutes=90,
+            uncertainty="medium",
+            splittable=True,
+            min_chunk_minutes=30,
+            pinned=False,
+            waiting_reason=None,
+            version=1,
+        )
+
+    predecessor = task(first_workspace.id, first_workstream.id, "first")
+    successor = task(second_workspace.id, second_workstream.id, "second")
+    db_session.add_all((predecessor, successor))
+    await db_session.flush()
+    db_session.add(
+        TaskDependencyModel(
+            workspace_id=first_workspace.id,
+            predecessor_id=predecessor.id,
+            successor_id=successor.id,
+            dependency_type="blocks_start",
+        )
+    )
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+
+
 async def test_outbox_idempotency_key_is_unique(clean_tables, db_session) -> None:
     from personal_pm_api.execution.models import OutboxEventModel
 

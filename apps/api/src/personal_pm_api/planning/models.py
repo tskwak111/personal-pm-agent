@@ -11,10 +11,12 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     Integer,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     text,
 )
@@ -110,7 +112,12 @@ class TaskModel(VersionedModel):
             "(deadline_time_known = false) OR (deadline_at IS NOT NULL)",
             name="known_time_requires_instant",
         ),
+        CheckConstraint(
+            "(deadline_time_known = true) OR (deadline_at IS NULL)",
+            name="unknown_time_forbids_instant",
+        ),
         CheckConstraint("min_chunk_minutes > 0", name="chunk_positive"),
+        UniqueConstraint("id", "workspace_id", name="uq_tasks_id_workspace_id"),
     )
 
     id: Mapped[UUID] = pk_uuid()
@@ -145,15 +152,86 @@ class TaskModel(VersionedModel):
 
 class TaskDependencyModel(Base):
     __tablename__ = "task_dependencies"
-    __table_args__ = (CheckConstraint("predecessor_id <> successor_id", name="no_self_dependency"),)
+    __table_args__ = (
+        CheckConstraint("predecessor_id <> successor_id", name="no_self_dependency"),
+        ForeignKeyConstraint(
+            ("predecessor_id", "workspace_id"),
+            ("tasks.id", "tasks.workspace_id"),
+            name="fk_task_dependencies_predecessor_workspace",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ("successor_id", "workspace_id"),
+            ("tasks.id", "tasks.workspace_id"),
+            name="fk_task_dependencies_successor_workspace",
+            ondelete="CASCADE",
+        ),
+    )
 
-    predecessor_id: Mapped[UUID] = mapped_column(
-        Uuid, ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True
+    workspace_id: Mapped[UUID] = mapped_column(
+        Uuid, ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    successor_id: Mapped[UUID] = mapped_column(
-        Uuid, ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True
-    )
+    predecessor_id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    successor_id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
     dependency_type: Mapped[str] = mapped_column(String(25), primary_key=True)
+
+
+class ExternalDependencyModel(VersionedModel):
+    __tablename__ = "external_dependencies"
+    __table_args__ = (
+        CheckConstraint("uncertainty_buffer_minutes >= 0", name="buffer_nonnegative"),
+        UniqueConstraint("id", "workspace_id", name="uq_external_dependencies_id_workspace_id"),
+    )
+
+    id: Mapped[UUID] = pk_uuid()
+    workspace_id: Mapped[UUID] = mapped_column(
+        Uuid, ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    deliverable: Mapped[str] = mapped_column(String(200), nullable=False)
+    owner_label: Mapped[str | None] = mapped_column(String(120))
+    expected_delivery_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    uncertainty_buffer_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    fallback_available: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = created_at()
+    updated_at: Mapped[datetime] = updated_at()
+
+
+class ExternalDependencyTaskModel(Base):
+    __tablename__ = "external_dependency_tasks"
+    __table_args__ = (
+        CheckConstraint("role IN ('affected', 'fallback')", name="valid_role"),
+        ForeignKeyConstraint(
+            ("external_dependency_id", "workspace_id"),
+            ("external_dependencies.id", "external_dependencies.workspace_id"),
+            name="fk_external_dependency_tasks_dependency_workspace",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ("task_id", "workspace_id"),
+            ("tasks.id", "tasks.workspace_id"),
+            name="fk_external_dependency_tasks_task_workspace",
+            ondelete="CASCADE",
+        ),
+    )
+
+    workspace_id: Mapped[UUID] = mapped_column(
+        Uuid, ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    external_dependency_id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    task_id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    role: Mapped[str] = mapped_column(String(10), primary_key=True)
+
+
+class WorkspaceExcludedDateModel(Base):
+    __tablename__ = "workspace_excluded_dates"
+
+    workspace_id: Mapped[UUID] = mapped_column(
+        Uuid,
+        ForeignKey("workspaces.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    excluded_date: Mapped[date] = mapped_column(Date(), primary_key=True)
 
 
 class CalendarEventModel(Base):

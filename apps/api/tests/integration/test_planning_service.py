@@ -5,7 +5,7 @@ import pytest
 pytestmark = pytest.mark.integration
 
 from collections.abc import AsyncIterator
-from datetime import datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
@@ -136,3 +136,170 @@ async def test_invalid_plan_preserves_last_valid_snapshot(planning_env, monkeypa
         assert str(latest.id) == first.id
     finally:
         await session_after.close()
+
+
+async def test_build_planner_input_hydrates_persisted_workspace_facts(planning_env) -> None:
+    from personal_pm_api.planning.models import (
+        CalendarEventModel,
+        ExternalDependencyModel,
+        ExternalDependencyTaskModel,
+        PlanSnapshotModel,
+        TaskDependencyModel,
+        TaskModel,
+        WorkspaceExcludedDateModel,
+    )
+    from personal_pm_api.workspaces.models import WorkspaceModel
+    from personal_pm_planner.domain.enums import CalendarEventKind, DependencyType
+    from personal_pm_planner.domain.identifiers import TaskId
+
+    service, session = await _make_service(planning_env)
+    try:
+        workspace_id = UUID(planning_env["workspace"])
+        workstream_id = UUID(planning_env["workstream"])
+        milestone_id = UUID(planning_env["milestone"])
+        workspace = await session.get(WorkspaceModel, workspace_id)
+        assert workspace is not None
+        workspace.timezone = "America/New_York"
+
+        def task(title: str, *, pinned: bool = False) -> TaskModel:
+            return TaskModel(
+                workspace_id=workspace_id,
+                workstream_id=workstream_id,
+                milestone_id=milestone_id,
+                title=title,
+                status="ready",
+                deadline_date=None,
+                deadline_at=None,
+                deadline_time_known=False,
+                start_after=None,
+                base_duration_minutes=60,
+                safety_duration_minutes=90,
+                remaining_base_minutes=60,
+                remaining_safety_minutes=90,
+                uncertainty="medium",
+                splittable=True,
+                min_chunk_minutes=30,
+                pinned=pinned,
+                waiting_reason=None,
+                version=1,
+            )
+
+        predecessor = task("선행", pinned=True)
+        successor = task("후행")
+        session.add_all((predecessor, successor))
+        await session.flush()
+
+        start = datetime(2026, 9, 1, 13, 0, tzinfo=UTC)
+        external = ExternalDependencyModel(
+            workspace_id=workspace_id,
+            deliverable="검토 결과",
+            owner_label="리뷰어",
+            expected_delivery_at=start + timedelta(hours=2),
+            uncertainty_buffer_minutes=30,
+            fallback_available=True,
+            version=1,
+        )
+        session.add(external)
+        await session.flush()
+        session.add_all(
+            (
+                CalendarEventModel(
+                    workspace_id=workspace_id,
+                    external_calendar_id="primary",
+                    external_event_id="event-1",
+                    external_version=1,
+                    title="고정 회의",
+                    start_at=start,
+                    end_at=start + timedelta(hours=1),
+                    event_kind=CalendarEventKind.FIXED_BUSY.value,
+                    deadline_date=None,
+                    sync_status="in_sync",
+                    version=1,
+                ),
+                TaskDependencyModel(
+                    workspace_id=workspace_id,
+                    predecessor_id=predecessor.id,
+                    successor_id=successor.id,
+                    dependency_type=DependencyType.BLOCKS_START.value,
+                ),
+                ExternalDependencyTaskModel(
+                    workspace_id=workspace_id,
+                    external_dependency_id=external.id,
+                    task_id=successor.id,
+                    role="affected",
+                ),
+                ExternalDependencyTaskModel(
+                    workspace_id=workspace_id,
+                    external_dependency_id=external.id,
+                    task_id=predecessor.id,
+                    role="fallback",
+                ),
+                WorkspaceExcludedDateModel(
+                    workspace_id=workspace_id,
+                    excluded_date=date(2026, 9, 7),
+                ),
+                PlanSnapshotModel(
+                    workspace_id=workspace_id,
+                    planner_version="planner-spec-1.0",
+                    input_hash="a" * 64,
+                    reason="prior",
+                    output_json={
+                        "base_allocations": [
+                            {
+                                "task_id": predecessor.id.hex,
+                                "start": start.isoformat(),
+                                "end": (start + timedelta(hours=1)).isoformat(),
+                            }
+                        ]
+                    },
+                    is_current=True,
+                ),
+            )
+        )
+        await session.commit()
+
+        captured = await service._build_planner_input(workspace_id, start)
+
+        assert captured.user_timezone == "America/New_York"
+        assert len(captured.calendar_events) == 1
+        assert len(captured.task_dependencies) == 1
+        assert len(captured.external_dependencies) == 1
+        assert captured.external_dependencies[0].affected_task_ids == (TaskId(successor.id),)
+        assert captured.external_dependencies[0].fallback_task_ids == (TaskId(predecessor.id),)
+        assert captured.pinned_task_ids == frozenset({TaskId(predecessor.id)})
+        assert captured.excluded_dates == (date(2026, 9, 7),)
+        assert captured.prior_plan_snapshot is not None
+        assert captured.prior_plan_snapshot.allocations[0].task_id == TaskId(predecessor.id)
+    finally:
+        await session.close()
+
+
+async def test_malformed_prior_plan_is_rejected_without_replacing_it(planning_env) -> None:
+    from personal_pm_api.planning.models import PlanSnapshotModel
+
+    service, session = await _make_service(planning_env)
+    try:
+        current = PlanSnapshotModel(
+            workspace_id=UUID(planning_env["workspace"]),
+            planner_version="planner-spec-1.0",
+            input_hash="b" * 64,
+            reason="malformed-prior",
+            output_json={"base_allocations": [{"task_id": "not-a-uuid"}]},
+            is_current=True,
+        )
+        session.add(current)
+        await session.commit()
+
+        with pytest.raises(ValueError, match="allocation fields"):
+            await service.create_plan(
+                actor_user_id=None,
+                workspace_id=planning_env["workspace"],
+                reason="must-not-replace",
+            )
+
+        latest = await service.latest_valid(planning_env["workspace"])
+        assert latest is not None
+        assert latest.id == current.id
+        assert latest.is_current is True
+    finally:
+        await session.close()
