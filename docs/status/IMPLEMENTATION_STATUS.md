@@ -1,28 +1,37 @@
 # 구현 상태
 
-- **전체 상태:** In Progress
-- **현재 Phase:** Phase 8 — Evaluation & Release (Complete: 코드·게이트 구현 완료. 실제 파일럿/배포는 운영 환경 필요)
-- **현재 Task:** P8-T01~T10 완료
-- **마지막 검증:** make verify 전체 통과 EXIT=0 (test-unit 235 passed, web 23 passed) + api 통합 81 passed — 2026-08-26 실측
-- **마지막 커밋:** 본 문서를 포함하는 커밋
+- **Local Production Readiness:** PENDING (최종 전체 명령 재실행 전)
+- **Release:** BLOCKED_EXTERNAL
+- **현재 Phase:** AAA production-readiness reconciliation
+- **현재 Task:** `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md`
+- **마지막 로컬 검증:** runtime 단위 게이트 PASS (Python 284 passed/112 deselected, API client 2, Web 40); 최종 전체 게이트는 Phase 6 Task 4에서 새로 실행
+- **기준 브랜치:** `codex/aaa-production-readiness`
 
 ## Phase 현황
 
 | Phase | 상태 | 완료 조건 |
 |---|---|---|
-| 0. Foundation | Complete | 로컬·CI에서 공통 verify 명령 통과 |
-| 1. Domain Core | Complete | 상태·권한·의존성 도메인 테스트 통과 |
-| 2. Planner Engine | Complete | 참조 벡터 100%, 불변 조건 위반 0건 |
-| 3. Persistence & API | Complete | 소유권·버전·트랜잭션·OpenAPI E2E 통과 (25 passed + contract) |
-| 4. Intake & LLM | Complete | 구조화 계약과 출처·불확실성 검증 통과 (unit 17 + integration 14) |
-| 5. Calendar & Execution | Complete | Outbox·멱등성·장애 주입 Gate 통과 (Stage C 리포트 산출, 중복 0·거짓 성공 0) |
-| 6. Agent & Briefing | Complete | Orchestrator 권한·승인·알림 테스트 통과 (8 Tasks, 40+ 신규 테스트) |
-| 7. Web/PWA | Complete | 핵심 사용자 흐름 컴포넌트·단위 테스트 통과, Playwright 스펙 준비 |
-| 8. Evaluation & Release | Complete (게이트 구현) | Stage A~C 러너·릴리스 게이트·보안·백업·파일럿 계약 구현 및 테스트 통과 |
+| 0. Foundation | Implemented — local evidence recorded | 공통 명령·툴체인·로컬 서비스 계약 |
+| 1. Domain Core | Implemented — local evidence recorded | 상태·권한·의존성 도메인 계약 |
+| 2. Planner Engine | Implemented — local evidence recorded | 참조 벡터와 Planner 불변 조건 |
+| 3. Persistence & API | Implemented — local evidence recorded | 소유권·버전·트랜잭션·OpenAPI |
+| 4. Intake & LLM | Implemented — local evidence recorded | 구조화·출처·불확실성 계약 |
+| 5. Calendar & Execution | Local fake/fault gates only | Outbox·멱등성·거짓 성공 방지; live provider는 외부 차단 |
+| 6. Agent & Briefing | Implemented — local evidence recorded | 권한·승인·알림·operation stream 계약 |
+| 7. Web/PWA | Implemented — browser evidence recorded | 실 API 기반 16 Playwright·axe·production build |
+| 8. Evaluation & Release | Local tooling implemented / BLOCKED_EXTERNAL | Stage A 로컬 PASS; private corpus·live provider·pilot·운영 배포는 미검증 |
 
 ## 현재 차단 사항
 
-없음. (R-011: 컨테이너 다이제스트 핀은 레지스트리 접근 가능 시 P8 전에 해소 / R-012 해소 — 원인은 ORM 레지스트리 미로드와 세션 누수였으며 2026-08-24 수정으로 확정 green)
+| 차단 증거 | 필요한 완료 증거 |
+|---|---|
+| Stage B private corpus | 고정 private holdout manifest와 임계값 통과 report |
+| Stage C live provider | 실제 Google 자격증명 기반 fault/reconciliation report |
+| Registry/cluster | push된 application image digest와 rollout/rollback·probe 관측 |
+| Managed backup | 운영 RPO/RTO를 포함한 restore drill |
+| Advisory/security | 의존성 advisory·침투 검토 결과와 remediation |
+| Stage D pilot | 동의된 baseline 1주 + agent 4주 outcome report |
+| Production observability | Prometheus scrape와 alert delivery 관측 |
 
 ## 최근 완료 기록
 
@@ -64,5 +73,6 @@
 
 ## 다음 행동
 
-1. `docs/plans/08-phase-7-web-pwa.md` 읽기
-2. P7-T01 실패 테스트부터 TDD 진행
+1. 추적성·상태 일관성 계약을 통과시킨다.
+2. 증명된 dead code만 제거한다.
+3. 전체 로컬 음성/양성 게이트를 새로 실행하고 local-readiness report를 고정한다.

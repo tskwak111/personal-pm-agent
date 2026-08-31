@@ -690,10 +690,10 @@ git commit -m "feat(api): publish generated TypeScript client"
 
 ## Phase 3 Exit Criteria
 
-- [ ] Blank database and previous migration state both upgrade successfully.
-- [ ] Workspace ownership returns no cross-tenant information.
-- [ ] Stale object versions return typed conflict without overwrite.
-- [ ] Domain state and Audit Event commit atomically.
-- [ ] Valid plans append immutable snapshots; invalid plans preserve the last valid snapshot.
-- [ ] State plus outbox commit atomically and duplicate idempotency keys are rejected.
-- [ ] OpenAPI and generated TypeScript client are reproducible.
+- [x] Blank database and previous migration state both upgrade successfully.
+- [x] Workspace ownership returns no cross-tenant information.
+- [x] Stale object versions return typed conflict without overwrite.
+- [x] Domain state and Audit Event commit atomically.
+- [x] Valid plans append immutable snapshots; invalid plans preserve the last valid snapshot.
+- [x] State plus outbox commit atomically and duplicate idempotency keys are rejected.
+- [x] OpenAPI and generated TypeScript client are reproducible.

@@ -95,8 +95,8 @@ def build_markdown() -> str:
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
 - **Manifest regenerated:** {generated}
-- **Product implementation status:** not started; this manifest verifies
-  development-package artifacts only
+- **Product implementation status:** local implementation under final verification;
+  release remains blocked on external evidence
 
 ## Package metrics
 

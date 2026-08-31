@@ -10,6 +10,7 @@ assert _SPEC is not None and _SPEC.loader is not None
 _MODULE: Any = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_MODULE)
 verify_traceability = _MODULE.verify_traceability
+verify_phase_status = _MODULE.verify_phase_status
 
 
 def test_traceability_rejects_missing_local_evidence(tmp_path: Path) -> None:
@@ -56,3 +57,7 @@ def test_traceability_rejects_path_outside_repository(tmp_path: Path) -> None:
     assert verify_traceability(doc, repo_root=tmp_path) == [
         "R-1: evidence path escapes repository: ../secret.txt"
     ]
+
+
+def test_complete_phase_has_checked_exit_criteria_or_external_block() -> None:
+    assert verify_phase_status(_ROOT) == []

@@ -78,6 +78,42 @@ def verify_traceability(document: Path, *, repo_root: Path) -> list[str]:
     return errors
 
 
+def verify_phase_status(repo_root: Path) -> list[str]:
+    status = (repo_root / "docs/status/IMPLEMENTATION_STATUS.md").read_text(encoding="utf-8")
+    errors: list[str] = []
+    if "- **Local Production Readiness:**" not in status:
+        errors.append("status: missing Local Production Readiness")
+    if "- **Release:** BLOCKED_EXTERNAL" not in status:
+        errors.append("status: Release must remain BLOCKED_EXTERNAL")
+    if "## 현재 차단 사항\n\n없음" in status:
+        errors.append("status: external blockers cannot be reported as none")
+
+    phase_plans = {
+        "0": "01-phase-0-foundation.md",
+        "1": "02-phase-1-domain-core.md",
+        "2": "03-phase-2-planner-engine.md",
+        "3": "04-phase-3-persistence-api.md",
+        "4": "05-phase-4-intake-llm-files.md",
+        "5": "06-phase-5-calendar-execution.md",
+        "6": "07-phase-6-agent-briefing.md",
+        "7": "08-phase-7-web-pwa.md",
+        "8": "09-phase-8-evaluation-security-deployment.md",
+    }
+    for phase, plan_name in phase_plans.items():
+        if re.search(rf"^\| {phase}\. .* \| Complete(?: \([^|]+\))? \|", status, re.MULTILINE) is None:
+            continue
+        plan = (repo_root / "docs/plans" / plan_name).read_text(encoding="utf-8")
+        exit_section = plan.rsplit("## Phase", maxsplit=1)[-1]
+        unsupported = [
+            line
+            for line in exit_section.splitlines()
+            if line.startswith("- [ ]") and "BLOCKED_EXTERNAL" not in line
+        ]
+        if unsupported:
+            errors.append(f"status: Phase {phase} is Complete with unchecked exit criteria")
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
     for relative in REQUIRED_ARTIFACTS:
@@ -109,6 +145,7 @@ def main() -> int:
             repo_root=ROOT,
         )
     )
+    errors.extend(verify_phase_status(ROOT))
 
     if errors:
         print("Repository verification FAILED", file=sys.stderr)

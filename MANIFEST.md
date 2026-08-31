@@ -2,9 +2,9 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T11:30:46+09:00
-- **Product implementation status:** not started; this manifest verifies
-  development-package artifacts only
+- **Manifest regenerated:** 2026-08-31T13:21:56+09:00
+- **Product implementation status:** local implementation under final verification;
+  release remains blocked on external evidence
 
 ## Package metrics
 
@@ -27,7 +27,7 @@
 | `SOURCE_SPEC_HASHES.sha256` | 1 |
 | `docs` | 48 |
 | `prompts` | 10 |
-| `scripts` | 12 |
+| `scripts` | 13 |
 
 ## File inventory before manifest files
 
@@ -36,7 +36,7 @@
 | `00_START_HERE.md` | 5513 | `cb55176a25c1dcfa0a84914e2edd8ff8e032ae7b6582c329ae711b54beda7e92` |
 | `AGENTS.md` | 6361 | `ceeb355938ee68285038189d740186fcf0a4bb31fa2f74ca3d8eab22789a9627` |
 | `PACKAGE_MANIFEST.md` | 4501 | `648d631213b5961a9fe9a100e6c12142edbdc5d6b09df2e29dec826c1c26a312` |
-| `PACKAGE_SUMMARY.json` | 811 | `1353ea998c3b515b25f5cbd3da1d360afbfc03fa52f726f587b2afd7cfc60626` |
+| `PACKAGE_SUMMARY.json` | 828 | `f5f900593563e7001280a3d7f9723341880e6a3e1b7d6193f0bb829cd9570db7` |
 | `README.md` | 2424 | `7b13ccef04b5ea0233900b1f51b43e1efd0e5d2eed4c96a09de84715f4511bd2` |
 | `SOURCE_SPEC_HASHES.sha256` | 383 | `8e16c626cac19c95ac750c38a8eb815347cb21182490bae7ac53b4c917809ffa` |
 | `docs/architecture/decision-precedence.md` | 2058 | `f049961e814843771faa17eabafd1e8051d3703b3d8b1db1ad1cd5c057c2c6d2` |
@@ -46,42 +46,42 @@
 | `docs/architecture/toolchain-baseline.md` | 2476 | `1dcce647e77946e6595143e8bc237bed3fb569463effa7f1e5e8c50de84b4408` |
 | `docs/operations/backup-and-restore.md` | 1851 | `977765aacca36f8ab730ddb206e69b4e442e2d2067bed50cbc861a32c29d7638` |
 | `docs/operations/event-catalog.md` | 602 | `39a5aa927c325433307f218355ee17953e6404c9e211e49dfd7e291b5ef5a223` |
-| `docs/operations/release-runbook.md` | 435 | `29b9ca5dce74165e093db87e656b08c24513dbc9249c63428bc63b7b04011100` |
+| `docs/operations/release-runbook.md` | 1137 | `11dcbe0cf3bb197ca2ebabbd62bbafda563a36b000ab593844a0da01d78969fe` |
 | `docs/operations/security-privacy-and-runbook.md` | 5015 | `b537c2e46f65492167f91192121fd672189e107aa61b4a59c02aaf828c0c22f6` |
 | `docs/pilot/annotation-guide.md` | 351 | `0e88e3d9c4732d96754a11c6f33533735dbd60fdfecebf50cb3f42d7713e446a` |
 | `docs/pilot/baseline-questionnaire.md` | 196 | `946bcfb6273b0c4108cb395f944c26799846fbd82fc2a1b13e080173bb536518` |
 | `docs/pilot/incident-procedure.md` | 329 | `0d1b8323003199ad0dce292df83da9abeec78145939994aacaa0cf4e626955b7` |
 | `docs/pilot/participant-protocol.md` | 288 | `4f7472af4299dd5f5762827f18df1da8e4a10e43ccbc489b589a1a712717ec14` |
 | `docs/pilot/weekly-survey.md` | 215 | `77034ae2ac6c28ef14fdb902f7b98b8b70c7f0557a846b09c558bc770a806aac` |
-| `docs/plans/00-master-implementation-roadmap.md` | 9610 | `7a44de857adfd143c65bb5c654098062f5602ee0b344d074e9652544b18d7c68` |
+| `docs/plans/00-master-implementation-roadmap.md` | 9825 | `20863eb990d1635af99cfba2867af00dd76c2b3a4202545be73f3ea30d85b657` |
 | `docs/plans/01-phase-0-foundation.md` | 16689 | `cf79961f8831910e89834f71cd0b955fe75a6a068fe70e2ba1b04403e05ebf85` |
 | `docs/plans/02-phase-1-domain-core.md` | 19883 | `4032c9769795cb7716c07b8e0ca47563c78fb59f2887e611400e64d9741c7133` |
-| `docs/plans/03-phase-2-planner-engine.md` | 29827 | `3b54e9b6e4dd844383d83d5df6d68fdd9faf148056d5692a1fd2c018f62853ad` |
-| `docs/plans/04-phase-3-persistence-api.md` | 26158 | `57b3061aa3bc94f7de015cfa937141773448bbf997b13e641bc07f64080c312e` |
+| `docs/plans/03-phase-2-planner-engine.md` | 29921 | `3ad1fee79676f4e8bf5ec7116c56c55ec2191c232910b4a8836fa026557d596b` |
+| `docs/plans/04-phase-3-persistence-api.md` | 26158 | `0b69e990039cc77756d681c937b3da6f21e66bab8d90244c5a3cfc173d2cecf9` |
 | `docs/plans/05-phase-4-intake-llm-files.md` | 23990 | `cbdecd55eed29abbdf5c2726f7017379ba2e0192b418777c673137af7726522d` |
 | `docs/plans/06-phase-5-calendar-execution.md` | 21616 | `3016a8cd11d853f1514f967c2c2845fe35cfe20419343f7133ac6ef45e6d6eb1` |
 | `docs/plans/07-phase-6-agent-briefing.md` | 22851 | `2567dd7bd61367bfc2136652281d4e9738b75ed898d73dd17f022914090a92ea` |
-| `docs/plans/08-phase-7-web-pwa.md` | 26853 | `30e80f9b909fa8582f831c959be7d7a28786063f74b2c75de5c11b7491d651ae` |
-| `docs/plans/09-phase-8-evaluation-security-deployment.md` | 26882 | `2460312d6f8ee2091daacd953c8125e7cfa3231769f5d9a07bbb149b92f5d7e5` |
+| `docs/plans/08-phase-7-web-pwa.md` | 26853 | `78f6b95e6c6b3ee904521ff8844d7747e57fd53211c819c37704417c556268be` |
+| `docs/plans/09-phase-8-evaluation-security-deployment.md` | 27143 | `47eeed69ded68ff43dce907abd3ed03b3db72293d2860cd1eec262367ead5842` |
 | `docs/quality/definition-of-done.md` | 2469 | `f3767b6339a7612630805e3a7f8934bca3b7c87da4f8100354f402e0c3cacd41` |
 | `docs/quality/metric-gate-index.md` | 8826 | `5ef6b789df5c2e7da30a8f2483cd68403977015574fc0c5902e33a91c3953f7e` |
-| `docs/quality/verification-command-matrix.md` | 2151 | `ef4ddc3267b3f63a936ad04e0128911fd40921aaaf82d8a4926a9e12338b934c` |
+| `docs/quality/verification-command-matrix.md` | 2694 | `b8dbcaed28be5cbc21a2c060c01128fe6898531a1c283735c9d5f7d1f41b9da9` |
 | `docs/requirements/acceptance-scenarios.md` | 7087 | `b2c59be7f7d3812fa5833ef99bd3c8c0b60861508d65be82d595ea2a1b1a0dac` |
-| `docs/requirements/requirements-traceability.md` | 22335 | `195df3ccce5b502ce606934a2eafbf2907dede315793c0deb5ef2c3e6db815ad` |
+| `docs/requirements/requirements-traceability.md` | 25623 | `4c37dc79317721da2a9595cdc71fff74b4417ab595a98d1d218436cfc90a6f5d` |
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
-| `docs/status/DECISION_LOG.md` | 4562 | `5de34ef6f73a0b5071ccdbda7c318f62e5b09565be615f1fff9db34fa5a5acad` |
-| `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 6246 | `c4bc2ea6cd7a43987aae5ded00297230e4fe8898cc7822841f575982aadf7d04` |
-| `docs/status/RISK_REGISTER.md` | 3136 | `903c8f5ee59b27b8ccf3194fa6cff832337b26bfe2471604d9917d71475fbbfd` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 27630 | `c978449c59b766b36c6e5fb7355e76048c07c64cfb925659606f8e80cc65242d` |
+| `docs/status/DECISION_LOG.md` | 5685 | `cd9788572ccba67f58fb6bed378fa4c4d5da9ece70ba65e645a12da39cad0771` |
+| `docs/status/HANDOFF_CHECKLIST.md` | 944 | `703fd0e888f10630c6f62c96a1bb0e39038e57e7c075bb86fec043e7b38dd5d9` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 6892 | `6ee801b2d75585d1aceb4a07b9523622958c11c56643f1e5bc38c917e16bf973` |
+| `docs/status/RISK_REGISTER.md` | 3622 | `b51ead920f46a560972611566c486bec3c261d8d44cfa27a6ebb56dcaf03ecf5` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 30727 | `f2f39925010b92cd2fcfd3f491a70ad5736092959157d6a0f1d351d64e3e2e7d` |
 | `docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md` | 14912 | `b3b83a9de0a9ef432010a357165b33181aaaa1a2f84282bafd5fb0fb544e6195` |
 | `docs/superpowers/plans/2026-08-31-02-truthful-release-gates.md` | 12246 | `a8463d0ee65229977a79d5b34ec5617de89d64132396e3352d48ad90172ec462` |
 | `docs/superpowers/plans/2026-08-31-03-api-authorization-security.md` | 11415 | `e92f1712a1599a0977aa851ab7b802946379fa4a40320465ff0e9f8df977f992` |
-| `docs/superpowers/plans/2026-08-31-04-web-openapi-pwa.md` | 12830 | `c717ac4a546d0d06bdfd9670957306c2ea12c23c41897b152d9ba9090c53a50b` |
-| `docs/superpowers/plans/2026-08-31-05-runtime-deployment-observability.md` | 11327 | `7718c77d310dc125163bc9c52d3359e7e48123459bd76bdaac5fe25db0a284f6` |
-| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `635fc643303d2028feca4596782a31f00d4829edabc9060fe677fb5b6c00da4f` |
+| `docs/superpowers/plans/2026-08-31-04-web-openapi-pwa.md` | 12830 | `315e81399d58dee4e05e62a3f7755ac3d15b34c21def4b6faa30a2c0506a7998` |
+| `docs/superpowers/plans/2026-08-31-05-runtime-deployment-observability.md` | 11327 | `1bf44f06f59b24a42e0053c95994afacce4cdb07bbd27da2db797c4a605f699c` |
+| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `a00b442944b41ab87319576e11edd5db1bec77915a54ed08eb467aacd5190443` |
 | `docs/superpowers/specs/2026-08-31-aaa-production-readiness-design.md` | 11012 | `c37c8954ed4c62fb3c7f8c0e0daf187381d12184cdaa4b512c8d1d47e53c0fcc` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
@@ -97,18 +97,19 @@
 | `prompts/RELEASE_AUDIT_PROMPT.md` | 2318 | `3e15e593dba6326a77049cd34d559aee4ccef4ce1f655420172bc5e63a583994` |
 | `prompts/runtime/intake-structuring-v1.md` | 641 | `c35ea615685ffe73f47f43659f4a5d2098d4cfbb707bafa453216241aabe0176` |
 | `prompts/runtime/project-decomposition-v1.md` | 594 | `b735e370c0baf75380065922534725e9325a39eb70183c668a3a31d42f02fa75` |
-| `scripts/build_distribution_manifest.py` | 4044 | `715b4b50999d6f786cb278c91b1a7f24d5ad88884d58a3923330ed41dc4b77b2` |
+| `scripts/build_distribution_manifest.py` | 4065 | `c7eaff48f93a2e6f66a52107ff857941a8e94f4e8d193ea16a46640c2fbce179` |
 | `scripts/export_openapi.py` | 643 | `fe562d7111652eef49eb06c1435437e47b72364ba77d24ef7d69b4872077febc` |
+| `scripts/render_deployment.py` | 4214 | `2c325b390ffcb8115901dd474b1786411d8022036c5ffa1181b04fd507e379f5` |
 | `scripts/run_calendar_faults.py` | 9382 | `bfc178d5285044d45d159ac356be440167100eb5c6ee1098acf12ba880828d04` |
 | `scripts/run_intake_eval.py` | 4275 | `d079f48f2c10c334437f2b7b29a4ff8ce1cd41eb4bfa78904aeb531d0f45e853` |
 | `scripts/run_stage_a.py` | 9806 | `20e3d6141d2ab0baa7bdd2676330dfc2ba2e5cafacdb4ae79c89a7db49a51df5` |
 | `scripts/run_stage_b.py` | 6978 | `4400865f55f93f6a459cd6334439556b0970c44dba5d0ab65890914f04896250` |
 | `scripts/run_stage_c.py` | 5243 | `bcdafa7b15a7454c7dc1cf867168cea76fe6abe582eb2a3b616ae48531cefc1f` |
-| `scripts/smoke_deployment.py` | 2409 | `5b57e949da4ae9090c748e6b62993a3f4a649fe1e160e54a7f72cc20d989918b` |
+| `scripts/smoke_deployment.py` | 4276 | `121615c73b8bc7b0afd0c3d4d39d8fd1d4e8f31f6bdb36347ed7b2cb2b1b715d` |
 | `scripts/test_backup_restore.py` | 6769 | `1d695eb95dee15781969a1beeb7ef648c961f007b49b051cabe7494a5a717c45` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
 | `scripts/verify_release.py` | 8564 | `eb8a449220961b68e940506cf57401bb9c11f155ac1bd2573c7d4e110755b736` |
-| `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |
+| `scripts/verify_repo.py` | 6225 | `b0bc3b6e3e05abca90e007641f9849c71b3bd02ea84f0bc4af3f35e674a3e235` |
 
 ## Verification
 

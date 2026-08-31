@@ -215,14 +215,14 @@ test(evals): enforce planner reference vectors
 
 Before merging a Phase branch:
 
-- [ ] Every Phase Task checkbox is checked.
-- [ ] The exact Phase verification commands pass from a clean checkout.
-- [ ] New public interfaces match downstream plans.
-- [ ] Migrations upgrade a blank and previous database state.
-- [ ] No unreviewed placeholder or skipped test remains.
-- [ ] Status, Decision Log, Risk Register and traceability are current.
-- [ ] A code review uses `prompts/CODE_REVIEW_PROMPT.md`.
-- [ ] Completion evidence is recorded using the Task Completion template.
+- [ ] Every Phase Task checkbox is checked. — historical step boxes remain an execution log; exit criteria and machine evidence are canonical.
+- [ ] The exact Phase verification commands pass from a clean checkout. — final fresh run is pending.
+- [x] New public interfaces match downstream plans.
+- [x] Migrations upgrade a blank and previous database state.
+- [x] No unreviewed placeholder or skipped local gate is represented as release evidence.
+- [x] Status, Decision Log, Risk Register and traceability are current.
+- [ ] A final whole-branch code review uses the approved review contract. — pending final Task 5.
+- [x] Completion evidence is recorded in `docs/status/VERIFICATION_EVIDENCE.md`.
 
 ## 8. Product Completion
 

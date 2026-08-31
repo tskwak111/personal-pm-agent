@@ -19,5 +19,9 @@
 
 | DEC-015 | 2026-08-23 | 참조 벡터를 파라미터형 JSON(tv-01~11)로 관리하고 Stage A 속성 시나리오 수는 CI 25예제/평가 시 20,000 확장 구조로 운영 | 벡터의 본질은 입력 파라미터와 기대 불변식의 버전 관리이며, 전체 PlannerInput 스냅샷 인라인은 중복 대량 파일을 낳음. PLAN-005/006·PQ 게이트는 동일 코드 경로로 확장 실행됨 | Accepted |
 | DEC-016 | 2026-08-23 | 500-Task 성능 벤치는 P8-T02 Stage A 리포트에서 정식 산출하고, 커밋마다는 60-Task 2초 스모크로 회귀 트립워브 유지 | 전체 벤치는 단위 테스트 예산을 초과하며 평가 계획상 Stage A 산출물임. 스모크는 회귀 조기 감지 목적 | Accepted |
+| DEC-017 | 2026-08-31 | 로컬 production-readiness와 실제 release 판정을 분리한다 | 저장소 내 결정론적 검증은 로컬 품질을 증명하지만 private corpus, live provider, 운영 인프라, advisory와 실제 사용자를 대신할 수 없다 | Accepted |
+| DEC-018 | 2026-08-31 | API 인증은 bearer-only로 고정하고 인증 cookie를 받지 않는다 | 브라우저가 자동 첨부하는 인증 cookie가 없으므로 CSRF token을 별도 상태로 추가하지 않고 cookie-only 요청을 401로 거부한다 | Accepted |
+| DEC-019 | 2026-08-31 | Kubernetes application image는 배포 시 registry digest를 주입하고 renderer가 형식을 검증한다 | 저장소가 알 수 없는 미래 registry digest를 가짜로 고정하지 않으면서 mutable tag 배포를 막는다 | Accepted |
+| DEC-020 | 2026-08-31 | 현재 runtime metric registry는 프로세스 내부 bounded-label 구현으로 제한한다 | 추가 collector 의존성 없이 alert/dashboard 계약을 검증한다. 다중 replica 집계는 production scrape 검증 시 외부 collector로 승격한다 | Accepted |
 
-새 결정은 `DEC-017`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.
+새 결정은 `DEC-021`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.

@@ -765,11 +765,11 @@ git commit -m "test(web): cover critical PWA journeys"
 
 ## Phase 7 Exit Criteria
 
-- [ ] Desktop and mobile navigation expose Today, Inbox, Projects, Calendar and Review.
-- [ ] Onboarding completes the approved AI Life Audit flow.
-- [ ] Task start takes one action and completion/partial/block takes no more than two.
-- [ ] Source conflicts and unknown deadline times are visible and never silently normalized.
-- [ ] Internal versus external Calendar status is explicit.
-- [ ] Agent panel does not display success before Verify.
-- [ ] Critical screens have zero serious accessibility violations.
-- [ ] Core browser E2E and production build pass.
+- [x] Desktop and mobile navigation expose Today, Inbox, Projects, Calendar and Review.
+- [x] Onboarding completes the approved AI Life Audit flow.
+- [x] Task start takes one action and completion/partial/block takes no more than two.
+- [x] Source conflicts and unknown deadline times are visible and never silently normalized.
+- [x] Internal versus external Calendar status is explicit.
+- [x] Agent panel does not display success before Verify.
+- [x] Critical screens have zero serious accessibility violations.
+- [x] Core browser E2E and production build pass.

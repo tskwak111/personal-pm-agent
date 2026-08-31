@@ -520,3 +520,25 @@ BLOCKED_EXTERNAL:
   - production Prometheus scrape와 alert delivery 확인
   - 실제 Google provider executor 자격증명 기반 종단 실행
 ```
+
+## AAA remediation — Traceability and status truthfulness
+
+```text
+Task ID: AAA-FINAL-01..02
+Commit SHAs: ea70ad0, (본 상태 커밋)
+Timestamp UTC: 2026-08-31
+Focused RED:
+  tests/handoff/test_traceability_contract.py import → verify_traceability AttributeError
+  repository verifier after implementation → 74 nonexistent planned evidence paths rejected
+  status contract import → verify_phase_status AttributeError
+Focused GREEN:
+  uv run pytest tests/handoff/test_traceability_contract.py -q → 6 passed
+  python3 scripts/verify_repo.py → PASSED, artifacts=10, workspace_members=3
+Reconciliation:
+  nonexistent local evidence paths → 0
+  absent local product contracts → explicit Not Implemented
+  credentials/private data/production/real-user proof → explicit BLOCKED_EXTERNAL
+  local production-readiness → PENDING until the final fresh command matrix passes
+  release → BLOCKED_EXTERNAL
+Residual risk: IMPLEMENTATION_STATUS.md의 외부 증거 표가 비워질 때까지 release PASS를 주장하지 않는다.
+```

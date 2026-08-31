@@ -789,6 +789,8 @@ git commit -m "feat(planner): complete normative planning engine"
 
 ## Phase 2 Exit Criteria
 
+Status reconciled 2026-08-31 against `evals/reports/stage-a.json` and current Planner tests.
+
 - [x] TV-01 through TV-11 pass exactly.
 - [x] Same input repeated 100 times has one canonical result.
 - [x] Property tests prove slot uniqueness, fixed-event exclusion, dependency order and capacity bounds.

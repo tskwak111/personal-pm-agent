@@ -82,7 +82,7 @@ git commit -m "test(docs): enforce traceability evidence links"
 **Interfaces:**
 - Produces: one consistent local-readiness status and one external-evidence table
 
-- [ ] **Step 1: Add a status-consistency contract**
+- [x] **Step 1: Add a status-consistency contract**
 
 ```python
 def test_complete_phase_has_checked_exit_criteria_or_external_block() -> None:
@@ -92,11 +92,11 @@ def test_complete_phase_has_checked_exit_criteria_or_external_block() -> None:
 
 The verifier rejects `Complete` when a phase exit criterion is unchecked without `BLOCKED_EXTERNAL`.
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest tests/handoff/test_traceability_contract.py -q`
 
-- [ ] **Step 3: Reconcile claims from evidence**
+- [x] **Step 3: Reconcile claims from evidence**
 
 Use these exact top-level states:
 
@@ -105,11 +105,11 @@ Use these exact top-level states:
 
 Check phase items backed by real files/tests. Leave external items unchecked and annotate their required evidence.
 
-- [ ] **Step 4: Record decisions and risks**
+- [x] **Step 4: Record decisions and risks**
 
 Record the local/external split, bearer-only CSRF decision, digest-rendering decision, and in-process metric ceiling. Reopen any risk previously marked mitigated by a synthetic runner.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 python3 scripts/verify_package.py

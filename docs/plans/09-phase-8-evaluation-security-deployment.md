@@ -735,11 +735,11 @@ git commit -m "test(release): enforce immutable release decision"
 
 ## Phase 8 Exit Criteria
 
-- [ ] Stage A, B and C commands generate versioned machine-readable reports.
-- [ ] Security tests cover CSRF, ownership, rate limit, file safety and prompt injection.
-- [ ] Logs and traces redact sensitive fields.
-- [ ] Production images run as non-root and migrations are separate jobs.
-- [ ] Backup and restore are executed, not merely documented.
-- [ ] Pilot protocol and outcome definitions match the evaluation spec.
-- [ ] Release decision cannot be altered by post-hoc threshold changes.
-- [ ] `make verify`, Stage A–C and release report commands all pass from a clean checkout.
+- [ ] Stage A, B and C commands generate versioned machine-readable reports. — BLOCKED_EXTERNAL: Stage B private holdout and Stage C live-provider inputs are absent.
+- [x] Security tests cover bearer-only auth/CSRF posture, ownership, rate limit, file safety and prompt injection.
+- [x] Logs and traces redact sensitive fields.
+- [x] Production images run as non-root and migrations are separate jobs.
+- [ ] Backup and restore are executed, not merely documented. — BLOCKED_EXTERNAL: managed restore RPO/RTO drill is absent.
+- [x] Pilot protocol and outcome definitions match the evaluation spec.
+- [x] Release decision cannot be altered by post-hoc threshold changes.
+- [ ] `make verify`, Stage A–C and release report commands all pass from a clean checkout. — BLOCKED_EXTERNAL: mandatory private/live/pilot inputs prevent a release PASS.
