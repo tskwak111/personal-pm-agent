@@ -77,6 +77,16 @@ class SlotLedger:
             for slot in self._slots
         ]
 
+    def reserve_interval(self, start_at: datetime, end_at: datetime, owner: TaskId) -> None:
+        self.allocate(
+            tuple(
+                slot.id
+                for slot in self._slots
+                if slot.is_free and slot.start_at < end_at and start_at < slot.end_at
+            ),
+            owner,
+        )
+
     def owned_minutes(self, owner: TaskId) -> int:
         return sum(
             int((slot.end_at - slot.start_at).total_seconds() // 60)
@@ -215,6 +225,7 @@ def serial_schedule(
     duration_field: str,
     pass_type: str = "base",
     start_gates: dict[TaskId, frozenset[TaskId]] | None = None,
+    preallocated: tuple[TaskAllocation, ...] = (),
 ) -> ScheduleResult:
     """Serial Schedule Generation over shared slots.
 
@@ -223,9 +234,13 @@ def serial_schedule(
     not open the gate.
     """
     ledger = SlotLedger(slots)
-    allocations: list[TaskAllocation] = []
+    allocations = list(preallocated)
     unallocated: set[TaskId] = set()
-    total = 0
+    total = sum(int((item.end_at - item.start_at).total_seconds() // 60) for item in preallocated)
+    preallocated_by_task: dict[TaskId, list[TaskAllocation]] = {}
+    for item in preallocated:
+        preallocated_by_task.setdefault(item.task_id, []).append(item)
+        ledger.reserve_interval(item.start_at, item.end_at, item.task_id)
 
     gates = start_gates or {}
     placed_fully: set[TaskId] = set()
@@ -248,9 +263,16 @@ def serial_schedule(
             unallocated.update(candidate.id for candidate in pending)
             break
         task = pending.pop(ready_index)
-        required = getattr(task, duration_field)
+        prior_allocations = preallocated_by_task.get(task.id, [])
+        prior_minutes = sum(
+            int((item.end_at - item.start_at).total_seconds() // 60) for item in prior_allocations
+        )
+        required_total = getattr(task, duration_field)
+        required = max(0, required_total - prior_minutes)
         if required <= 0:
             placed_fully.add(task.id)
+            if prior_allocations:
+                completion_by_task[task.id] = max(item.end_at for item in prior_allocations)
             continue
         predecessor_end = max(
             (
@@ -260,21 +282,29 @@ def serial_schedule(
             ),
             default=None,
         )
+        own_prior_end = (
+            max(item.end_at for item in prior_allocations) if prior_allocations else None
+        )
         produced = _place_task(
             ledger,
             task,
             required,
             pass_type,
-            earliest_start=predecessor_end,
+            earliest_start=max(
+                (value for value in (predecessor_end, own_prior_end) if value is not None),
+                default=None,
+            ),
         )
         placed = sum(int((item.end_at - item.start_at).total_seconds() // 60) for item in produced)
         allocations.extend(produced)
         total += placed
-        if placed < required:
+        if prior_minutes + placed < required_total:
             unallocated.add(task.id)
         else:
             placed_fully.add(task.id)
-            completion_by_task[task.id] = max(item.end_at for item in produced)
+            completion_by_task[task.id] = max(
+                item.end_at for item in (*prior_allocations, *produced)
+            )
 
     return ScheduleResult(
         allocations=tuple(allocations),

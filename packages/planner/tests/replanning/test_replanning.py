@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
@@ -112,6 +113,100 @@ def test_freeze_window_change_requires_proposal() -> None:
     assert any(
         proposal.approval_level is AuthorizationLevel.APPROVAL for proposal in outcome.proposals
     )
+
+
+def test_public_plan_preserves_pinned_allocation_until_proposal_is_approved() -> None:
+    from personal_pm_planner import plan
+
+    snapshot = PriorPlanSnapshot(
+        id=UUID(int=900),
+        input_hash="prior",
+        allocations=(
+            PriorAllocation(
+                task_id=TaskId(UUID(int=1)),
+                start_at=datetime(2026, 9, 1, 3, 30, tzinfo=UTC),
+                end_at=datetime(2026, 9, 1, 5, 30, tzinfo=UTC),
+            ),
+        ),
+    )
+    value = build_value(
+        task_specs=[{"base": 120, "safety": 150}],
+        prior=snapshot,
+        pinned={TaskId(UUID(int=1))},
+    )
+
+    output = plan(value)
+
+    assert output.base_plan is not None
+    allocation = next(
+        item for item in output.base_plan.allocations if item.task_id == TaskId(UUID(int=1))
+    )
+    assert allocation.start_at == snapshot.allocations[0].start_at
+    assert allocation.end_at == snapshot.allocations[0].end_at
+    assert "PROPOSAL_REQUIRED:USER_PINNED_MOVE_FORBIDDEN" in output.validation_warnings
+
+
+def test_public_plan_preserves_freeze_window_allocation_until_proposal_is_approved() -> None:
+    from personal_pm_planner import plan
+
+    snapshot = PriorPlanSnapshot(
+        id=UUID(int=901),
+        input_hash="prior",
+        allocations=(
+            PriorAllocation(
+                task_id=TaskId(UUID(int=1)),
+                start_at=datetime(2026, 9, 1, 1, 30, tzinfo=UTC),
+                end_at=datetime(2026, 9, 1, 2, 30, tzinfo=UTC),
+            ),
+        ),
+    )
+    value = build_value(
+        task_specs=[{"base": 60, "safety": 90}],
+        prior=snapshot,
+    )
+
+    output = plan(value)
+
+    assert output.base_plan is not None
+    allocation = next(
+        item for item in output.base_plan.allocations if item.task_id == TaskId(UUID(int=1))
+    )
+    assert allocation.start_at == snapshot.allocations[0].start_at
+    assert allocation.end_at == snapshot.allocations[0].end_at
+    assert "PROPOSAL_REQUIRED:FREEZE_WINDOW_MOVE_FORBIDDEN" in output.validation_warnings
+
+
+def test_public_plan_keeps_pinned_allocation_when_no_fresh_slot_exists() -> None:
+    from personal_pm_planner import plan
+
+    snapshot = PriorPlanSnapshot(
+        id=UUID(int=902),
+        input_hash="prior",
+        allocations=(
+            PriorAllocation(
+                task_id=TaskId(UUID(int=1)),
+                start_at=datetime(2026, 9, 1, 3, 30, tzinfo=UTC),
+                end_at=datetime(2026, 9, 1, 4, 30, tzinfo=UTC),
+            ),
+        ),
+    )
+    value = replace(
+        build_value(
+            task_specs=[{"base": 60, "safety": 90}],
+            prior=snapshot,
+            pinned={TaskId(UUID(int=1))},
+        ),
+        availability_windows=(),
+    )
+
+    output = plan(value)
+
+    assert output.base_plan is not None
+    assert [
+        (item.start_at, item.end_at)
+        for item in output.base_plan.allocations
+        if item.task_id == TaskId(UUID(int=1))
+    ] == [(snapshot.allocations[0].start_at, snapshot.allocations[0].end_at)]
 
 
 def test_choose_candidate_uses_lexicographic_field_order() -> None:

@@ -17,7 +17,7 @@ from personal_pm_planner.risk.classify import (
     RiskContext,
     calculate_risks,
 )
-from personal_pm_planner.scheduling.passes import PlanningPasses, run_planning_passes
+from personal_pm_planner.scheduling.passes import PlanningPasses
 from personal_pm_planner.today import build_today_plan
 
 
@@ -52,7 +52,8 @@ def plan(value: PlannerInput) -> PlannerOutput:
             generated_at_utc=value.now_utc,
         )
 
-    passes = run_planning_passes(value)
+    outcome = run_replan(value)
+    passes = outcome.selected_passes
     risk_context = _risk_context(value)
     risks = calculate_risks(passes, risk_context)
 
@@ -76,10 +77,6 @@ def plan(value: PlannerInput) -> PlannerOutput:
         opportunistic=today_view.opportunistic,
         excluded=today_view.excluded,
     )
-
-    # Replanning evidence is computed but the candidate IS the fresh Base plan;
-    # prior-shape protection already flowed through protected intervals.
-    outcome = run_replan(value)
 
     warnings = list(today_view.warnings)
     for cycle in risk_context.analysis.cycles:

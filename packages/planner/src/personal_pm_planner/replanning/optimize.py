@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from personal_pm_planner.availability.slots import Interval
-from personal_pm_planner.contracts.input import PlannerInput
+from personal_pm_planner.contracts.input import PlannerInput, PriorAllocation
 from personal_pm_planner.domain.enums import TaskStatus
 from personal_pm_planner.domain.identifiers import MilestoneId, TaskId
 from personal_pm_planner.replanning.cost import (
@@ -46,6 +46,7 @@ class ReplanOutcome:
     diff: ReplanDiff
     applied_moves: tuple[AppliedMove, ...]
     proposals: tuple[object, ...]
+    selected_passes: PlanningPasses
 
 
 def _prior_intervals(value: PlannerInput) -> tuple[Interval, ...]:
@@ -54,6 +55,18 @@ def _prior_intervals(value: PlannerInput) -> tuple[Interval, ...]:
         return ()
     return tuple(
         Interval(start_at=item.start_at, end_at=item.end_at) for item in snapshot.allocations
+    )
+
+
+def _protected_prior_allocations(value: PlannerInput) -> tuple[PriorAllocation, ...]:
+    snapshot = value.prior_plan_snapshot
+    if snapshot is None:
+        return ()
+    return tuple(
+        item
+        for item in snapshot.allocations
+        if item.task_id in value.pinned_task_ids
+        or is_in_freeze_window(item.start_at, value.now_utc)
     )
 
 
@@ -176,6 +189,24 @@ def replan(value_or_context: PlannerInput | ReplanContext) -> ReplanOutcome:
         )
         change_cost_total += cost
 
+    protected_prior = _protected_prior_allocations(value)
+    protected_by_task = {item.task_id: item for item in protected_prior}
+    for task_id in diff.removed_task_ids:
+        protected = protected_by_task.get(task_id)
+        if protected is None:
+            continue
+        reason = (
+            "USER_PINNED_MOVE_FORBIDDEN" if task_id in pinned else "FREEZE_WINDOW_MOVE_FORBIDDEN"
+        )
+        proposals.append(
+            proposal_for_disallowed_move(
+                task_id,
+                reason_rule_id=reason,
+                milestone_id=None,
+                minutes_delta=0,
+            )
+        )
+
     before_metrics = _metrics_from(
         value,
         before_passes,
@@ -197,6 +228,14 @@ def replan(value_or_context: PlannerInput | ReplanContext) -> ReplanOutcome:
         diff=diff,
         applied_moves=tuple(applied_moves),
         proposals=tuple(proposals),
+        selected_passes=(
+            run_planning_passes(
+                value,
+                preallocated=protected_prior,
+            )
+            if proposals
+            else after_passes
+        ),
     )
 
 

@@ -17,7 +17,8 @@ from personal_pm_planner.availability.slots import (
     Interval,
     build_unique_slots,
 )
-from personal_pm_planner.contracts.input import PlannerInput
+from personal_pm_planner.contracts.input import PlannerInput, PriorAllocation
+from personal_pm_planner.contracts.output import PassType, TaskAllocation
 from personal_pm_planner.domain.enums import (
     DeadlineType,
     DependencyType,
@@ -200,6 +201,7 @@ def run_planning_passes(
     value: PlannerInput,
     *,
     extra_protected_intervals: tuple[Interval, ...] = (),
+    preallocated: tuple[PriorAllocation, ...] = (),
 ) -> PlanningPasses:
     analysis = build_graph_analysis(value)
     tasks = enrich_tasks(value, analysis)
@@ -208,12 +210,15 @@ def run_planning_passes(
     schedulable = tasks + buffer_tasks
 
     gates = _start_gates(value)
+    preallocated_base = _preallocated_for_pass(preallocated, PassType.BASE)
+    preallocated_safety = _preallocated_for_pass(preallocated, PassType.SAFETY)
     provisional = serial_schedule(
         tasks=schedulable,
         slots=_fresh_slots(value, extra_protected_intervals),
         duration_field="base_duration_minutes",
         pass_type="base",
         start_gates=gates,
+        preallocated=preallocated_base,
     )
     final_tasks, promoted = _promote_infeasible_required_paths_once(schedulable, provisional, value)
 
@@ -223,6 +228,7 @@ def run_planning_passes(
         duration_field="base_duration_minutes",
         pass_type="base",
         start_gates=gates,
+        preallocated=preallocated_base,
     )
     safety = serial_schedule(
         tasks=final_tasks,
@@ -230,6 +236,7 @@ def run_planning_passes(
         duration_field="safety_duration_minutes",
         pass_type="safety",
         start_gates=gates,
+        preallocated=preallocated_safety,
     )
     return PlanningPasses(
         provisional=provisional,
@@ -238,6 +245,27 @@ def run_planning_passes(
         promoted_task_count=promoted,
         buffers_by_milestone=buffers_by_milestone,
     )
+
+
+def _preallocated_for_pass(
+    allocations: tuple[PriorAllocation, ...],
+    pass_type: PassType,
+) -> tuple[TaskAllocation, ...]:
+    chunk_by_task: dict[TaskId, int] = {}
+    result: list[TaskAllocation] = []
+    for item in sorted(allocations, key=lambda value: (value.start_at, value.task_id.value.hex)):
+        chunk_index = chunk_by_task.get(item.task_id, 0)
+        result.append(
+            TaskAllocation(
+                task_id=item.task_id,
+                pass_type=pass_type,
+                start_at=item.start_at,
+                end_at=item.end_at,
+                chunk_index=chunk_index,
+            )
+        )
+        chunk_by_task[item.task_id] = chunk_index + 1
+    return tuple(result)
 
 
 def _promote_infeasible_required_paths_once(
