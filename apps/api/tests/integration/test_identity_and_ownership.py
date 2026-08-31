@@ -123,6 +123,15 @@ async def test_missing_session_is_unauthorized(api: dict) -> None:
     assert response.status_code == 401
 
 
+async def test_cookie_only_request_is_unauthorized(api: dict) -> None:
+    client: AsyncClient = api["client"]
+    response = await client.get(
+        "/api/v1/workstreams",
+        headers={"Cookie": f"session={api['token_a']}"},
+    )
+    assert response.status_code == 401
+
+
 async def test_cross_workspace_object_is_not_disclosed(api: dict) -> None:
     client: AsyncClient = api["client"]
     task_b = api["task_b"]

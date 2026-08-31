@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T10:54:53+09:00
+- **Manifest regenerated:** 2026-08-31T11:00:38+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -47,7 +47,7 @@
 | `docs/operations/backup-and-restore.md` | 1851 | `977765aacca36f8ab730ddb206e69b4e442e2d2067bed50cbc861a32c29d7638` |
 | `docs/operations/event-catalog.md` | 602 | `39a5aa927c325433307f218355ee17953e6404c9e211e49dfd7e291b5ef5a223` |
 | `docs/operations/release-runbook.md` | 435 | `29b9ca5dce74165e093db87e656b08c24513dbc9249c63428bc63b7b04011100` |
-| `docs/operations/security-privacy-and-runbook.md` | 4789 | `34ad3a9ba0cddffd9d9a87eb4280b7fdfc608d7d183fb621929ddb95936769e3` |
+| `docs/operations/security-privacy-and-runbook.md` | 5015 | `b537c2e46f65492167f91192121fd672189e107aa61b4a59c02aaf828c0c22f6` |
 | `docs/pilot/annotation-guide.md` | 351 | `0e88e3d9c4732d96754a11c6f33533735dbd60fdfecebf50cb3f42d7713e446a` |
 | `docs/pilot/baseline-questionnaire.md` | 196 | `946bcfb6273b0c4108cb395f944c26799846fbd82fc2a1b13e080173bb536518` |
 | `docs/pilot/incident-procedure.md` | 329 | `0d1b8323003199ad0dce292df83da9abeec78145939994aacaa0cf4e626955b7` |

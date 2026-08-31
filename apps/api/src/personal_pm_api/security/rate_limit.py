@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
+from threading import Lock
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,17 +26,28 @@ class RateLimiter:
     """Fixed-window counter keyed by (actor, bucket name)."""
 
     def __init__(self) -> None:
-        self._counts: dict[tuple[str, int, timedelta], int] = {}
+        self._counters: dict[tuple[str, str], tuple[datetime, int]] = {}
+        self._lock = Lock()
 
-    def allow(self, actor_id: str, *, bucket: RateLimit) -> bool:
-        # Key on the LIMIT CONFIG, not the object identity: two equal limits
-        # must share a bucket, and id() is not stable across interpreters.
-        key = (actor_id, bucket.max_requests, bucket.window)
-        current = self._counts.get(key, 0)
-        if current >= bucket.max_requests:
-            return False
-        self._counts[key] = current + 1
-        return True
+    def allow(
+        self,
+        actor_id: str,
+        *,
+        bucket_name: str,
+        bucket: RateLimit,
+        now_utc: datetime,
+    ) -> bool:
+        if now_utc.tzinfo is None or now_utc.utcoffset() is None:
+            raise ValueError("rate-limit clock must be timezone-aware")
+        key = (actor_id, bucket_name)
+        with self._lock:
+            window_start, count = self._counters.get(key, (now_utc, 0))
+            if now_utc - window_start >= bucket.window:
+                window_start, count = now_utc, 0
+            if count >= bucket.max_requests:
+                return False
+            self._counters[key] = (window_start, count + 1)
+            return True
 
 
 __all__ = ["RATE_LIMITS", "RateLimit", "RateLimiter"]

@@ -1,13 +1,80 @@
 """FastAPI application factory for the Personal PM Agent API."""
 
-from fastapi import FastAPI
+from __future__ import annotations
 
+import hashlib
+from collections.abc import Awaitable, Callable, Mapping
+from datetime import UTC, datetime
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from starlette.responses import Response
+
+from personal_pm_api.security.rate_limit import RATE_LIMITS, RateLimit, RateLimiter
 from personal_pm_api.settings import ApiSettings
 
 
-def create_app(settings: ApiSettings | None = None) -> FastAPI:
+def _utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
+def _rate_bucket(request: Request) -> str | None:
+    path = request.url.path
+    if not path.startswith("/api/v1/"):
+        return None
+    if path == "/api/v1/identity/test-session":
+        return "auth"
+    if path == "/api/v1/inbox/sources" and request.method == "POST":
+        return "upload"
+    if path.startswith("/api/v1/calendar/") or request.method not in {"GET", "HEAD", "OPTIONS"}:
+        return "external-write"
+    return "read-api"
+
+
+def _rate_actor(request: Request, bucket_name: str) -> str:
+    client_address = request.client.host if request.client is not None else "unknown"
+    if bucket_name == "auth":
+        return f"client:{client_address}"
+    authorization = request.headers.get("Authorization", "")
+    if authorization.startswith("Bearer "):
+        raw_token = authorization.removeprefix("Bearer ").strip()
+        if raw_token:
+            token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+            return f"session:{token_hash}"
+    return f"client:{client_address}"
+
+
+def create_app(
+    settings: ApiSettings | None = None,
+    *,
+    rate_limits: Mapping[str, RateLimit] | None = None,
+    rate_limit_clock: Callable[[], datetime] = _utc_now,
+) -> FastAPI:
     app_settings = settings if settings is not None else ApiSettings()
     app = FastAPI(title="Personal PM Agent API", version="0.1.0")
+    limiter = RateLimiter()
+    limits = RATE_LIMITS if rate_limits is None else rate_limits
+
+    @app.middleware("http")
+    async def enforce_rate_limit(
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        bucket_name = _rate_bucket(request)
+        if bucket_name is not None:
+            bucket = limits.get(bucket_name)
+            if bucket is not None and not limiter.allow(
+                _rate_actor(request, bucket_name),
+                bucket_name=bucket_name,
+                bucket=bucket,
+                now_utc=rate_limit_clock(),
+            ):
+                return JSONResponse(
+                    status_code=429,
+                    content={"code": "RATE_LIMITED", "bucket": bucket_name},
+                    headers={"Retry-After": str(max(1, int(bucket.window.total_seconds())))},
+                )
+        return await call_next(request)
 
     from personal_pm_api.approvals.router import router as approvals_router
     from personal_pm_api.calendar.router import router as calendar_router

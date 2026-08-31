@@ -12,7 +12,8 @@
 
 ## 2. Authentication and authorization
 
-- Browser sessions use secure, HTTP-only, SameSite cookies and CSRF defenses.
+- Browser clients explicitly attach bearer sessions in the `Authorization` header; the API does not accept ambient authentication cookies.
+- CSRF tokens are not applicable to the current bearer-only mode. Introduce SameSite/HTTP-only cookies and CSRF defenses together if cookie authentication is added.
 - OAuth state, PKCE and redirect URI checks are mandatory.
 - Provider scopes are incremental: calendar read before calendar write.
 - Every repository query is scoped by workspace; object IDs alone never authorize access.
