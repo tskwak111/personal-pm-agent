@@ -152,6 +152,23 @@ async def test_failed_external_verification_is_reported_as_failed(
     assert result.user_message_code == "EXTERNAL_EXECUTION_FAILED"
 
 
+async def test_missing_external_executor_never_reports_success(
+    orch_env: dict[str, Any],
+) -> None:
+    from personal_pm_api.agent.orchestrator import StepEvent
+
+    result = await orch_env["orchestrator"].handle(
+        orch_env["actor"],
+        text="실행해줘",
+        approved_proposal_id=orch_env["proposal"],
+    )
+
+    assert result.status == "FAILED"
+    assert result.external_action_executed is False
+    assert result.user_message_code == "EXTERNAL_EXECUTOR_UNAVAILABLE"
+    assert result.events[-1] == StepEvent(step="VERIFY", status="FAILED")
+
+
 async def test_read_only_operation_skips_authorize_and_act(
     orch_env: dict[str, Any],
 ) -> None:

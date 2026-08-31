@@ -113,14 +113,19 @@ class AgentOrchestrator:
                     external_action_executed=False,
                     authorization_level=review.level,
                 )
+            executor = self._external_executor
+            if executor is None:
+                events.append(StepEvent(step="VERIFY", status="FAILED"))
+                return OperationResult(
+                    status="FAILED",
+                    events=tuple(events),
+                    external_action_executed=False,
+                    authorization_level=review.level,
+                    user_message_code="EXTERNAL_EXECUTOR_UNAVAILABLE",
+                )
             try:
-                executor = self._external_executor
-                if executor is not None:
-                    outcome = await executor.execute(approved_proposal_id)
-                    verified = outcome == "SUCCEEDED"
-                else:
-                    outcome = "SUCCEEDED"
-                    verified = True
+                outcome = await executor.execute(approved_proposal_id)
+                verified = outcome == "SUCCEEDED"
                 events.append(
                     StepEvent(step="VERIFY", status="SUCCEEDED" if verified else "FAILED")
                 )
