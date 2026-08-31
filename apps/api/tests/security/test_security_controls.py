@@ -87,3 +87,19 @@ def test_upload_scan_allows_plain_text() -> None:
 
     verdict = scan_upload(b"hello world", declared_type="text/plain")
     assert verdict.allowed is True
+
+
+def test_upload_scan_rejects_invalid_utf8_text() -> None:
+    from personal_pm_api.security.uploads import scan_upload
+
+    verdict = scan_upload(b"\xff\xfe", declared_type="text/plain")
+    assert verdict.allowed is False
+    assert verdict.code == "UPLOAD_REJECTED"
+
+
+def test_upload_scan_detects_declared_type_mismatch() -> None:
+    from personal_pm_api.security.uploads import scan_upload
+
+    verdict = scan_upload(b"\x89PNG\r\n\x1a\n", declared_type="application/pdf")
+    assert verdict.allowed is False
+    assert verdict.code == "UPLOAD_TYPE_MISMATCH"

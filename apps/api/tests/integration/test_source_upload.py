@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 
 @pytest_asyncio.fixture
@@ -49,6 +49,7 @@ async def upload_env(clean_tables, database_url_session) -> AsyncIterator[dict[s
         )
         await session.commit()
         ids["workspace"] = str(workspace.id)
+        ids["factory"] = factory
 
     transport = ASGITransport(app=app)
     client = AsyncClient(
@@ -80,6 +81,57 @@ async def test_upload_rejects_oversized_or_disallowed_file(
     assert response.json()["code"] == "UNSUPPORTED_SOURCE_TYPE"
 
 
+async def _source_and_outbox_counts(upload_env: dict[str, Any]) -> tuple[int, int]:
+    from personal_pm_api.execution.models import OutboxEventModel
+    from personal_pm_api.inbox.models import SourceArtifactModel
+
+    async with upload_env["factory"]() as session:
+        sources = int(await session.scalar(select(func.count()).select_from(SourceArtifactModel)))
+        outbox = int(await session.scalar(select(func.count()).select_from(OutboxEventModel)))
+    return sources, outbox
+
+
+async def test_executable_disguised_as_pdf_is_rejected_before_persistence(
+    upload_env: dict[str, Any],
+) -> None:
+    client: AsyncClient = upload_env["client"]
+    response = await client.post(
+        "/api/v1/inbox/sources?filename=notice.pdf",
+        content=b"MZ" + b"x" * 64,
+        headers={"Content-Type": "application/pdf"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "UPLOAD_REJECTED"
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)
+
+
+async def test_declared_type_must_match_magic_bytes(upload_env: dict[str, Any]) -> None:
+    client: AsyncClient = upload_env["client"]
+    response = await client.post(
+        "/api/v1/inbox/sources?filename=image.pdf",
+        content=b"\x89PNG\r\n\x1a\n" + b"x" * 64,
+        headers={"Content-Type": "application/pdf"},
+    )
+
+    assert response.status_code == 415
+    assert response.json()["code"] == "UPLOAD_TYPE_MISMATCH"
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)
+
+
+async def test_valid_raw_pdf_is_scanned_before_metadata_insert(upload_env: dict[str, Any]) -> None:
+    client: AsyncClient = upload_env["client"]
+    content = b"%PDF-1.7\nvalid test document"
+    response = await client.post(
+        "/api/v1/inbox/sources?filename=notice.pdf",
+        content=content,
+        headers={"Content-Type": "application/pdf"},
+    )
+
+    assert response.status_code == 201
+    assert await _source_and_outbox_counts(upload_env) == (1, 0)
+
+
 async def test_oversized_file_is_rejected(upload_env: dict[str, Any]) -> None:
     client: AsyncClient = upload_env["client"]
     response = await client.post(
@@ -94,7 +146,7 @@ async def test_oversized_file_is_rejected(upload_env: dict[str, Any]) -> None:
     assert response.json()["code"] == "SOURCE_TOO_LARGE"
 
 
-async def test_source_artifact_key_is_workspace_scoped(
+async def test_unscanned_metadata_initiation_is_rejected(
     upload_env: dict[str, Any],
 ) -> None:
     client: AsyncClient = upload_env["client"]
@@ -106,11 +158,9 @@ async def test_source_artifact_key_is_workspace_scoped(
             "size_bytes": 1024,
         },
     )
-    assert response.status_code == 201
-    body = response.json()
-    assert body["storage_key"].startswith("workspaces/")
-    assert body["status"] == "NEW"
-    assert len(body["id"]) > 0
+    assert response.status_code == 410
+    assert response.json()["code"] == "UPLOAD_FLOW_REPLACED"
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)
 
 
 async def test_upload_record_is_persisted_and_immutable_source_identity(
@@ -120,14 +170,11 @@ async def test_upload_record_is_persisted_and_immutable_source_identity(
     from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
     client: AsyncClient = upload_env["client"]
+    content = b"plain UTF-8 notes"
     created = await client.post(
-        "/api/v1/source-artifacts/uploads",
-        json={
-            "filename": "notes.txt",
-            "content_type": "text/plain",
-            "size_bytes": 2048,
-            "sha256": "a" * 64,
-        },
+        "/api/v1/inbox/sources?filename=notes.txt",
+        content=content,
+        headers={"Content-Type": "text/plain; charset=utf-8"},
     )
     assert created.status_code == 201
 
@@ -141,6 +188,43 @@ async def test_upload_record_is_persisted_and_immutable_source_identity(
     row = rows[0]
     assert row.filename == "notes.txt"
     assert row.content_type == "text/plain"
-    assert row.size_bytes == 2048
+    assert row.size_bytes == len(content)
     assert str(row.workspace_id) == upload_env["workspace"]
-    assert row.sha256 == "a" * 64
+    import hashlib
+
+    assert row.sha256 == hashlib.sha256(content).hexdigest()
+
+
+async def test_path_like_filename_is_rejected_before_persistence(
+    upload_env: dict[str, Any],
+) -> None:
+    client: AsyncClient = upload_env["client"]
+    response = await client.post(
+        "/api/v1/inbox/sources?filename=../notice.pdf",
+        content=b"%PDF-1.7\nvalid",
+        headers={"Content-Type": "application/pdf"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "INVALID_SOURCE_FILENAME"
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)
+
+
+async def test_oversized_content_length_is_rejected_before_body_processing(
+    upload_env: dict[str, Any],
+) -> None:
+    from personal_pm_api.security.uploads import MAX_UPLOAD_BYTES
+
+    client: AsyncClient = upload_env["client"]
+    response = await client.post(
+        "/api/v1/inbox/sources?filename=notice.pdf",
+        content=b"%PDF-1.7\nsmall body",
+        headers={
+            "Content-Type": "application/pdf",
+            "Content-Length": str(MAX_UPLOAD_BYTES + 1),
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "UPLOAD_REJECTED"
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)

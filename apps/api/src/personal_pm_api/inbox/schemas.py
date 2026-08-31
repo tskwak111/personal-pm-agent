@@ -4,16 +4,13 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-ALLOWED_SOURCE_TYPES = frozenset(
-    {
-        "application/pdf",
-        "image/png",
-        "image/jpeg",
-        "text/plain",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    }
+from personal_pm_api.security.uploads import (
+    MAX_UPLOAD_BYTES,
+    SUPPORTED_UPLOAD_TYPES,
 )
-MAX_SOURCE_BYTES = 25 * 1024 * 1024
+
+ALLOWED_SOURCE_TYPES = SUPPORTED_UPLOAD_TYPES
+MAX_SOURCE_BYTES = MAX_UPLOAD_BYTES
 
 
 class UploadInitiationRequest(BaseModel):
@@ -38,3 +35,15 @@ def validate_source_upload(content_type: str, size_bytes: int) -> None:
         raise DomainRuleError("UNSUPPORTED_SOURCE_TYPE", f"unsupported type {content_type}")
     if size_bytes <= 0 or size_bytes > MAX_SOURCE_BYTES:
         raise DomainRuleError("SOURCE_TOO_LARGE", f"size {size_bytes} exceeds limit")
+
+
+def validate_source_filename(filename: str) -> None:
+    from personal_pm_api.shared.errors import DomainRuleError
+
+    if (
+        filename in {".", ".."}
+        or "/" in filename
+        or "\\" in filename
+        or any(ord(character) < 32 for character in filename)
+    ):
+        raise DomainRuleError("INVALID_SOURCE_FILENAME", "filename must be a single safe segment")
