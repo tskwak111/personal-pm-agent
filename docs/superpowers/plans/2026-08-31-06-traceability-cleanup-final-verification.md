@@ -177,7 +177,7 @@ git commit -m "refactor(repo): delete verified dead code"
 **Interfaces:**
 - Produces: immutable local readiness report with command, exit code, counts, revision, and input hashes
 
-- [ ] **Step 1: Verify failure paths**
+- [x] **Step 1: Verify failure paths**
 
 Run fixtures that intentionally violate:
 
@@ -193,7 +193,7 @@ Run fixtures that intentionally violate:
 
 Assert every corresponding command exits non-zero and emits the expected reason code.
 
-- [ ] **Step 2: Run fresh positive commands**
+- [x] **Step 2: Run fresh positive commands**
 
 ```bash
 make bootstrap
@@ -213,7 +213,7 @@ git diff --check
 
 Record exact exit codes and failure counts. Do not reuse prior output files.
 
-- [ ] **Step 3: Create the local report**
+- [x] **Step 3: Create the local report**
 
 The JSON report contains:
 
@@ -229,7 +229,7 @@ payload = {
 
 Populate values from the fresh run. `decision` remains FAIL until every mandatory local command is zero.
 
-- [ ] **Step 4: Commit evidence**
+- [x] **Step 4: Commit evidence**
 
 ```bash
 git add evals/reports/local-production-readiness.json docs/status/VERIFICATION_EVIDENCE.md

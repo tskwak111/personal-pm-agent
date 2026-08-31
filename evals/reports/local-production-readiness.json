@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "revision": "45b68e0060a4955954323f0d87c8ac199ed8cb5a",
+  "profile": "local-production-readiness",
+  "decision": "PASS",
+  "measured_at": "2026-08-31T13:41:13+09:00",
+  "commands": [
+    {"command": "make bootstrap", "exit_code": 0, "result": "49 Python packages checked; pnpm lockfile up to date"},
+    {"command": "make format-check", "exit_code": 0, "result": "176 Python files and both TypeScript workspaces formatted"},
+    {"command": "make lint", "exit_code": 0, "result": "Ruff and ESLint passed"},
+    {"command": "make typecheck", "exit_code": 0, "result": "mypy strict 159 source files; TypeScript passed"},
+    {"command": "make test-unit", "exit_code": 0, "result": "Python 290 passed, 112 deselected; API client 2 passed; Web 40 passed"},
+    {"command": "make test-integration", "exit_code": 0, "result": "PostgreSQL integration and Planner 247 passed"},
+    {"command": "make test-e2e", "exit_code": 0, "result": "standalone Next, real FastAPI/PostgreSQL, Playwright and axe 16 passed"},
+    {"command": "make build", "exit_code": 0, "result": "API client and optimized Next standalone build passed"},
+    {"command": "make verify", "exit_code": 0, "result": "static, unit, build, document, repository, Stage A 20000 and emulator Stage C passed"},
+    {"command": "python3 scripts/verify_package.py", "exit_code": 0, "result": "77 manifest files; 104 requirements; 64 metrics"},
+    {"command": "python3 scripts/verify_repo.py", "exit_code": 0, "result": "10 artifacts and 3 Python workspace members passed"},
+    {"command": "uv run python scripts/run_stage_a.py --scenarios 20000 --output /tmp/pma-stage-a-final.json", "exit_code": 0, "result": "PASS; 20000 scenarios; 15 hard gates; 0 failed gates"},
+    {"command": "git diff --check", "exit_code": 0, "result": "clean"}
+  ],
+  "negative_contracts": {
+    "command": "focused fail-closed pytest nodes",
+    "exit_code": 0,
+    "assertions_passed": 10,
+    "covered": [
+      "PLAN-002 dependency ordering",
+      "pinned allocation preservation",
+      "freeze-window preservation",
+      "missing external executor never succeeds",
+      "omitted Stage A gate returns nonzero",
+      "incomplete Stage B corpus is BLOCKED_EXTERNAL",
+      "missing Stage C metric fails",
+      "missing mandatory release outcome fails",
+      "invalid deployment digest is rejected",
+      "missing traceability path is rejected"
+    ]
+  },
+  "input_hashes": {
+    "stage_a_report": "5f16f40fd03f46fec7085287753b6f1296de3f4900942e9b3308fb8240af0368",
+    "stage_a_gate_map": "ea8f39ca9d8c33e9bfd2ad1de503bb961ce0d3d8edcebcd798ff696887783b7b",
+    "distribution_manifest": "2634db528f14c3e24a1a04265f274f4911108a4a0a2d9f8a6783e033f4c405fc",
+    "uv_lock": "d93363cb26c968ca824cd54569371037a3849d2979f79990445fb99f0087aa2e",
+    "pnpm_lock": "429a7599720dd19a45e849fbc1332a5ac991e6f98fbfabb81c560be38e82413b"
+  },
+  "external_blockers": [
+    "Stage B private holdout corpus and immutable report",
+    "Stage C live Google provider fault and reconciliation report",
+    "registry-returned image digests and cluster rollout/rollback evidence",
+    "managed backup restore RPO/RTO drill",
+    "dependency advisory and penetration review evidence",
+    "consented Stage D baseline and four-week pilot outcomes",
+    "production metrics scrape and alert-delivery observation"
+  ],
+  "release_decision": "BLOCKED_EXTERNAL"
+}

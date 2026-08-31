@@ -1,10 +1,10 @@
 # 구현 상태
 
-- **Local Production Readiness:** PENDING (최종 전체 명령 재실행 전)
+- **Local Production Readiness:** PASS
 - **Release:** BLOCKED_EXTERNAL
 - **현재 Phase:** AAA production-readiness reconciliation
-- **현재 Task:** `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md`
-- **마지막 로컬 검증:** runtime 단위 게이트 PASS (Python 284 passed/112 deselected, API client 2, Web 40); 최종 전체 게이트는 Phase 6 Task 4에서 새로 실행
+- **현재 Task:** independent whole-branch review and final verification
+- **마지막 로컬 검증:** `make verify` PASS; Python unit 290, API client 2, Web unit 40, PostgreSQL integration 247, standalone E2E/axe 16, Stage A 20,000/15 gates PASS — 2026-08-31 실측
 - **기준 브랜치:** `codex/aaa-production-readiness`
 
 ## Phase 현황
@@ -73,6 +73,6 @@
 
 ## 다음 행동
 
-1. 추적성·상태 일관성 계약을 통과시킨다.
-2. 증명된 dead code만 제거한다.
-3. 전체 로컬 음성/양성 게이트를 새로 실행하고 local-readiness report를 고정한다.
+1. 전체 브랜치 독립 리뷰에서 Critical/Important 0건을 확인한다.
+2. 마지막 수정 뒤 최종 검증을 다시 실행한다.
+3. 외부 증거 표가 남아 있으므로 release는 계속 차단한다.

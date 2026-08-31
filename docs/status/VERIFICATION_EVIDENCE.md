@@ -560,3 +560,30 @@ Completion:
 Net: 126 lines removed, 2 lines added, 0 dependencies added or removed.
 Residual risk: production transaction, ownership, adapter and Planner boundaries were retained.
 ```
+
+## AAA remediation — Local production-readiness gate
+
+```text
+Task ID: AAA-FINAL-04
+Measured revision: 45b68e0060a4955954323f0d87c8ac199ed8cb5a
+Timestamp UTC: 2026-08-31T04:41:13Z
+Fail-closed regression command: 10 focused nodes → 10 passed; dependency/freeze/executor/Stage A/B/C/release/digest/traceability rejection paths asserted.
+Fresh positive commands:
+  make bootstrap → exit 0
+  make format-check → exit 0
+  make lint → exit 0
+  make typecheck → exit 0, mypy 159 source files + TypeScript
+  make test-unit → exit 0, Python 290 passed/112 deselected + API client 2 + Web 40
+  make test-integration → exit 0, PostgreSQL + Planner 247 passed
+  make test-e2e → exit 0, standalone Next + FastAPI/PostgreSQL + Playwright/axe 16 passed
+  make build → exit 0
+  make verify → exit 0, includes Stage A 20,000 PASS and emulator Stage C PASS
+  python3 scripts/verify_package.py → exit 0, manifest_files=77
+  python3 scripts/verify_repo.py → exit 0, artifacts=10/workspace_members=3
+  separate Stage A 20,000 → exit 0, 15 gates/0 failures
+  git diff --check → exit 0
+Generated report: evals/reports/local-production-readiness.json
+Local decision: PASS
+Release decision: BLOCKED_EXTERNAL
+Warnings: upstream Starlette httpx deprecation and Alembic path_separator deprecation; neither changed command exit status.
+```
