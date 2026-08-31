@@ -30,6 +30,19 @@ def test_migration_is_separate_from_api_start() -> None:
     assert "alembic" in migrate
 
 
+def test_web_build_mode_matches_docker_copy() -> None:
+    config = (_REPO_ROOT / "apps" / "web" / "next.config.ts").read_text(encoding="utf-8")
+    dockerfile = (_REPO_ROOT / "infra" / "docker" / "Dockerfile.web").read_text(encoding="utf-8")
+    assert 'output: "standalone"' in config
+    assert ".next/standalone" in dockerfile
+
+
+def test_worker_image_copies_api_and_worker_sources() -> None:
+    source = (_REPO_ROOT / "infra" / "docker" / "Dockerfile.worker").read_text(encoding="utf-8")
+    assert "COPY apps/api" in source
+    assert "COPY apps/worker" in source
+
+
 def test_smoke_main_passes(tmp_path: Path, capsys: Any) -> None:
     import os
 

@@ -1,0 +1,13 @@
+.git
+.venv
+**/__pycache__
+**/.mypy_cache
+**/.pytest_cache
+**/.ruff_cache
+**/node_modules
+**/.next
+**/test-results
+**/playwright-report
+.worktrees
+docs
+evals/reports

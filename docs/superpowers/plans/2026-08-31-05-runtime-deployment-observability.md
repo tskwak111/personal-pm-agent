@@ -88,7 +88,7 @@ git commit -m "feat(worker): execute pending outbox jobs"
 - Produces: worker image with API models and worker package installed
 - Produces: web `.next/standalone/apps/web/server.js`
 
-- [ ] **Step 1: Write file-contract tests**
+- [x] **Step 1: Write file-contract tests**
 
 ```python
 def test_web_build_mode_matches_docker_copy() -> None:
@@ -101,15 +101,15 @@ def test_worker_image_copies_api_and_worker_sources() -> None:
     assert "COPY apps/worker" in source
 ```
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest apps/api/tests/evals/test_deployment_contract.py -q`
 
-- [ ] **Step 3: Align builds**
+- [x] **Step 3: Align builds**
 
 Set `output: "standalone"`. Build Python wheels in the builder stage with the locked workspace, copy only the virtual environment and required migration/source assets, and use `python -m ...` commands. Add `HEALTHCHECK` only where the image contains a local health endpoint; Kubernetes probes remain authoritative.
 
-- [ ] **Step 4: Verify local artifacts**
+- [x] **Step 4: Verify local artifacts**
 
 ```bash
 make build
@@ -121,7 +121,7 @@ docker build --check -f infra/docker/Dockerfile.web .
 
 If actual image builds require unavailable network or daemon access, record `BLOCKED_EXTERNAL`; do not replace them with a passing echo.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/web/next.config.ts infra/docker .dockerignore apps/api/tests/evals/test_deployment_contract.py

@@ -1,17 +1,22 @@
-# Personal PM Agent API — non-root reproducible runtime.
+# Personal PM Agent API — locked workspace build, non-root runtime.
 FROM python:3.13-slim AS builder
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
+COPY packages/planner ./packages/planner
 COPY apps/api ./apps/api
-COPY packages ./packages
-RUN pip install --no-cache-dir uv && uv sync --package personal-pm-api --frozen --no-dev
+COPY apps/worker ./apps/worker
+RUN pip install --no-cache-dir uv==0.12.3 \
+    && uv sync --package personal-pm-api --frozen --no-dev --no-editable
 
 FROM python:3.13-slim AS runtime
 RUN useradd --create-home --uid 10001 app
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
-COPY apps/api/src /app/apps/api/src
+COPY apps/api/alembic.ini ./apps/api/alembic.ini
+COPY apps/api/migrations ./apps/api/migrations
 ENV PATH="/app/.venv/bin:$PATH"
 USER app
 EXPOSE 8000
-CMD ["uvicorn", "personal_pm_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2)"]
+CMD ["python", "-m", "uvicorn", "personal_pm_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
