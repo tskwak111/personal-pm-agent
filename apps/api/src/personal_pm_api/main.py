@@ -15,9 +15,16 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from starlette.responses import Response
 
-from personal_pm_api.security.rate_limit import RATE_LIMITS, RateLimit, RateLimiter
+from personal_pm_api.security.rate_limit import (
+    RATE_LIMITS,
+    RateLimit,
+    RateLimiter,
+    RateLimiterPort,
+    RedisRateLimiter,
+)
 from personal_pm_api.settings import ApiSettings
 from personal_pm_api.shared.db import get_engine
+from personal_pm_api.storage import ObjectStorage, S3ObjectStorage
 from personal_pm_api.telemetry.logging import StructuredLogger
 from personal_pm_api.telemetry.metrics import RUNTIME_METRICS
 from personal_pm_api.telemetry.tracing import resolve_correlation_id
@@ -65,11 +72,18 @@ def create_app(
     *,
     rate_limits: Mapping[str, RateLimit] | None = None,
     rate_limit_clock: Callable[[], datetime] = _utc_now,
+    object_storage: ObjectStorage | None = None,
+    rate_limiter: RateLimiterPort | None = None,
 ) -> FastAPI:
     app_settings = settings if settings is not None else ApiSettings()
     app = FastAPI(title="Personal PM Agent API", version="0.1.0")
     app.state.settings = app_settings
-    limiter = RateLimiter()
+    app.state.object_storage = object_storage or S3ObjectStorage.from_settings(app_settings)
+    limiter = rate_limiter or (
+        RateLimiter()
+        if app_settings.environment in ("local", "test")
+        else RedisRateLimiter.from_url(app_settings.redis_url)
+    )
     limits = RATE_LIMITS if rate_limits is None else rate_limits
 
     @app.middleware("http")
@@ -80,7 +94,7 @@ def create_app(
         bucket_name = _rate_bucket(request)
         if bucket_name is not None:
             bucket = limits.get(bucket_name)
-            if bucket is not None and not limiter.allow(
+            if bucket is not None and not await limiter.allow(
                 _rate_actor(request, bucket_name),
                 bucket_name=bucket_name,
                 bucket=bucket,
@@ -143,6 +157,7 @@ def create_app(
     from personal_pm_api.approvals.router import router as approvals_router
     from personal_pm_api.calendar.router import router as calendar_router
     from personal_pm_api.identity.router import router as identity_router
+    from personal_pm_api.identity.router import test_router as identity_test_router
     from personal_pm_api.inbox.router import router as inbox_router
     from personal_pm_api.planning.router import router as planning_router
     from personal_pm_api.shared.errors import install_error_handlers
@@ -150,6 +165,8 @@ def create_app(
     from personal_pm_api.workspaces.router import router as workspaces_router
 
     app.include_router(identity_router)
+    if app_settings.environment in ("local", "test"):
+        app.include_router(identity_test_router)
     app.include_router(workspaces_router)
     app.include_router(planning_router)
     app.include_router(approvals_router)

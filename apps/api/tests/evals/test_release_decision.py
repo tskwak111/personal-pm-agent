@@ -108,15 +108,21 @@ def test_fail_cli_returns_nonzero(tmp_path: Path) -> None:
     assert json.loads(output.read_text(encoding="utf-8"))["decision"] == "FAIL"
 
 
-def test_cli_hashes_every_immutable_input(tmp_path: Path) -> None:
+def _write_cli_inputs(tmp_path: Path, *, stage_c_profile: str) -> dict[str, Path]:
     paths = {
         name: tmp_path / f"{name}.json"
         for name in ("stage-a", "stage-b", "stage-c", "outcomes", "incidents", "threshold-changes")
     }
-    for stage in ("stage-a", "stage-b", "stage-c"):
+    for stage in ("stage-a", "stage-b"):
         paths[stage].write_text(
             json.dumps({"schema_version": "1.0", "overall": "PASS"}), encoding="utf-8"
         )
+    paths["stage-c"].write_text(
+        json.dumps(
+            {"schema_version": "1.0", "overall": "PASS", "provider_profile": stage_c_profile}
+        ),
+        encoding="utf-8",
+    )
     paths["outcomes"].write_text(
         json.dumps(
             {
@@ -143,6 +149,11 @@ def test_cli_hashes_every_immutable_input(tmp_path: Path) -> None:
     paths["threshold-changes"].write_text(
         json.dumps({"schema_version": "1.0", "changes": []}), encoding="utf-8"
     )
+    return paths
+
+
+def test_cli_hashes_every_immutable_input(tmp_path: Path) -> None:
+    paths = _write_cli_inputs(tmp_path, stage_c_profile="live")
     output = tmp_path / "release.json"
     arguments = ["--output", str(output)]
     for name, path in paths.items():
@@ -152,3 +163,16 @@ def test_cli_hashes_every_immutable_input(tmp_path: Path) -> None:
     report = json.loads(output.read_text(encoding="utf-8"))
     assert report["decision"] == "PASS"
     assert set(report["input_hashes"]) == set(paths)
+
+
+def test_cli_rejects_emulator_stage_c_for_release(tmp_path: Path) -> None:
+    paths = _write_cli_inputs(tmp_path, stage_c_profile="emulator")
+    output = tmp_path / "release.json"
+    arguments = ["--output", str(output)]
+    for name, path in paths.items():
+        arguments.extend([f"--{name}", str(path)])
+
+    assert main(arguments) == 1
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["decision"] == "FAIL"
+    assert report["reasons"] == ["EXTERNAL_EVIDENCE_BLOCKED"]

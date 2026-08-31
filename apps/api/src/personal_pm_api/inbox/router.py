@@ -33,6 +33,7 @@ from personal_pm_api.inbox.schemas import (
 from personal_pm_api.security.uploads import MAX_UPLOAD_BYTES, scan_upload
 from personal_pm_api.shared.db import database_session
 from personal_pm_api.shared.errors import NotFoundError
+from personal_pm_api.storage import ObjectStorage
 
 router = APIRouter(prefix="/api/v1", tags=["source-artifacts"])
 
@@ -50,23 +51,30 @@ async def _persist_artifact(
     sha256: str | None,
     actor: CurrentActor,
     session: AsyncSession,
+    storage: ObjectStorage,
+    content: bytes,
 ) -> UploadInitiationResponse:
     validate_source_filename(filename)
     artifact_id = uuid4()
     storage_key = f"workspaces/{actor.workspace_id}/source-artifacts/{artifact_id}/{filename}"
-    artifact = await SourceArtifactRepository(session).add(
-        SourceArtifactModel(
-            id=artifact_id,
-            workspace_id=actor.workspace_id,
-            filename=filename,
-            content_type=content_type,
-            size_bytes=size_bytes,
-            sha256=sha256,
-            storage_key=storage_key,
-            status="NEW",
+    await storage.put(storage_key, content)
+    try:
+        artifact = await SourceArtifactRepository(session).add(
+            SourceArtifactModel(
+                id=artifact_id,
+                workspace_id=actor.workspace_id,
+                filename=filename,
+                content_type=content_type,
+                size_bytes=size_bytes,
+                sha256=sha256,
+                storage_key=storage_key,
+                status="NEW",
+            )
         )
-    )
-    await session.commit()
+        await session.commit()
+    except Exception:
+        await storage.delete(storage_key)
+        raise
     return UploadInitiationResponse(
         id=str(artifact.id),
         storage_key=artifact.storage_key,
@@ -187,6 +195,8 @@ async def upload_source(
         sha256=hashlib.sha256(content).hexdigest(),
         actor=actor,
         session=session,
+        storage=request.app.state.object_storage,
+        content=content,
     )
 
 

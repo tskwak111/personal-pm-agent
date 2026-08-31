@@ -36,3 +36,11 @@ it("registers the service worker from the production root layout", () => {
   expect(registration).toContain('navigator.serviceWorker.register("/sw.js")');
   expect(registration).toContain('process.env.NODE_ENV !== "production"');
 });
+
+it("sets browser security headers for the standalone app", () => {
+  const config = readFileSync(resolve(__dirname, "../../next.config.ts"), "utf-8");
+  expect(config).toContain("Content-Security-Policy");
+  expect(config).toContain("frame-ancestors 'none'");
+  expect(config).toContain("X-Content-Type-Options");
+  expect(config).toContain("Referrer-Policy");
+});

@@ -3,22 +3,27 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 from httpx import ASGITransport, AsyncClient
-from personal_pm_api.security.rate_limit import RATE_LIMITS, RateLimit, RateLimiter
+from personal_pm_api.security.rate_limit import (
+    RATE_LIMITS,
+    RateLimit,
+    RateLimiter,
+    RedisRateLimiter,
+)
 
 
-def test_rate_limit_resets_after_window() -> None:
+async def test_rate_limit_resets_after_window() -> None:
     limiter = RateLimiter()
     start = datetime(2026, 9, 1, tzinfo=UTC)
     limit = RateLimit(1, timedelta(minutes=10))
 
-    assert limiter.allow("u", bucket_name="read-api", bucket=limit, now_utc=start)
-    assert not limiter.allow(
+    assert await limiter.allow("u", bucket_name="read-api", bucket=limit, now_utc=start)
+    assert not await limiter.allow(
         "u",
         bucket_name="read-api",
         bucket=limit,
         now_utc=start + timedelta(minutes=9),
     )
-    assert limiter.allow(
+    assert await limiter.allow(
         "u",
         bucket_name="read-api",
         bucket=limit,
@@ -54,17 +59,19 @@ async def test_rate_limit_middleware_returns_429_before_endpoint() -> None:
     assert calls == 1
 
 
-def test_llm_rate_limit_is_separate_from_read_api() -> None:
+async def test_llm_rate_limit_is_separate_from_read_api() -> None:
     limiter = RateLimiter()
     actor_id = "user-1"
     llm_limit = RATE_LIMITS["llm"]
     now = datetime(2026, 9, 1, tzinfo=UTC)
     for _ in range(llm_limit.max_requests):
-        assert limiter.allow(actor_id, bucket_name="llm", bucket=llm_limit, now_utc=now) is True
-    assert limiter.allow(actor_id, bucket_name="llm", bucket=llm_limit, now_utc=now) is False
+        assert (
+            await limiter.allow(actor_id, bucket_name="llm", bucket=llm_limit, now_utc=now) is True
+        )
+    assert await limiter.allow(actor_id, bucket_name="llm", bucket=llm_limit, now_utc=now) is False
     # Separate bucket: read API unaffected.
     assert (
-        limiter.allow(
+        await limiter.allow(
             actor_id,
             bucket_name="read-api",
             bucket=RATE_LIMITS["read-api"],
@@ -72,6 +79,29 @@ def test_llm_rate_limit_is_separate_from_read_api() -> None:
         )
         is True
     )
+
+
+async def test_redis_rate_limit_is_atomic_and_fails_closed() -> None:
+    class FakeRedis:
+        def __init__(self) -> None:
+            self.count = 0
+            self.fail = False
+
+        async def eval(self, *_args: object) -> int:
+            if self.fail:
+                raise OSError("redis unavailable")
+            self.count += 1
+            return self.count
+
+    redis = FakeRedis()
+    limiter = RedisRateLimiter(redis)
+    now = datetime(2026, 9, 1, tzinfo=UTC)
+    limit = RateLimit(1, timedelta(minutes=10))
+
+    assert await limiter.allow("actor", bucket_name="auth", bucket=limit, now_utc=now)
+    assert not await limiter.allow("actor", bucket_name="auth", bucket=limit, now_utc=now)
+    redis.fail = True
+    assert not await limiter.allow("other", bucket_name="auth", bucket=limit, now_utc=now)
 
 
 def test_upload_scan_rejects_executable_magic_bytes() -> None:

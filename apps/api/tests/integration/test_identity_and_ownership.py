@@ -185,3 +185,32 @@ async def test_seeded_test_session_provisions_a_complete_owned_browser_fixture(a
     assert transitioned.status_code == 200
     assert reset.json() == {"seeded": True}
     assert restored.json()["core_outcome"]["status"] == "ready"
+
+
+async def test_production_app_hides_test_identity_routes(api: dict) -> None:
+    from personal_pm_api.main import create_app
+    from personal_pm_api.security.rate_limit import RateLimiter
+    from personal_pm_api.settings import ApiSettings
+
+    app = create_app(
+        ApiSettings(
+            environment="production",
+            database_url="postgresql+asyncpg://pma:secret@database.internal/pma",
+            s3_endpoint="https://objects.internal",
+            s3_access_key_id="production-key",
+            s3_secret_access_key="production-secret",
+            redis_url="rediss://redis.internal/0",
+        ),
+        rate_limiter=RateLimiter(),
+    )
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as client:
+        session = await client.post(
+            "/api/v1/identity/test-session",
+            json={"email": "should-not-exist@example.com"},
+        )
+        reset = await client.post("/api/v1/identity/test-reset")
+
+    assert session.status_code == 404
+    assert reset.status_code == 404

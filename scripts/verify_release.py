@@ -191,6 +191,9 @@ def main(argv: list[str] | None = None) -> int:
         for name, status in statuses.items():
             if status not in {"PASS", "FAIL", "BLOCKED_EXTERNAL"}:
                 raise ValueError(f"invalid {name} overall status")
+        stage_c_profile = values["stage-c"].get("provider_profile")
+        if stage_c_profile not in {"emulator", "live", "none"}:
+            raise ValueError("invalid stage-c provider_profile")
         outcomes, reevaluation_date = _parse_outcomes(values["outcomes"])
         incidents = values["incidents"]
         release_inputs = ReleaseInputs(
@@ -203,7 +206,9 @@ def main(argv: list[str] | None = None) -> int:
             stage_a_passed=statuses["stage-a"] == "PASS",
             stage_b_required_passed=statuses["stage-b"] == "PASS",
             stage_c_passed=statuses["stage-c"] == "PASS",
-            external_evidence_blocked="BLOCKED_EXTERNAL" in statuses.values(),
+            external_evidence_blocked=(
+                "BLOCKED_EXTERNAL" in statuses.values() or stage_c_profile != "live"
+            ),
             outcomes=outcomes,
             reevaluation_date=reevaluation_date,
         )

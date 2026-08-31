@@ -14,6 +14,23 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import func, select
 
 
+class _MemoryStorage:
+    def __init__(self) -> None:
+        self.objects: dict[str, bytes] = {}
+        self.fail_put = False
+
+    async def put(self, key: str, content: bytes) -> None:
+        if self.fail_put:
+            raise OSError("object storage unavailable")
+        self.objects[key] = content
+
+    async def get(self, key: str) -> bytes:
+        return self.objects[key]
+
+    async def delete(self, key: str) -> None:
+        self.objects.pop(key, None)
+
+
 @pytest_asyncio.fixture
 async def upload_env(clean_tables, database_url_session) -> AsyncIterator[dict[str, Any]]:
     from personal_pm_api.main import create_app
@@ -24,7 +41,9 @@ async def upload_env(clean_tables, database_url_session) -> AsyncIterator[dict[s
         create_async_engine,
     )
 
+    storage = _MemoryStorage()
     app = create_app()
+    app.state.object_storage = storage
     engine = create_async_engine(database_url_session)
     factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
@@ -58,7 +77,7 @@ async def upload_env(clean_tables, database_url_session) -> AsyncIterator[dict[s
         headers={"Authorization": f"Bearer {raw_token}"},
     )
     try:
-        yield {**ids, "client": client}
+        yield {**ids, "client": client, "storage": storage}
     finally:
         await client.aclose()
         await engine.dispose()
@@ -129,7 +148,21 @@ async def test_valid_raw_pdf_is_scanned_before_metadata_insert(upload_env: dict[
     )
 
     assert response.status_code == 201
+    assert await upload_env["storage"].get(response.json()["storage_key"]) == content
     assert await _source_and_outbox_counts(upload_env) == (1, 0)
+
+
+async def test_storage_failure_never_creates_source_metadata(upload_env: dict[str, Any]) -> None:
+    upload_env["storage"].fail_put = True
+
+    with pytest.raises(OSError, match="object storage unavailable"):
+        await upload_env["client"].post(
+            "/api/v1/inbox/sources?filename=notice.pdf",
+            content=b"%PDF-1.7\nvalid test document",
+            headers={"Content-Type": "application/pdf"},
+        )
+
+    assert await _source_and_outbox_counts(upload_env) == (0, 0)
 
 
 async def test_oversized_file_is_rejected(upload_env: dict[str, Any]) -> None:
