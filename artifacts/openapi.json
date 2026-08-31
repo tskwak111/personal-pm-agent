@@ -877,12 +877,30 @@
         "title": "TaskTransitionBody",
         "type": "object"
       },
+      "TestResetResponse": {
+        "properties": {
+          "seeded": {
+            "title": "Seeded",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "seeded"
+        ],
+        "title": "TestResetResponse",
+        "type": "object"
+      },
       "TestSessionRequest": {
         "properties": {
           "email": {
             "format": "email",
             "title": "Email",
             "type": "string"
+          },
+          "seed_demo": {
+            "default": false,
+            "title": "Seed Demo",
+            "type": "boolean"
           }
         },
         "required": [
@@ -1479,6 +1497,55 @@
         "summary": "Oauth Callback",
         "tags": [
           "calendar"
+        ]
+      }
+    },
+    "/api/v1/identity/test-reset": {
+      "post": {
+        "operationId": "reset_test_fixture_api_v1_identity_test_reset_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestResetResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset Test Fixture",
+        "tags": [
+          "identity"
         ]
       }
     },

@@ -48,6 +48,18 @@ class IdentityService:
         await self._session.flush()
         return IssuedSession(raw_token=raw_token, user_id=user_id, session_id=model.id)
 
+    async def ensure_workspace(self, *, user_id: UUID, name: str) -> None:
+        from personal_pm_api.workspaces.models import WorkspaceModel
+
+        existing = (
+            await self._session.execute(
+                select(WorkspaceModel.id).where(WorkspaceModel.owner_user_id == user_id).limit(1)
+            )
+        ).scalar_one_or_none()
+        if existing is None:
+            self._session.add(WorkspaceModel(owner_user_id=user_id, name=name))
+            await self._session.flush()
+
     async def test_provider_session(self, *, email: str) -> IssuedSession | None:
         """Deterministic local/test provider; disabled outside local/test envs."""
         from personal_pm_api.settings import ApiSettings
@@ -55,6 +67,7 @@ class IdentityService:
         if ApiSettings().environment not in ("local", "test"):
             return None
         user = await self.ensure_user(email=email, display_name=email.split("@")[0])
+        await self.ensure_workspace(user_id=user.id, name="내 워크스페이스")
         return await self.start_session_for_user(user.id)
 
     async def resolve_actor(self, raw_token: str) -> CurrentActor | None:

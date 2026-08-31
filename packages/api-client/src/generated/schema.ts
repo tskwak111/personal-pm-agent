@@ -89,6 +89,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/identity/test-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reset Test Fixture */
+        post: operations["reset_test_fixture_api_v1_identity_test_reset_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/identity/test-session": {
         parameters: {
             query?: never;
@@ -699,6 +716,11 @@ export interface components {
              */
             waiting_resolved: boolean;
         };
+        /** TestResetResponse */
+        TestResetResponse: {
+            /** Seeded */
+            seeded: boolean;
+        };
         /** TestSessionRequest */
         TestSessionRequest: {
             /**
@@ -706,6 +728,11 @@ export interface components {
              * Format: email
              */
             email: string;
+            /**
+             * Seed Demo
+             * @default false
+             */
+            seed_demo: boolean;
         };
         /** TodayResponse */
         TodayResponse: {
@@ -958,6 +985,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_test_fixture_api_v1_identity_test_reset_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestResetResponse"];
                 };
             };
             /** @description Validation Error */

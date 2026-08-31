@@ -153,3 +153,35 @@ async def test_workstreams_are_scoped_to_own_workspace(api: dict) -> None:
     assert response.status_code == 200
     items = response.json()["items"]
     assert [item["name"] for item in items] == ["B의 수업"]
+
+
+async def test_seeded_test_session_provisions_a_complete_owned_browser_fixture(api: dict) -> None:
+    client: AsyncClient = api["client"]
+    session = await client.post(
+        "/api/v1/identity/test-session",
+        json={"email": "browser-e2e@example.com", "seed_demo": True},
+    )
+
+    assert session.status_code == 200
+    headers = _auth(session.json()["token"])
+    today = await client.get("/api/v1/today", headers=headers)
+    inbox = await client.get("/api/v1/inbox", headers=headers)
+    review = await client.get("/api/v1/review", headers=headers)
+
+    assert today.status_code == 200
+    assert today.json()["core_outcome"]["title"] == "오늘의 핵심 작업"
+    assert inbox.json()["candidates"][0]["source_text"] == "금요일까지 제안서 초안"
+    assert review.json()["pending_proposals"][0]["status"] == "pending"
+
+    task = today.json()["core_outcome"]
+    transitioned = await client.post(
+        f"/api/v1/tasks/{task['id']}/transition",
+        headers=headers,
+        json={"expected_version": task["version"], "target_status": "in_progress"},
+    )
+    reset = await client.post("/api/v1/identity/test-reset", headers=headers)
+    restored = await client.get("/api/v1/today", headers=headers)
+
+    assert transitioned.status_code == 200
+    assert reset.json() == {"seeded": True}
+    assert restored.json()["core_outcome"]["status"] == "ready"
