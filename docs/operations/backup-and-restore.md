@@ -1,6 +1,28 @@
-# Backup & Restore 운영 절차 (요약)
+# Backup and restore drill
 
-1. **백업**: 매일 `infra/backup/backup-postgres.sh` — age 공개키 암호화, 객체 저장소 업로드
-2. **복원**: `infra/backup/restore-postgres.sh` — 복구 훈련은 분기 1회 스테이징에서 실시
-3. **보존**: 원본 삭제 후 백업본은 30일 보존 뒤 파기(`RetentionVerifier` 계약)
-4. **검증**: `scripts/test_backup_restore.py`가 카운트 일치·감사 링크 무결성을 확인
+The release gate accepts only a completed encrypted PostgreSQL restore into a separate, empty database. A Compose file or unit test alone is not restore evidence.
+
+## Required inputs
+
+- `--source-url`: source PostgreSQL connection URL.
+- `--restore-url`: separate empty PostgreSQL database; the script rejects the source database as the target.
+- `--backup-file`: a new output path. Existing files are never overwritten.
+- `--now-utc`: explicit timezone-aware drill time, for example `2026-08-31T00:00:00+00:00`.
+- `BACKUP_AGE_RECIPIENT`: age public recipient used to encrypt the dump.
+- `BACKUP_AGE_IDENTITY`: age identity file used to decrypt the dump.
+
+```bash
+BACKUP_AGE_RECIPIENT='age1...' \
+BACKUP_AGE_IDENTITY='/secure/path/identity.txt' \
+uv run python scripts/test_backup_restore.py \
+  --source-url "$SOURCE_DATABASE_URL" \
+  --restore-url "$EMPTY_RESTORE_DATABASE_URL" \
+  --backup-file '/secure/backups/pma-drill.sql.gz.age' \
+  --now-utc '2026-08-31T00:00:00+00:00'
+```
+
+The command returns `0/PASS` only when plan snapshot and audit event counts match and the restored audit rows have no missing workspace, actor, or approval references. Missing database or age inputs return `2/BLOCKED_EXTERNAL`; dump, restore, query, count, or reference failures return `1/FAIL`.
+
+Backups are encrypted before being committed to disk, written with owner-only permissions, and never overwrite an existing path. Restore drills must use an isolated empty database because the restore command intentionally does not clean or replace existing objects.
+
+Production retention remains 30 days after primary deletion. Retention verification receives an explicit UTC observation time; it does not infer evidence from the machine clock. Quarterly staging restore drills and their immutable command output are required before release.

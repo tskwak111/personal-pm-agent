@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T10:42:07+09:00
+- **Manifest regenerated:** 2026-08-31T10:48:28+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -44,7 +44,7 @@
 | `docs/architecture/engineering-standards.md` | 4030 | `e8815da6f970d88c070c464f311c2a5d16543feb97e1b71a85fd6b6df6b21115` |
 | `docs/architecture/repository-and-module-contract.md` | 4165 | `5d6f67a04f1e2b554671d101245bb95931405343f103edd5ecfce8e4e75fe2f2` |
 | `docs/architecture/toolchain-baseline.md` | 2476 | `1dcce647e77946e6595143e8bc237bed3fb569463effa7f1e5e8c50de84b4408` |
-| `docs/operations/backup-and-restore.md` | 465 | `1a38b2b7b93a1aed23fbc987cec5904a394eb3cadd760c5b876452a0dead9dce` |
+| `docs/operations/backup-and-restore.md` | 1851 | `977765aacca36f8ab730ddb206e69b4e442e2d2067bed50cbc861a32c29d7638` |
 | `docs/operations/event-catalog.md` | 602 | `39a5aa927c325433307f218355ee17953e6404c9e211e49dfd7e291b5ef5a223` |
 | `docs/operations/release-runbook.md` | 435 | `29b9ca5dce74165e093db87e656b08c24513dbc9249c63428bc63b7b04011100` |
 | `docs/operations/security-privacy-and-runbook.md` | 4789 | `34ad3a9ba0cddffd9d9a87eb4280b7fdfc608d7d183fb621929ddb95936769e3` |
@@ -105,7 +105,7 @@
 | `scripts/run_stage_b.py` | 6978 | `4400865f55f93f6a459cd6334439556b0970c44dba5d0ab65890914f04896250` |
 | `scripts/run_stage_c.py` | 5243 | `bcdafa7b15a7454c7dc1cf867168cea76fe6abe582eb2a3b616ae48531cefc1f` |
 | `scripts/smoke_deployment.py` | 2409 | `5b57e949da4ae9090c748e6b62993a3f4a649fe1e160e54a7f72cc20d989918b` |
-| `scripts/test_backup_restore.py` | 1728 | `d167968084e57674e2a92b2d15de6e15a73913b8d18a8512a25b966253633623` |
+| `scripts/test_backup_restore.py` | 6769 | `1d695eb95dee15781969a1beeb7ef648c961f007b49b051cabe7494a5a717c45` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
 | `scripts/verify_release.py` | 2971 | `95e66a4afe80eef9432215dc398e87f046c13df6521b60cdac66feefdda9c251` |
 | `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |

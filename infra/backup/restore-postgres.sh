@@ -3,5 +3,7 @@
 set -euo pipefail
 : "${BACKUP_FILE:?set BACKUP_FILE}"
 : "${BACKUP_AGE_IDENTITY:?set BACKUP_AGE_IDENTITY}"
-age -d -i "$BACKUP_AGE_IDENTITY" < "$BACKUP_FILE" | gunzip | pg_restore --no-owner --dbname "${DATABASE_URL:?}"
+: "${DATABASE_URL:?set DATABASE_URL}"
+test -f "$BACKUP_FILE"
+age -d -i "$BACKUP_AGE_IDENTITY" "$BACKUP_FILE" | gunzip | pg_restore --exit-on-error --single-transaction --no-owner --dbname "$DATABASE_URL"
 echo "restored $BACKUP_FILE"
