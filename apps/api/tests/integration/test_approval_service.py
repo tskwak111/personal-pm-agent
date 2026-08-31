@@ -4,6 +4,9 @@ import pytest
 
 pytestmark = pytest.mark.integration
 
+import asyncio
+import hashlib
+import json
 from collections.abc import AsyncIterator
 from typing import Any
 from uuid import uuid4
@@ -76,7 +79,11 @@ async def approval_env(clean_tables, database_url_session) -> AsyncIterator[dict
             workspace_id=workspace.id,
             kind="TASK_UPDATE",
             approval_level="CONFIRM",
-            payload_hash=__import__("hashlib").sha256(b"x").hexdigest(),
+            payload_hash=hashlib.sha256(
+                json.dumps(
+                    [proposed_change], sort_keys=True, ensure_ascii=False, separators=(",", ":")
+                ).encode("utf-8")
+            ).hexdigest(),
             targets_json=[proposed_change],
             status="pending",
             version=2,
@@ -88,13 +95,15 @@ async def approval_env(clean_tables, database_url_session) -> AsyncIterator[dict
         ids["proposal"] = str(proposal.id)
         ids["proposal_version"] = proposal.version
         ids["workspace"] = str(workspace.id)
+        ids["user"] = str(user.id)
 
     from personal_pm_api.approvals.service import ApprovalService
 
     class Actor:
         def __init__(self, wid: str) -> None:
-            self.user_id = "00000000-0000-0000-0000-000000000002"
+            self.user_id = ids["user"]
             self.workspace_id = wid
+            self.session_id = "00000000-0000-0000-0000-000000000003"
 
     ids["factory"] = factory
     ids["actor"] = Actor(ids["workspace"])
@@ -157,3 +166,91 @@ async def test_reject_marks_proposal_rejected(approval_env: dict[str, Any]) -> N
         expected_version=approval_env["proposal_version"],
     )
     assert result.status == "REJECTED"
+
+
+async def test_payload_hash_mismatch_never_executes(approval_env: dict[str, Any]) -> None:
+    from personal_pm_api.approvals.models import ProposalModel
+    from personal_pm_api.planning.models import TaskModel
+
+    async with approval_env["factory"]() as session:
+        proposal = await session.get(ProposalModel, approval_env["proposal"])
+        assert proposal is not None
+        tampered = dict(proposal.targets_json[0])
+        tampered["values"] = {"title": "변조된 제목"}
+        proposal.targets_json = [tampered]
+        await session.commit()
+
+    result = await approval_env["service"].approve(
+        approval_env["actor"],
+        proposal_id=approval_env["proposal"],
+        expected_version=approval_env["proposal_version"],
+    )
+
+    assert result.status == "CONFLICT"
+    async with approval_env["factory"]() as session:
+        task = await session.get(TaskModel, approval_env["task"])
+        assert task is not None
+        assert task.title == "대상 작업"
+
+
+async def test_execution_and_audit_commit_together(approval_env: dict[str, Any]) -> None:
+    from personal_pm_api.audit.models import AuditEventModel
+    from sqlalchemy import func, select
+
+    result = await approval_env["service"].approve(
+        approval_env["actor"],
+        proposal_id=approval_env["proposal"],
+        expected_version=approval_env["proposal_version"],
+    )
+    assert result.status == "EXECUTED"
+
+    async with approval_env["factory"]() as session:
+        count = int(await session.scalar(select(func.count()).select_from(AuditEventModel)))
+    assert count == 1
+
+
+async def test_audit_failure_rolls_back_execution(
+    approval_env: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from personal_pm_api.approvals.models import ProposalModel
+    from personal_pm_api.audit.repository import AuditRepository
+    from personal_pm_api.planning.models import TaskModel
+
+    async def fail_audit(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("audit unavailable")
+
+    monkeypatch.setattr(AuditRepository, "append", fail_audit)
+    with pytest.raises(RuntimeError, match="audit unavailable"):
+        await approval_env["service"].approve(
+            approval_env["actor"],
+            proposal_id=approval_env["proposal"],
+            expected_version=approval_env["proposal_version"],
+        )
+
+    async with approval_env["factory"]() as session:
+        task = await session.get(TaskModel, approval_env["task"])
+        proposal = await session.get(ProposalModel, approval_env["proposal"])
+        assert task is not None and proposal is not None
+        assert task.title == "대상 작업"
+        assert proposal.status == "pending"
+
+
+async def test_concurrent_decisions_execute_once(approval_env: dict[str, Any]) -> None:
+    from personal_pm_api.approvals.models import ApprovalModel
+    from personal_pm_api.audit.models import AuditEventModel
+    from sqlalchemy import func, select
+
+    async def approve() -> Any:
+        return await approval_env["service"].approve(
+            approval_env["actor"],
+            proposal_id=approval_env["proposal"],
+            expected_version=approval_env["proposal_version"],
+        )
+
+    outcomes = await asyncio.gather(approve(), approve())
+
+    assert sorted(outcome.status for outcome in outcomes) == ["CONFLICT", "EXECUTED"]
+    async with approval_env["factory"]() as session:
+        approvals = int(await session.scalar(select(func.count()).select_from(ApprovalModel)))
+        audits = int(await session.scalar(select(func.count()).select_from(AuditEventModel)))
+    assert (approvals, audits) == (1, 1)
