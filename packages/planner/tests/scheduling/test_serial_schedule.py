@@ -162,3 +162,32 @@ def test_respects_start_after_constraint() -> None:
     )
     first_start = min(item.start_at for item in result.allocations)
     assert first_start >= DAY_START + timedelta(hours=2)
+
+
+def test_blocks_start_successor_begins_after_predecessor_finishes() -> None:
+    from personal_pm_planner.scheduling.serial import serial_schedule
+
+    slots = build_unique_slots(
+        AvailabilityContext(availability_windows=(make_window(8),), capacity_factor=1.0)
+    )
+    predecessor = make_schedulable(
+        1,
+        base_duration_minutes=60,
+        start_after=DAY_START + timedelta(hours=4),
+    )
+    successor = make_schedulable(2, base_duration_minutes=60)
+
+    result = serial_schedule(
+        tasks=(successor, predecessor),
+        slots=slots,
+        duration_field="base_duration_minutes",
+        start_gates={successor.id: frozenset({predecessor.id})},
+    )
+
+    predecessor_end = max(
+        item.end_at for item in result.allocations if item.task_id == predecessor.id
+    )
+    successor_start = min(
+        item.start_at for item in result.allocations if item.task_id == successor.id
+    )
+    assert successor_start >= predecessor_end

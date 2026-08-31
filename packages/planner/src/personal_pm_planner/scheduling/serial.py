@@ -125,12 +125,15 @@ def _place_task(
     task: SchedulableTask,
     required_minutes: int,
     pass_type_str: str,
+    earliest_start: datetime | None = None,
 ) -> list[TaskAllocation]:
     remaining = required_minutes
     allocations: list[TaskAllocation] = []
     chunk_index = 0
     day_chunks: dict[date, int] = {}
     earliest = task.start_after
+    if earliest_start is not None and (earliest is None or earliest_start > earliest):
+        earliest = earliest_start
 
     while remaining > 0:
         runs = [
@@ -226,6 +229,7 @@ def serial_schedule(
 
     gates = start_gates or {}
     placed_fully: set[TaskId] = set()
+    completion_by_task: dict[TaskId, datetime] = {}
     pending: list[SchedulableTask] = sorted(tasks, key=priority_key)
 
     while pending:
@@ -248,7 +252,21 @@ def serial_schedule(
         if required <= 0:
             placed_fully.add(task.id)
             continue
-        produced = _place_task(ledger, task, required, pass_type)
+        predecessor_end = max(
+            (
+                completion_by_task[predecessor]
+                for predecessor in gates.get(task.id, frozenset())
+                if predecessor in completion_by_task
+            ),
+            default=None,
+        )
+        produced = _place_task(
+            ledger,
+            task,
+            required,
+            pass_type,
+            earliest_start=predecessor_end,
+        )
         placed = sum(int((item.end_at - item.start_at).total_seconds() // 60) for item in produced)
         allocations.extend(produced)
         total += placed
@@ -256,6 +274,7 @@ def serial_schedule(
             unallocated.add(task.id)
         else:
             placed_fully.add(task.id)
+            completion_by_task[task.id] = max(item.end_at for item in produced)
 
     return ScheduleResult(
         allocations=tuple(allocations),

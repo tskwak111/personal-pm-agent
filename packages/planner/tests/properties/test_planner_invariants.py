@@ -5,6 +5,7 @@ the required 20,000 scenarios (P8-T02) without code changes.
 """
 
 from dataclasses import replace
+from datetime import timedelta
 from uuid import UUID
 
 from hypothesis import HealthCheck, given, settings
@@ -84,6 +85,12 @@ def test_dependency_order_is_never_violated(task_count, hours) -> None:
         "cycle": False,
     }
     value = build_vector_input(spec)
+    if task_count >= 2:
+        delayed_predecessor = replace(
+            value.tasks[0],
+            start_after=value.now_utc + timedelta(hours=2),
+        )
+        value = replace(value, tasks=(delayed_predecessor, *value.tasks[1:]))
     from personal_pm_planner.domain.dependency import TaskDependency
     from personal_pm_planner.domain.enums import DependencyType
 
@@ -99,16 +106,18 @@ def test_dependency_order_is_never_violated(task_count, hours) -> None:
     value = replace(value, task_dependencies=chain)
     output = plan(value)
 
-    start_index = {}
-    order = sorted(
-        (a for a in output.base_plan.allocations if a.kind == "TASK"),
-        key=lambda a: a.start_at,
-    )
-    for position, allocation in enumerate(order):
-        start_index[allocation.task_id.value.hex[-2:]] = position
-
     for edge in chain:
-        pred = edge.predecessor_id.value.hex[-2:]
-        succ = edge.successor_id.value.hex[-2:]
-        if pred in start_index and succ in start_index:
-            assert start_index[pred] <= start_index[succ]
+        predecessor = [
+            allocation
+            for allocation in output.base_plan.allocations
+            if allocation.task_id == edge.predecessor_id
+        ]
+        successor = [
+            allocation
+            for allocation in output.base_plan.allocations
+            if allocation.task_id == edge.successor_id
+        ]
+        if predecessor and successor:
+            assert min(item.start_at for item in successor) >= max(
+                item.end_at for item in predecessor
+            )
