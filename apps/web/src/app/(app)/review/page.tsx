@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { components } from "@personal-pm/api-client";
 
 import { ApiState } from "../../../components/api-state";
@@ -20,12 +20,14 @@ function targetText(targets: Record<string, unknown>[], key: "before_values" | "
 }
 
 export default function ReviewPage() {
+  const [decisionStatus, setDecisionStatus] = useState<string | null>(null);
   const load = useCallback(async () => requireApiData(await api.GET("/api/v1/review")), []);
   const resource = useApiResource(load, isEmpty);
   if (resource.state !== "ready" || !resource.data) {
     return (
       <main>
         <h1>리뷰</h1>
+        {decisionStatus === "EXECUTED" ? <p role="status">제안이 실행되었습니다</p> : null}
         <ApiState state={resource.state}>리뷰</ApiState>
       </main>
     );
@@ -33,6 +35,7 @@ export default function ReviewPage() {
   const data = resource.data;
   return (
     <main>
+      {decisionStatus === "EXECUTED" ? <p role="status">제안이 실행되었습니다</p> : null}
       <WeeklyReview
         week={{
           plannedMinutes: data.planned_minutes,
@@ -51,7 +54,8 @@ export default function ReviewPage() {
           reversible: false,
         }))}
         onDecision={async (proposal, decision) => {
-          await decideProposal(proposal.id, proposal.version, decision);
+          const result = await decideProposal(proposal.id, proposal.version, decision);
+          setDecisionStatus(result.status);
           resource.reload();
         }}
       />

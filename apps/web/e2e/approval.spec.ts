@@ -1,6 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
-test("approval center exposes approve action", async ({ page }) => {
+test("approval executes its version-bound proposal", async ({ page }) => {
   await page.goto("/review");
-  await expect(page.getByText(/주간 리뷰/)).toBeVisible();
+  const approve = page.getByRole("button", { name: "승인" });
+  await expect(approve).toBeVisible();
+  await approve.click();
+  await expect(page.getByText("제안이 실행되었습니다")).toBeVisible();
 });

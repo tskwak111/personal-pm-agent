@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
+import { recordUxEvent, startUxTimer } from "../../lib/analytics/ux-events";
 import { SourceEvidence, type CandidateSource } from "./source-evidence";
 
 export type InboxCandidate = {
@@ -30,10 +31,12 @@ export function CandidateCard({
 
   async function decide(decision: "confirm" | "ignore") {
     if (!onDecision || pending) return;
+    const startedAt = startUxTimer();
     setPending(true);
     setError(false);
     try {
       await onDecision(candidate.id, decision);
+      if (decision === "confirm") recordUxEvent("candidate_confirmed", startedAt);
     } catch {
       setError(true);
     } finally {

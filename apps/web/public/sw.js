@@ -1,7 +1,7 @@
 // Personal PM Agent service worker.
-// Policy: cache only the static app shell; NEVER cache /api/v1 responses.
+// Policy: cache only immutable static assets; NEVER cache pages or /api responses.
 const CACHE_NAME = "pma-shell-v1";
-const SHELL_ASSETS = ["/", "/today"];
+const SHELL_ASSETS = ["/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_ASSETS)));
@@ -21,20 +21,21 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  // Authenticated API calls always go to the network — never cached.
-  if (url.pathname.startsWith("/api/")) return;
+  if (
+    event.request.method !== "GET" ||
+    url.origin !== self.location.origin ||
+    url.pathname.startsWith("/api/")
+  )
+    return;
+  const isStatic = url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/");
+  if (!isStatic) return;
   event.respondWith(
     caches.match(event.request).then(
       (hit) =>
         hit ||
         fetch(event.request).then((response) => {
-          const isStatic =
-            event.request.method === "GET" &&
-            (url.pathname.startsWith("/_next/static") || url.pathname.startsWith("/icons"));
-          if (isStatic) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           return response;
         }),
     ),

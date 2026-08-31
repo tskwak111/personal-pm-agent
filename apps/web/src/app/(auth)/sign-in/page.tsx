@@ -27,7 +27,7 @@ export default function SignInPage() {
     setError(null);
     const email = String(formData.get("email") ?? "");
     const { data, error: apiError } = await api.POST("/api/v1/identity/test-session", {
-      body: { email },
+      body: { email, seed_demo: false },
     });
     if (apiError || !data) {
       setError("테스트 세션을 만들지 못했습니다");

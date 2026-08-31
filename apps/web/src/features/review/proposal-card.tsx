@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button, Card } from "../../components/ui";
+import { recordUxEvent, startUxTimer } from "../../lib/analytics/ux-events";
 
 export type ProposalView = {
   id: string;
@@ -27,10 +28,12 @@ export function ProposalCard({
 
   async function decide(decision: "approve" | "reject") {
     if (!onDecision || pending) return;
+    const startedAt = startUxTimer();
     setPending(true);
     setError(false);
     try {
       await onDecision(proposal, decision);
+      if (decision === "approve") recordUxEvent("proposal_approved", startedAt);
     } catch {
       setError(true);
     } finally {

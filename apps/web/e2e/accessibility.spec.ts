@@ -1,5 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
+
+import { expect, test } from "./fixtures";
 
 const CRITICAL_PAGES = ["/today", "/inbox", "/projects", "/calendar", "/review"];
 
@@ -23,4 +25,25 @@ test.describe("accessibility coverage", () => {
       await expect(page.locator("main")).toBeAttached();
     });
   }
+});
+
+async function tabTo(page: Page, label: string) {
+  for (let index = 0; index < 30; index += 1) {
+    await page.keyboard.press("Tab");
+    if ((await page.locator(":focus").getAttribute("aria-label")) === label) return;
+    if ((await page.locator(":focus").textContent())?.trim() === label) return;
+  }
+  throw new Error(`keyboard focus did not reach ${label}`);
+}
+
+test("primary navigation and approval are keyboard reachable", async ({ page }) => {
+  await page.goto("/review");
+  await tabTo(page, "오늘");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/today$/);
+
+  await page.goto("/review");
+  await tabTo(page, "승인");
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("제안이 실행되었습니다")).toBeVisible();
 });

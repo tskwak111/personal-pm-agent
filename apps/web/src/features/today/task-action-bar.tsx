@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "../../components/ui/button";
+import { recordUxEvent, startUxTimer } from "../../lib/analytics/ux-events";
 
 export type TodayTask = {
   id: string;
@@ -25,10 +26,12 @@ export function TaskActionBar({
 
   async function start() {
     if (!onStartSession || pending) return;
+    const startedAt = startUxTimer();
     setPending(true);
     setError(false);
     try {
       await onStartSession(task);
+      recordUxEvent("task_started", startedAt);
     } catch {
       setError(true);
     } finally {
@@ -39,6 +42,7 @@ export function TaskActionBar({
   return (
     <div aria-label={`${task.title} 작업`}>
       <span>{task.title}</span>
+      <span>{task.status === "in_progress" ? "진행 중" : task.status}</span>
       <Button onClick={start} disabled={pending || task.status !== "ready" || !onStartSession}>
         {pending ? "시작 중…" : `${task.title} 시작`}
       </Button>

@@ -278,7 +278,7 @@ git commit -m "feat(web): connect core planning workflows"
 - Produces: `pnpm --filter @personal-pm/web e2e`
 - Produces: service worker registration only in production and valid manifest assets
 
-- [ ] **Step 1: Remove conditional E2E**
+- [x] **Step 1: Remove conditional E2E**
 
 Replace:
 
@@ -288,7 +288,7 @@ if (await start.isVisible()) { ... }
 
 with unconditional `await expect(start).toBeVisible()`, action, and persisted-state assertion. Approval E2E must click approval and observe executed state, not only the page heading.
 
-- [ ] **Step 2: Add Playwright webServer and deterministic API setup**
+- [x] **Step 2: Add Playwright webServer and deterministic API setup**
 
 ```typescript
 webServer: {
@@ -300,15 +300,15 @@ webServer: {
 
 Tests seed the API through documented test setup endpoints in `APP_ENVIRONMENT=test`; they do not skip when data is absent.
 
-- [ ] **Step 3: Register and test the service worker**
+- [x] **Step 3: Register and test the service worker**
 
 Register `/sw.js` from a client component in production. Cache only immutable same-origin assets; never cache authenticated API responses. Verify icon files exist and match manifest sizes.
 
-- [ ] **Step 4: Wire scripts**
+- [x] **Step 4: Wire scripts**
 
 Add `"e2e": "playwright test"` and make `make test-e2e` execute it. Keep axe tests over every critical page and add keyboard-only traversal for navigation and approval.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 pnpm --filter @personal-pm/web test --run
