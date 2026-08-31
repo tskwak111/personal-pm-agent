@@ -486,3 +486,37 @@ Generated report/artifact paths: apps/api/migrations/versions/0010_planner_input
 Reviewer: Codex self-review against docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md
 Residual risk: 실제 Google provider 자격증명 기반 실행 증거는 BLOCKED_EXTERNAL이며 R-005를 Open으로 유지한다. 파일럿 사용자 신뢰 측정도 저장소 범위 밖이다.
 ```
+
+## AAA remediation — Runtime, deployment, and observability
+
+```text
+Task ID: AAA-RUNTIME-01..05
+Commit SHAs: 02e641f, f65a234, b30d8e9, 65b2c81, (본 증거 커밋)
+Timestamp UTC: 2026-08-31T04:06:45Z
+Focused RED:
+  apps/worker/tests/test_outbox_worker.py → 2 failed(ModuleNotFoundError)
+  apps/api/tests/evals/test_deployment_contract.py → standalone 미설정/worker API source 누락 2 failed
+  immutable renderer 계약 → FileNotFoundError(scripts/render_deployment.py)
+  apps/api/tests/unit/test_runtime_metrics.py → metrics 모듈·operator endpoint 부재 4 failed
+Focused GREEN:
+  worker 전체 + PostgreSQL Outbox 원자성 → 54 passed; verified external_id 동시 저장 확인
+  deployment contract → 7 passed; 4 files/6 Kubernetes documents smoke PASS
+  runtime metrics + telemetry + worker → 20 passed; 관련 planner/OAuth 회귀 포함 35 passed
+  Ruff clean; mypy strict 113 source files clean
+Artifact/runtime verification:
+  make build → Next standalone server.js 생성, exit 0
+  Docker BuildKit --check → API/worker/web 3개, warning 0
+  실제 Docker build → API b5f085f2..., worker 23e2fe61..., web 26e0c982... local manifest list 생성
+  scripts/render_deployment.py(고정 test digest) + scripts/smoke_deployment.py → PASS
+  scripts/verify_repo.py → artifacts=10, workspace_members=3, PASS
+  make typecheck → mypy strict 159 source files + TypeScript PASS
+  make test-unit → Python 284 passed/112 deselected, api-client 2, web 40 passed
+Plan deviation:
+  scripts/check_toolchain.py는 저장소에 없어 exit 2. 동일 계약을 이미 검사하는 scripts/verify_repo.py를 재사용해 PASS했으며 중복 래퍼는 추가하지 않았다.
+BLOCKED_EXTERNAL:
+  - 실제 registry push와 registry가 반환한 application image digest 확인
+  - 실제 cluster manifest apply/rollout/rollback 및 probe 관측
+  - managed backup restore의 운영 RPO/RTO 실측
+  - production Prometheus scrape와 alert delivery 확인
+  - 실제 Google provider executor 자격증명 기반 종단 실행
+```

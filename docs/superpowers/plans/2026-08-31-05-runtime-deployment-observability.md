@@ -231,7 +231,7 @@ git commit -m "feat(observability): connect bounded runtime metrics"
 - Modify: `docs/status/RISK_REGISTER.md`
 - Modify: `docs/requirements/requirements-traceability.md`
 
-- [ ] **Step 1: Run available runtime verification**
+- [x] **Step 1: Run available runtime verification**
 
 ```bash
 uv run python scripts/check_toolchain.py
@@ -242,11 +242,11 @@ make test-unit
 git diff --check
 ```
 
-- [ ] **Step 2: Record blocked external evidence**
+- [x] **Step 2: Record blocked external evidence**
 
 List actual Docker image build/push, registry digest resolution, cluster apply/rollout, managed backup RPO/RTO, and production metrics scrape as `BLOCKED_EXTERNAL` until their commands run against real infrastructure.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add docs/status/VERIFICATION_EVIDENCE.md docs/status/RISK_REGISTER.md docs/requirements/requirements-traceability.md

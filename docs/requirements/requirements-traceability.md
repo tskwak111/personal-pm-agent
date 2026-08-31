@@ -71,7 +71,7 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-CAL-005 | A focus block write requires a version-bound proposal and approval. | Design §7.3, §23 | P5-T04 | apps/api/tests/integration/test_focus_block_approval.py |
 | REQ-CAL-006 | Internal change and outbox event commit atomically. | Design §21.4 | P3-T08, P5-T05 | apps/api/tests/integration/test_transactional_outbox.py |
 | REQ-CAL-007 | External execution uses an idempotency key and does not duplicate provider objects. | Design §21.3; EXT-002 | P5-T05, P5-T08 | apps/worker/tests/fault/test_duplicate_delivery.py |
-| REQ-CAL-008 | External success is shown only after provider result verification and external identity linkage. | Design §23.4; SAFE-004 | P5-T05 | apps/api/tests/integration/test_orchestrator_flow.py::test_missing_external_executor_never_reports_success; apps/api/tests/integration/test_orchestrator_flow.py::test_failed_external_verification_is_reported_as_failed; apps/worker/tests/calendar/test_calendar_executor.py |
+| REQ-CAL-008 | External success is shown only after provider result verification and external identity linkage. | Design §23.4; SAFE-004 | P5-T05, AAA-RUNTIME-01 | apps/api/tests/integration/test_orchestrator_flow.py::test_missing_external_executor_never_reports_success; apps/api/tests/integration/test_outbox_atomicity.py::test_database_worker_persists_only_verified_provider_success; apps/worker/tests/test_outbox_worker.py |
 | REQ-CAL-009 | Retryable, permanent, reauthorization and dead-letter failures remain distinct. | Design §24.4 | P5-T06 | apps/worker/tests/unit/test_execution_failure_classification.py |
 | REQ-CAL-010 | Webhook gaps are repaired by periodic reconciliation without forced restoration of user edits. | Design §23.3; EXT-005 | P5-T07 | apps/worker/tests/integration/test_calendar_reconciliation.py |
 | REQ-UX-001 | Desktop and mobile use the approved five-area information architecture plus global agent panel. | Design §16 | P7-T01 | apps/web/e2e/navigation.spec.ts |
@@ -81,8 +81,8 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-UX-005 | Calendar shows fixed events, focus blocks, flexible queue and internal/external sync state distinctly. | Design §16.4 | P7-T06 | apps/web/e2e/calendar-truth.spec.ts |
 | REQ-UX-006 | Review and Approval Center exposes before/after, impact, reason and exact action. | Design §16.5–§16.6 | P7-T07 | apps/web/e2e/approval-center.spec.ts |
 | REQ-UX-007 | Agent operation streaming is resumable and cannot imply execution before verification. | Design Agent loop | P6-T08, P7-T08 | apps/web/e2e/agent-operation-stream.spec.ts |
-| REQ-UX-008 | PWA offline behavior is read-safe and does not queue dangerous writes without explicit design. | Design Web/PWA | P7-T09 | apps/web/e2e/pwa-offline.spec.ts |
-| REQ-UX-009 | Critical journeys meet keyboard, semantic and automated accessibility gates. | Evaluation UX | P7-T10 | reports/web/accessibility.json |
+| REQ-UX-008 | PWA offline behavior is read-safe and does not queue dangerous writes without explicit design. | Design Web/PWA | P7-T09, AAA-WEB-05 | apps/web/src/test/pwa.test.ts; apps/web/public/sw.js |
+| REQ-UX-009 | Critical journeys meet keyboard, semantic and automated accessibility gates. | Evaluation UX | P7-T10, AAA-WEB-05 | apps/web/e2e/accessibility.spec.ts; `make test-e2e` 16 passed (2026-08-31) |
 | REQ-UX-010 | Interaction telemetry measures the defined UX completion thresholds without recording private content. | Evaluation UX-001–006 | P7-T10, P8-T01 | reports/ux/interaction-time.json |
 | REQ-SEC-001 | All cross-workspace access attempts are denied and logged without data leakage. | SAFE-003 | P3-T04, P8-T05 | reports/stage-a/security-hard-gates.json |
 | REQ-SEC-002 | CSRF, session fixation, OAuth state and redirect attacks have regression tests. | Security runbook | P8-T05 | apps/api/tests/security/ |
@@ -92,8 +92,8 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-SEC-006 | Backups are restorable and deletion tombstones are re-applied after restore. | Operational runbook | P8-T08 | reports/operations/restore-drill.json |
 | REQ-OPS-001 | Non-LLM API P95 is 500 ms or less under the reference load. | Evaluation OPS-001 | P8-T06, P8-T10 | reports/stage-c/performance.json |
 | REQ-OPS-002 | Chat first stream response P95 is 2 seconds or less. | Evaluation OPS-002 | P6-T08, P8-T10 | reports/stage-c/stream-latency.json |
-| REQ-OPS-003 | Structured observability uses pseudonymous IDs and links API, worker, LLM and provider traces. | Design observability | P8-T01, P8-T06 | tests/observability/test_trace_linkage.py |
-| REQ-OPS-004 | Production deploys separate Web, API and Worker processes with health/readiness checks. | Design §18.8 | P8-T07 | tests/deployment/test_runtime_contract.py |
+| REQ-OPS-003 | Structured observability uses pseudonymous IDs and links API, worker, LLM and provider traces. | Design observability | P8-T01, P8-T06, AAA-RUNTIME-04 | apps/api/tests/unit/test_runtime_metrics.py; apps/api/tests/unit/test_telemetry_events.py; production scrape는 BLOCKED_EXTERNAL |
+| REQ-OPS-004 | Production deploys separate Web, API and Worker processes with health/readiness checks. | Design §18.8 | P8-T07, AAA-RUNTIME-01..03 | apps/api/tests/evals/test_deployment_contract.py; scripts/render_deployment.py; scripts/smoke_deployment.py; 실제 Docker build 3개 PASS |
 | REQ-OPS-005 | Release decision is generated from immutable metric evidence and cannot lower thresholds after observation. | Evaluation release rules | P8-T02, P8-T03, P8-T04, P8-T10 | reports/release/final-gate-decision.json |
 | REQ-OPS-006 | Pilot tooling captures baseline week and four agent weeks with consent and incident stop rules. | Evaluation pilot plan | P8-T09 | pilot/protocol/; reports/pilot/ |
 | REQ-OPS-007 | Any Hard Gate violation blocks release regardless of aggregate score. | Evaluation Hard Gates | P8-T10 | reports/release/final-gate-decision.json |
@@ -102,7 +102,7 @@ This matrix connects approved behavior to implementation Tasks and planned evide
 | REQ-FND-001 | Root toolchain and package managers are pinned and reproducible from a clean checkout. | Engineering standards | P0-T01 | tests/handoff/test_root_contract.py; lockfiles |
 | REQ-FND-002 | Local PostgreSQL, Redis and S3-compatible infrastructure has health checks and persistent development data. | Architecture §18.8 | P0-T02 | tests/handoff/test_compose_contract.py; docker compose config |
 | REQ-FND-003 | API exposes typed liveness/readiness endpoints without product-domain coupling. | Repository contract | P0-T04 | apps/api/tests/test_health.py |
-| REQ-FND-004 | Worker boots with explicit settings, job registry and graceful shutdown contract. | Repository contract | P0-T05 | apps/worker/tests/test_boot.py |
+| REQ-FND-004 | Worker boots with explicit settings, job registry and graceful shutdown contract. | Repository contract | P0-T05, AAA-RUNTIME-01 | apps/worker/src/personal_pm_worker/main.py; apps/worker/tests/test_worker_contract.py; apps/worker/tests/test_outbox_worker.py |
 | REQ-FND-005 | Web application boots with strict TypeScript, test baseline and generated-client boundary. | Repository contract | P0-T06 | apps/web/src/app/page.test.tsx; pnpm build |
 | REQ-API-001 | Database settings, async sessions and Alembic migrations work against a fresh PostgreSQL instance. | Design §18–§19 | P3-T01 | apps/api/tests/integration/test_migration_bootstrap.py |
 | REQ-API-002 | Repository adapters and Unit of Work preserve transaction boundaries and do not leak ORM types into domain contracts. | Architecture contract | P3-T03 | apps/api/tests/integration/test_unit_of_work.py |
