@@ -587,3 +587,54 @@ Local decision: PASS
 Release decision: BLOCKED_EXTERNAL
 Warnings: upstream Starlette httpx deprecation and Alembic path_separator deprecation; neither changed command exit status.
 ```
+
+## AAA remediation — Whole-branch review findings
+
+```text
+Task ID: AAA-FINAL-05
+Code commits: 02af2e9, 02674bc
+Timestamp UTC: 2026-08-31
+Reviewer: Codex self-review; user explicitly selected inline execution without subagents
+RED evidence:
+  release emulator Stage C → decision PASS, expected EXTERNAL_EVIDENCE_BLOCKED
+  production app with injected production settings → /identity/test-session returned 200
+  valid source upload → metadata 201 but storage key raised KeyError because raw bytes were discarded
+  RedisRateLimiter import → ImportError; production limiter was process-local
+  Web PWA security-header regression → Content-Security-Policy absent
+GREEN evidence:
+  release + Stage C focused → 18 passed
+  production identity route + seeded test route → 2 passed
+  object storage unit + source/identity integrations → 3 unit and 16 integration passed
+  security controls → 8 passed; real local Redis atomic counter → REDIS_RATE_LIMIT_PASS
+  real local MinIO put/get/delete → S3_ROUNDTRIP_PASS; verification bucket removed
+  Web PWA security header tests → 4 passed; Web typecheck/format clean
+  combined focused review suite → Python 29 unit/eval/security + 16 integration + Web 4 passed
+  first full matrix exposed explicit-settings alias regression → Calendar OAuth 6 failed; populate_by_name root fix → 12 passed
+Review verdict after scoped re-review: Critical 0, Important 0; READY for final full verification.
+External limits: live provider/private corpus/pilot/managed anti-malware/advisory/registry/cluster/backup/production observability remain BLOCKED_EXTERNAL.
+```
+
+## AAA remediation — Final verification after review
+
+```text
+Task ID: AAA-FINAL-05
+Measured revision: 02674bc2f080932c05bdc582bd5dc0990a9187df
+Timestamp UTC: 2026-08-31T05:10:15Z
+Fresh completion matrix after the last code fix:
+  make bootstrap → exit 0, 57 Python packages checked, pnpm lock current
+  make format-check → exit 0, 177 Python files + TypeScript workspaces clean
+  make lint → exit 0, Ruff + ESLint clean
+  make typecheck → exit 0, mypy strict 160 source files + TypeScript
+  make test-unit → exit 0, Python 295 passed/114 deselected, API client 2, Web 41
+  make test-integration → exit 0, PostgreSQL + Planner 249 passed
+  make test-e2e → exit 0, standalone Next + FastAPI/PostgreSQL + Playwright/axe 16 passed
+  make build → exit 0, optimized standalone Next build
+  make verify → exit 0, includes Stage A 20,000 PASS and emulator Stage C PASS
+  python3 scripts/verify_package.py → exit 0, manifest_files=77/requirements=104/metrics=64
+  python3 scripts/verify_repo.py → exit 0, artifacts=10/workspace_members=3
+  separate Stage A 20,000 → exit 0, 15 gates/0 failures
+  git diff --check → exit 0
+Local decision: PASS
+Release decision: BLOCKED_EXTERNAL
+Warnings: upstream Starlette httpx deprecation, Alembic path_separator deprecation and Playwright NO_COLOR notice; no command failed.
+```

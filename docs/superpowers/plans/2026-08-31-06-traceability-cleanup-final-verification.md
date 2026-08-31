@@ -241,19 +241,21 @@ git commit -m "test(release): record local production readiness"
 **Files:**
 - Review: all changes from `5993152` to HEAD
 
-- [ ] **Step 1: Invoke `superpowers:requesting-code-review`**
+- [x] **Step 1: Invoke `superpowers:requesting-code-review`**
 
 Request a whole-branch review against the approved spec, normative documents, and all six plans. Reviewer reports only Critical, Important, Minor, strengths, and READY/NOT READY with file:line evidence.
 
-- [ ] **Step 2: Fix Critical and Important findings with TDD**
+- [x] **Step 2: Fix Critical and Important findings with TDD**
 
 Each finding gets one reproduction, root-cause fix, focused verification, and scoped re-review. Do not bundle unrelated refactoring.
 
-- [ ] **Step 3: Invoke `superpowers:verification-before-completion`**
+Self-review was used because the user explicitly selected inline execution without subagents. The review found and fixed five production-boundary gaps: emulator Stage C accepted by release, production-mounted test identity routes, discarded source bytes, per-process production rate limits, and missing browser security headers.
+
+- [x] **Step 3: Invoke `superpowers:verification-before-completion`**
 
 Repeat every final command after the last fix. A previous green run does not count.
 
-- [ ] **Step 4: Reconcile final status**
+- [x] **Step 4: Reconcile final status**
 
 Set local readiness PASS only if the final review is READY and all local commands are green. Keep release `BLOCKED_EXTERNAL` until the explicit external evidence table is empty.
 

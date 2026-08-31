@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T13:41:44+09:00
+- **Manifest regenerated:** 2026-08-31T14:11:20+09:00
 - **Product implementation status:** local implementation under final verification;
   release remains blocked on external evidence
 
@@ -47,7 +47,7 @@
 | `docs/operations/backup-and-restore.md` | 1851 | `977765aacca36f8ab730ddb206e69b4e442e2d2067bed50cbc861a32c29d7638` |
 | `docs/operations/event-catalog.md` | 602 | `39a5aa927c325433307f218355ee17953e6404c9e211e49dfd7e291b5ef5a223` |
 | `docs/operations/release-runbook.md` | 1137 | `11dcbe0cf3bb197ca2ebabbd62bbafda563a36b000ab593844a0da01d78969fe` |
-| `docs/operations/security-privacy-and-runbook.md` | 5015 | `b537c2e46f65492167f91192121fd672189e107aa61b4a59c02aaf828c0c22f6` |
+| `docs/operations/security-privacy-and-runbook.md` | 5369 | `95007ce8d5c3c1a032854d761cbcb7ec5e95a641cf4dc4a87f464aff2ddca685` |
 | `docs/pilot/annotation-guide.md` | 351 | `0e88e3d9c4732d96754a11c6f33533735dbd60fdfecebf50cb3f42d7713e446a` |
 | `docs/pilot/baseline-questionnaire.md` | 196 | `946bcfb6273b0c4108cb395f944c26799846fbd82fc2a1b13e080173bb536518` |
 | `docs/pilot/incident-procedure.md` | 329 | `0d1b8323003199ad0dce292df83da9abeec78145939994aacaa0cf4e626955b7` |
@@ -67,21 +67,21 @@
 | `docs/quality/metric-gate-index.md` | 8826 | `5ef6b789df5c2e7da30a8f2483cd68403977015574fc0c5902e33a91c3953f7e` |
 | `docs/quality/verification-command-matrix.md` | 2694 | `b8dbcaed28be5cbc21a2c060c01128fe6898531a1c283735c9d5f7d1f41b9da9` |
 | `docs/requirements/acceptance-scenarios.md` | 7087 | `b2c59be7f7d3812fa5833ef99bd3c8c0b60861508d65be82d595ea2a1b1a0dac` |
-| `docs/requirements/requirements-traceability.md` | 25623 | `4c37dc79317721da2a9595cdc71fff74b4417ab595a98d1d218436cfc90a6f5d` |
+| `docs/requirements/requirements-traceability.md` | 26307 | `3c12227cd777da919bc0a9f5dd1fa4e5fa7d59a437c45e8f2f20f12f327e01ba` |
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
-| `docs/status/DECISION_LOG.md` | 5685 | `cd9788572ccba67f58fb6bed378fa4c4d5da9ece70ba65e645a12da39cad0771` |
+| `docs/status/DECISION_LOG.md` | 6135 | `202244fe3e6c9b5ce507bf5872d9e095348a2e8b5c375aad064d7d856c87dafe` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 944 | `703fd0e888f10630c6f62c96a1bb0e39038e57e7c075bb86fec043e7b38dd5d9` |
-| `docs/status/IMPLEMENTATION_STATUS.md` | 6858 | `d7ad7f8b6ecee8e4f67ddf09c01b1416c0f88a3def4030b3f021ed0e4ec352fe` |
-| `docs/status/RISK_REGISTER.md` | 3622 | `b51ead920f46a560972611566c486bec3c261d8d44cfa27a6ebb56dcaf03ecf5` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 32869 | `02fcf6042751ecb119686d0c00b400f94212e58783a06f9d68b4975b906e6bbc` |
+| `docs/status/IMPLEMENTATION_STATUS.md` | 6991 | `d1ae9c6fb27a182d8cb158ad5dd8b00e7c4a2dfbf9295d77e91ad8fa6a1a5963` |
+| `docs/status/RISK_REGISTER.md` | 3747 | `848f730efcea700478a21bd2eec23a1aac2dafe0bffd5a9755a0253f33674e33` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 35825 | `a531d0896729a0959876fbf4052edef6f2644bfd3ca587bf712d8f18371df6b6` |
 | `docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md` | 14912 | `b3b83a9de0a9ef432010a357165b33181aaaa1a2f84282bafd5fb0fb544e6195` |
 | `docs/superpowers/plans/2026-08-31-02-truthful-release-gates.md` | 12246 | `a8463d0ee65229977a79d5b34ec5617de89d64132396e3352d48ad90172ec462` |
 | `docs/superpowers/plans/2026-08-31-03-api-authorization-security.md` | 11415 | `e92f1712a1599a0977aa851ab7b802946379fa4a40320465ff0e9f8df977f992` |
 | `docs/superpowers/plans/2026-08-31-04-web-openapi-pwa.md` | 12830 | `315e81399d58dee4e05e62a3f7755ac3d15b34c21def4b6faa30a2c0506a7998` |
 | `docs/superpowers/plans/2026-08-31-05-runtime-deployment-observability.md` | 11327 | `1bf44f06f59b24a42e0053c95994afacce4cdb07bbd27da2db797c4a605f699c` |
-| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `f4b1993ab0e990d7c967afc61723427d368e9d847ee3ba620ba1da2e4b0aeae6` |
+| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10681 | `9777915da78054c263a5dffb02b29c85b87de5efb45e9ac9a650b40a25113aff` |
 | `docs/superpowers/specs/2026-08-31-aaa-production-readiness-design.md` | 11012 | `c37c8954ed4c62fb3c7f8c0e0daf187381d12184cdaa4b512c8d1d47e53c0fcc` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
@@ -108,7 +108,7 @@
 | `scripts/smoke_deployment.py` | 4276 | `121615c73b8bc7b0afd0c3d4d39d8fd1d4e8f31f6bdb36347ed7b2cb2b1b715d` |
 | `scripts/test_backup_restore.py` | 6769 | `1d695eb95dee15781969a1beeb7ef648c961f007b49b051cabe7494a5a717c45` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
-| `scripts/verify_release.py` | 8564 | `eb8a449220961b68e940506cf57401bb9c11f155ac1bd2573c7d4e110755b736` |
+| `scripts/verify_release.py` | 8822 | `ded34bbb84e82609223915080a69336a1bbaa967abbf9a0c6921fa694989f683` |
 | `scripts/verify_repo.py` | 6293 | `f8888743704bcf56945e8fb53564922497f39878bcb0400e8ad02cf279b0a5b7` |
 
 ## Verification

@@ -23,5 +23,6 @@
 | DEC-018 | 2026-08-31 | API 인증은 bearer-only로 고정하고 인증 cookie를 받지 않는다 | 브라우저가 자동 첨부하는 인증 cookie가 없으므로 CSRF token을 별도 상태로 추가하지 않고 cookie-only 요청을 401로 거부한다 | Accepted |
 | DEC-019 | 2026-08-31 | Kubernetes application image는 배포 시 registry digest를 주입하고 renderer가 형식을 검증한다 | 저장소가 알 수 없는 미래 registry digest를 가짜로 고정하지 않으면서 mutable tag 배포를 막는다 | Accepted |
 | DEC-020 | 2026-08-31 | 현재 runtime metric registry는 프로세스 내부 bounded-label 구현으로 제한한다 | 추가 collector 의존성 없이 alert/dashboard 계약을 검증한다. 다중 replica 집계는 production scrape 검증 시 외부 collector로 승격한다 | Accepted |
+| DEC-021 | 2026-08-31 | source 원문은 S3-compatible storage에 먼저 보존하고 production rate limit은 Redis 원자 카운터를 사용한다 | 메타데이터만 남고 원문이 소실되는 경로와 replica별 rate-limit 우회를 막는다. local/test는 자동 bucket 생성과 결정론적 메모리 limiter를 허용하지만 production은 HTTPS object storage, 비로컬 Redis와 비로컬 자격증명을 강제한다 | Accepted |
 
-새 결정은 `DEC-021`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.
+새 결정은 `DEC-022`부터 추가한다. 장기적·구조적 결정은 `docs/architecture/adr/`에 별도 ADR을 생성하고 이 표에서 연결한다.

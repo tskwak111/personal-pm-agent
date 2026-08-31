@@ -4,7 +4,7 @@
 - **Release:** BLOCKED_EXTERNAL
 - **현재 Phase:** AAA production-readiness reconciliation
 - **현재 Task:** independent whole-branch review and final verification
-- **마지막 로컬 검증:** `make verify` PASS; Python unit 290, API client 2, Web unit 40, PostgreSQL integration 247, standalone E2E/axe 16, Stage A 20,000/15 gates PASS — 2026-08-31 실측
+- **마지막 로컬 검증:** `make verify` PASS; Python unit 295, API client 2, Web unit 41, PostgreSQL integration 249, standalone E2E/axe 16, Stage A 20,000/15 gates PASS — revision `02674bc`, 2026-08-31 실측
 - **기준 브랜치:** `codex/aaa-production-readiness`
 
 ## Phase 현황
@@ -29,7 +29,7 @@
 | Stage C live provider | 실제 Google 자격증명 기반 fault/reconciliation report |
 | Registry/cluster | push된 application image digest와 rollout/rollback·probe 관측 |
 | Managed backup | 운영 RPO/RTO를 포함한 restore drill |
-| Advisory/security | 의존성 advisory·침투 검토 결과와 remediation |
+| Advisory/security | 관리형 anti-malware/signature 검증, 의존성 advisory·침투 검토 결과와 remediation |
 | Stage D pilot | 동의된 baseline 1주 + agent 4주 outcome report |
 | Production observability | Prometheus scrape와 alert delivery 관측 |
 
@@ -73,6 +73,6 @@
 
 ## 다음 행동
 
-1. 전체 브랜치 독립 리뷰에서 Critical/Important 0건을 확인한다.
-2. 마지막 수정 뒤 최종 검증을 다시 실행한다.
+1. 전체 브랜치 self-review의 Critical/Important 5건은 TDD로 수정했고 scoped re-review에서 잔여 0건이다.
+2. 마지막 수정 뒤 전체 완료 매트릭스를 재실행했고 모두 통과했다.
 3. 외부 증거 표가 남아 있으므로 release는 계속 차단한다.

@@ -35,6 +35,8 @@
 5. Document text can create candidates only; it cannot select tools, authority or recipients.
 6. All candidate commands pass schema, provenance, conflict, ownership, version and authority policies.
 
+Runtime configuration uses `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `REDIS_URL`. Production rejects local object-storage credentials, non-HTTPS object storage and local Redis URLs. A successful upload means both the scanned bytes and metadata were persisted; storage failure cannot create a source record.
+
 ## 5. Retention and deletion
 
 - Retention periods are configuration-backed and documented in product policy.
