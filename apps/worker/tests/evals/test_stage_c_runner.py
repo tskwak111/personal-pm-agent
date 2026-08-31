@@ -19,6 +19,7 @@ _spec.loader.exec_module(_mod)
 
 build_stage_c_report = _mod.build_stage_c_report
 ExtGate = _mod.ExtGateResult
+main = _mod.main
 
 
 @dataclass
@@ -51,3 +52,37 @@ def test_recovery_window_threshold_is_fifteen_minutes(
 
 def test_clean_inputs_pass(sample_ext_results: dict[str, Any]) -> None:
     assert build_stage_c_report(sample_ext_results).overall == "PASS"
+
+
+def test_missing_ext_metric_fails_without_key_error(
+    sample_ext_results: dict[str, Any],
+) -> None:
+    del sample_ext_results["EXT-004"]
+
+    report = build_stage_c_report(sample_ext_results)
+
+    assert report.overall == "FAIL"
+    assert report.detail["missing_metrics"] == ["EXT-004"]
+
+
+def test_undeclared_provider_profile_is_blocked(
+    sample_ext_results: dict[str, Any],
+) -> None:
+    report = build_stage_c_report(sample_ext_results, provider_profile="none")
+
+    assert report.overall == "BLOCKED_EXTERNAL"
+
+
+def test_fault_runner_failure_emits_fail_report(tmp_path: Path) -> None:
+    scenarios = tmp_path / "scenarios.yaml"
+    output = tmp_path / "stage-c.json"
+    scenarios.write_text("provider_profile: emulator\nscenarios: []\n", encoding="utf-8")
+
+    assert main(["--scenarios", str(scenarios), "--output", str(output)]) == 1
+
+    import json
+
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["overall"] == "FAIL"
+    assert report["provider_profile"] == "none"
+    assert report["metrics"] == {}

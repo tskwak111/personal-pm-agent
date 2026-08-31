@@ -18,21 +18,27 @@ run_fault_scenarios = _mod.run_fault_scenarios
 
 
 def _sample_suite() -> list[dict[str, Any]]:
-    return [
-        {"scenario": "api-timeout"},
-        {"scenario": "rate-limit-429"},
-        {"scenario": "provider-5xx"},
-        {"scenario": "oauth-expired"},
-        {"scenario": "duplicate-worker-delivery"},
-        {"scenario": "crash-after-db-commit"},
-        {"scenario": "provider-success-response-lost"},
-    ]
+    import yaml
+
+    path = _REPO_ROOT / "evals/fault-injection/calendar/scenarios.yaml"
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return payload["scenarios"]
 
 
 def test_fault_report_has_zero_duplicate_and_false_success() -> None:
     report = run_fault_scenarios(_sample_suite())
     for metric_id in ("EXT-002", "EXT-003", "EXT-006"):
         assert report.metrics[metric_id]["failures"] == 0
+    assert set(report.metrics) == {
+        "EXT-001",
+        "EXT-002",
+        "EXT-003",
+        "EXT-004",
+        "EXT-005",
+        "EXT-006",
+        "EXT-007",
+        "webhook_recovery_seconds",
+    }
 
 
 def test_all_required_scenarios_present_in_report() -> None:
@@ -43,7 +49,7 @@ def test_all_required_scenarios_present_in_report() -> None:
 
 
 def test_missing_scenario_is_reported_as_failure() -> None:
-    incomplete = [{"scenario": "api-timeout"}]
+    incomplete = [{"scenario": "api-timeout", "metric_ids": ["EXT-003"]}]
     report = run_fault_scenarios(incomplete, required=_mod.REQUIRED_SCENARIOS)
     missing = [r for r in report.results if not r.passed]
     assert len(missing) >= 1

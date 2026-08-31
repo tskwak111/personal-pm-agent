@@ -2,11 +2,54 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Stage C external & resilience report",
   "type": "object",
-  "required": ["overall", "zero_failure_gates_pass", "success_rate", "recovery_p95_seconds"],
+  "required": [
+    "schema_version",
+    "overall",
+    "missing_metrics",
+    "provider_profile",
+    "code_version",
+    "input_hash",
+    "generated_at_utc",
+    "metrics"
+  ],
   "properties": {
-    "overall": {"enum": ["PASS", "FAIL"]},
+    "schema_version": {"const": "1.0"},
+    "overall": {"enum": ["PASS", "FAIL", "BLOCKED_EXTERNAL"]},
+    "missing_metrics": {"type": "array", "items": {"type": "string"}},
+    "provider_profile": {"enum": ["emulator", "live", "none"]},
     "zero_failure_gates_pass": {"type": "boolean"},
     "success_rate": {"type": "number"},
-    "recovery_p95_seconds": {"type": "integer"}
-  }
+    "recovery_p95_seconds": {"type": "integer"},
+    "code_version": {"type": "string", "minLength": 1},
+    "input_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "metrics": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"overall": {"const": "PASS"}}},
+      "then": {
+        "required": [
+          "zero_failure_gates_pass",
+          "success_rate",
+          "recovery_p95_seconds"
+        ],
+        "properties": {
+          "metrics": {
+            "required": [
+              "EXT-001",
+              "EXT-002",
+              "EXT-003",
+              "EXT-004",
+              "EXT-005",
+              "EXT-006",
+              "EXT-007",
+              "webhook_recovery_seconds"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
 }

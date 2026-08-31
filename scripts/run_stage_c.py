@@ -1,21 +1,31 @@
 #!/usr/bin/env python3
-"""Stage C report: external execution and resilience gates.
-
-Aggregates the Calendar fault runner results with EXT metric thresholds.
-Zero duplicate, zero false-success and 15-minute recovery are hard gates.
-"""
+"""Build Stage C only from complete fault-runner observations."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-ZERO_FAILURE_EXT_GATES = {"EXT-002", "EXT-003", "EXT-004", "EXT-005", "EXT-006", "EXT-007"}
+ROOT = Path(__file__).resolve().parents[1]
+REQUIRED_METRICS = {
+    "EXT-001",
+    "EXT-002",
+    "EXT-003",
+    "EXT-004",
+    "EXT-005",
+    "EXT-006",
+    "EXT-007",
+    "webhook_recovery_seconds",
+}
+ZERO_FAILURE_EXT_GATES = {f"EXT-{index:03d}" for index in range(2, 8)}
 SUCCESS_RATE_THRESHOLD = 0.995
 RECOVERY_P95_LIMIT_SECONDS = 900
 
@@ -31,82 +41,126 @@ class StageCReport:
     detail: dict[str, Any]
 
 
-def build_stage_c_report(results: dict[str, Any]) -> StageCReport:
-    def _failures(entry: Any) -> int:
-        if isinstance(entry, dict):
-            return int(entry.get("failures", 0))
-        return int(getattr(entry, "failures", 0))
+def _value(entry: Any, key: str) -> Any:
+    return entry.get(key) if isinstance(entry, dict) else getattr(entry, key)
 
-    zero_gate_pass = all(_failures(results[metric]) == 0 for metric in ZERO_FAILURE_EXT_GATES)
-    rate_raw = results["EXT-001"]
-    rate = rate_raw["rate"] if isinstance(rate_raw, dict) else rate_raw.rate
-    success_rate_pass = float(rate) >= SUCCESS_RATE_THRESHOLD
 
-    recovery_raw: Any = results["webhook_recovery_seconds"]
-    p95 = int(recovery_raw["p95"]) if isinstance(recovery_raw, dict) else int(recovery_raw.p95)
+def build_stage_c_report(
+    results: dict[str, Any],
+    *,
+    provider_profile: str = "emulator",
+) -> StageCReport:
+    missing = sorted(REQUIRED_METRICS - set(results))
+    if missing:
+        return StageCReport(
+            "FAIL",
+            {"missing_metrics": missing, "provider_profile": provider_profile},
+        )
+    if provider_profile not in {"emulator", "live"}:
+        return StageCReport(
+            "BLOCKED_EXTERNAL",
+            {"missing_metrics": [], "provider_profile": provider_profile},
+        )
+
+    zero_gate_pass = all(
+        int(_value(results[metric], "failures")) == 0 for metric in ZERO_FAILURE_EXT_GATES
+    )
+    rate = float(_value(results["EXT-001"], "rate"))
+    p95 = int(_value(results["webhook_recovery_seconds"], "p95"))
+    success_rate_pass = rate >= SUCCESS_RATE_THRESHOLD
     recovery_pass = p95 <= RECOVERY_P95_LIMIT_SECONDS
-
     overall = "PASS" if zero_gate_pass and success_rate_pass and recovery_pass else "FAIL"
     return StageCReport(
-        overall=overall,
-        detail={
+        overall,
+        {
+            "missing_metrics": [],
+            "provider_profile": provider_profile,
             "zero_failure_gates_pass": zero_gate_pass,
-            "success_rate": float(rate),
+            "success_rate": rate,
             "recovery_p95_seconds": p95,
         },
     )
 
 
 class LatencyLike:
-    """Structural marker so both dataclasses and dicts are accepted."""
+    """Structural marker retained for test inputs."""
 
 
-def main() -> int:
+def _failure_report(output: Path, reason: str) -> int:
+    payload = {
+        "schema_version": "1.0",
+        "overall": "FAIL",
+        "missing_metrics": sorted(REQUIRED_METRICS),
+        "provider_profile": "none",
+        "code_version": _revision(),
+        "input_hash": hashlib.sha256(reason.encode()).hexdigest(),
+        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "metrics": {},
+        "error": reason,
+    }
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {output}; overall=FAIL")
+    return 1
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run Stage C evaluation")
+    parser.add_argument(
+        "--scenarios",
+        type=Path,
+        default=Path("evals/fault-injection/calendar/scenarios.yaml"),
+    )
     parser.add_argument("--output", type=Path, required=True)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    # Delegate scenario execution to the calendar fault runner.
-    fault_report_path = args.output.parent / "calendar-stage-c.json"
-    if not fault_report_path.exists():
-        subprocess.run(  # noqa: S603 — fixed argv
+    with tempfile.TemporaryDirectory(prefix="pma-stage-c-") as temporary:
+        fault_report_path = Path(temporary) / "calendar-faults.json"
+        process = subprocess.run(  # noqa: S603 - fixed local runner
             [
-                "uv",
-                "run",
-                "python",
-                "scripts/run_calendar_faults.py",
+                sys.executable,
+                str(ROOT / "scripts/run_calendar_faults.py"),
+                "--scenarios",
+                str(args.scenarios),
                 "--output",
                 str(fault_report_path),
             ],
-            check=False,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         )
-    faults = json.loads(fault_report_path.read_text(encoding="utf-8"))
+        if process.returncode != 0 or not fault_report_path.is_file():
+            return _failure_report(args.output, (process.stdout + process.stderr)[-4000:])
+        fault_bytes = fault_report_path.read_bytes()
+        faults = json.loads(fault_bytes)
 
-    results: dict[str, Any] = {
-        "EXT-001": {"rate": 1.0 if faults.get("overall") is None else _success_rate(faults)},
-        **{f"EXT-{i:03d}": ExtGateResult(failures=0) for i in range(2, 8)},
+    metrics = faults.get("metrics")
+    if not isinstance(metrics, dict):
+        return _failure_report(args.output, "fault runner omitted metrics")
+    report = build_stage_c_report(
+        metrics,
+        provider_profile=str(faults.get("provider_profile", "none")),
+    )
+    payload = {
+        "schema_version": "1.0",
+        "overall": report.overall,
+        **report.detail,
+        "code_version": _revision(),
+        "input_hash": hashlib.sha256(fault_bytes).hexdigest(),
+        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "metrics": metrics,
     }
-    for result in faults.get("results", []):
-        if not result.get("passed") and result["scenario"] in {
-            "duplicate-worker-delivery",
-            "crash-after-db-commit",
-        }:
-            results["EXT-002"] = ExtGateResult(failures=1)
-
-    report = build_stage_c_report(results)
-    payload = {"overall": report.overall, **report.detail}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.output}; overall={report.overall}")
-    return 0 if report.overall == "PASS" else 1
+    return {"PASS": 0, "FAIL": 1, "BLOCKED_EXTERNAL": 2}[report.overall]
 
 
-def _success_rate(faults: dict[str, Any]) -> float:
-    results = faults.get("results", [])
-    if not results:
-        return 0.0
-    passed = sum(1 for r in results if r.get("passed"))
-    return passed / len(results)
+def _revision() -> str:
+    result = subprocess.run(  # noqa: S603 - fixed git command
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True
+    )
+    return result.stdout.strip() if result.returncode == 0 else "unknown"
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T10:33:25+09:00
+- **Manifest regenerated:** 2026-08-31T10:42:07+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -99,11 +99,11 @@
 | `prompts/runtime/project-decomposition-v1.md` | 594 | `b735e370c0baf75380065922534725e9325a39eb70183c668a3a31d42f02fa75` |
 | `scripts/build_distribution_manifest.py` | 4044 | `715b4b50999d6f786cb278c91b1a7f24d5ad88884d58a3923330ed41dc4b77b2` |
 | `scripts/export_openapi.py` | 643 | `fe562d7111652eef49eb06c1435437e47b72364ba77d24ef7d69b4872077febc` |
-| `scripts/run_calendar_faults.py` | 6738 | `b757ac64ea9fa7403f7bf0874414e4f021e426f1866581135e6a1128d7259480` |
+| `scripts/run_calendar_faults.py` | 9382 | `bfc178d5285044d45d159ac356be440167100eb5c6ee1098acf12ba880828d04` |
 | `scripts/run_intake_eval.py` | 4275 | `d079f48f2c10c334437f2b7b29a4ff8ce1cd41eb4bfa78904aeb531d0f45e853` |
 | `scripts/run_stage_a.py` | 9806 | `20e3d6141d2ab0baa7bdd2676330dfc2ba2e5cafacdb4ae79c89a7db49a51df5` |
 | `scripts/run_stage_b.py` | 6978 | `4400865f55f93f6a459cd6334439556b0970c44dba5d0ab65890914f04896250` |
-| `scripts/run_stage_c.py` | 3683 | `cf5b6304631470555597f1ac6ed9e011cb9c54a557c88bb55c65acecf707dd71` |
+| `scripts/run_stage_c.py` | 5243 | `bcdafa7b15a7454c7dc1cf867168cea76fe6abe582eb2a3b616ae48531cefc1f` |
 | `scripts/smoke_deployment.py` | 2409 | `5b57e949da4ae9090c748e6b62993a3f4a649fe1e160e54a7f72cc20d989918b` |
 | `scripts/test_backup_restore.py` | 1728 | `d167968084e57674e2a92b2d15de6e15a73913b8d18a8512a25b966253633623` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
