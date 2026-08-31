@@ -24,6 +24,106 @@
         "title": "ApproveProposalRequest",
         "type": "object"
       },
+      "CalendarConnectionSummary": {
+        "properties": {
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "mode",
+          "status"
+        ],
+        "title": "CalendarConnectionSummary",
+        "type": "object"
+      },
+      "CalendarEventSummary": {
+        "properties": {
+          "all_day": {
+            "title": "All Day",
+            "type": "boolean"
+          },
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "sync_status": {
+            "title": "Sync Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "start_at",
+          "end_at",
+          "all_day",
+          "kind",
+          "sync_status"
+        ],
+        "title": "CalendarEventSummary",
+        "type": "object"
+      },
+      "CalendarResponse": {
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarConnectionSummary"
+            },
+            "title": "Connections",
+            "type": "array"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarEventSummary"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "flexible_tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "title": "Flexible Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "connections",
+          "events",
+          "flexible_tasks"
+        ],
+        "title": "CalendarResponse",
+        "type": "object"
+      },
       "ConnectionResponse": {
         "properties": {
           "authorization_url": {
@@ -69,6 +169,99 @@
         "title": "CreatePlanRequest",
         "type": "object"
       },
+      "ExternalDependencySummary": {
+        "properties": {
+          "deliverable": {
+            "title": "Deliverable",
+            "type": "string"
+          },
+          "expected_delivery_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Delivery At"
+          },
+          "fallback_available": {
+            "title": "Fallback Available",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "owner_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Label"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "deliverable",
+          "owner_label",
+          "expected_delivery_at",
+          "fallback_available",
+          "version"
+        ],
+        "title": "ExternalDependencySummary",
+        "type": "object"
+      },
+      "FixedEvent": {
+        "properties": {
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "sync_status": {
+            "title": "Sync Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "start_at",
+          "end_at",
+          "kind",
+          "sync_status"
+        ],
+        "title": "FixedEvent",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -80,6 +273,78 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "InboxCandidate": {
+        "properties": {
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "evidence_score": {
+            "title": "Evidence Score",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inbox_item_id": {
+            "title": "Inbox Item Id",
+            "type": "string"
+          },
+          "interpretation": {
+            "additionalProperties": true,
+            "title": "Interpretation",
+            "type": "object"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "source_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Text"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "inbox_item_id",
+          "kind",
+          "status",
+          "source_text",
+          "interpretation",
+          "evidence_score",
+          "decision"
+        ],
+        "title": "InboxCandidate",
+        "type": "object"
+      },
+      "InboxResponse": {
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/InboxCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "candidates"
+        ],
+        "title": "InboxResponse",
         "type": "object"
       },
       "MilestonePatchBody": {
@@ -104,6 +369,65 @@
           "expected_version"
         ],
         "title": "MilestonePatchBody",
+        "type": "object"
+      },
+      "MilestoneSummary": {
+        "properties": {
+          "deadline_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline At"
+          },
+          "deadline_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Date"
+          },
+          "deadline_time_known": {
+            "title": "Deadline Time Known",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "deadline_date",
+          "deadline_at",
+          "deadline_time_known",
+          "version"
+        ],
+        "title": "MilestoneSummary",
         "type": "object"
       },
       "PlanResponse": {
@@ -139,6 +463,109 @@
         "title": "PlanResponse",
         "type": "object"
       },
+      "ProjectDetailResponse": {
+        "properties": {
+          "external_dependencies": {
+            "items": {
+              "$ref": "#/components/schemas/ExternalDependencySummary"
+            },
+            "title": "External Dependencies",
+            "type": "array"
+          },
+          "milestones": {
+            "items": {
+              "$ref": "#/components/schemas/MilestoneSummary"
+            },
+            "title": "Milestones",
+            "type": "array"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectSummary"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project",
+          "milestones",
+          "tasks",
+          "external_dependencies"
+        ],
+        "title": "ProjectDetailResponse",
+        "type": "object"
+      },
+      "ProjectSummary": {
+        "properties": {
+          "done_count": {
+            "title": "Done Count",
+            "type": "integer"
+          },
+          "execution_progress": {
+            "title": "Execution Progress",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "risk_level": {
+            "title": "Risk Level",
+            "type": "string"
+          },
+          "risk_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Risk Reasons",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "task_count": {
+            "title": "Task Count",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "execution_progress",
+          "risk_level",
+          "risk_reasons",
+          "task_count",
+          "done_count"
+        ],
+        "title": "ProjectSummary",
+        "type": "object"
+      },
+      "ProjectsResponse": {
+        "properties": {
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectSummary"
+            },
+            "title": "Projects",
+            "type": "array"
+          }
+        },
+        "required": [
+          "projects"
+        ],
+        "title": "ProjectsResponse",
+        "type": "object"
+      },
       "ProposalApproveResponse": {
         "properties": {
           "approval_level": {
@@ -171,6 +598,91 @@
           "approval_level"
         ],
         "title": "ProposalApproveResponse",
+        "type": "object"
+      },
+      "ProposalSummary": {
+        "properties": {
+          "approval_level": {
+            "title": "Approval Level",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "targets": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Targets",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "approval_level",
+          "status",
+          "version",
+          "targets"
+        ],
+        "title": "ProposalSummary",
+        "type": "object"
+      },
+      "ReviewResponse": {
+        "properties": {
+          "actual_minutes": {
+            "title": "Actual Minutes",
+            "type": "integer"
+          },
+          "missed_minutes": {
+            "title": "Missed Minutes",
+            "type": "integer"
+          },
+          "pending_proposals": {
+            "items": {
+              "$ref": "#/components/schemas/ProposalSummary"
+            },
+            "title": "Pending Proposals",
+            "type": "array"
+          },
+          "period_end": {
+            "format": "date",
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "title": "Period Start",
+            "type": "string"
+          },
+          "planned_minutes": {
+            "title": "Planned Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "period_start",
+          "period_end",
+          "planned_minutes",
+          "actual_minutes",
+          "missed_minutes",
+          "pending_proposals"
+        ],
+        "title": "ReviewResponse",
         "type": "object"
       },
       "SessionResponse": {
@@ -243,6 +755,39 @@
         "title": "TaskResponse",
         "type": "object"
       },
+      "TaskSummary": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "remaining_minutes": {
+            "title": "Remaining Minutes",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "remaining_minutes",
+          "version"
+        ],
+        "title": "TaskSummary",
+        "type": "object"
+      },
       "TaskTransitionBody": {
         "properties": {
           "blocker_resolved": {
@@ -299,6 +844,62 @@
           "email"
         ],
         "title": "TestSessionRequest",
+        "type": "object"
+      },
+      "TodayResponse": {
+        "properties": {
+          "core_outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaskSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fixed_events": {
+            "items": {
+              "$ref": "#/components/schemas/FixedEvent"
+            },
+            "title": "Fixed Events",
+            "type": "array"
+          },
+          "must_do": {
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "title": "Must Do",
+            "type": "array"
+          },
+          "not_today": {
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "title": "Not Today",
+            "type": "array"
+          },
+          "plan_status": {
+            "title": "Plan Status",
+            "type": "string"
+          },
+          "queue": {
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "title": "Queue",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plan_status",
+          "core_outcome",
+          "fixed_events",
+          "must_do",
+          "queue",
+          "not_today"
+        ],
+        "title": "TodayResponse",
         "type": "object"
       },
       "UploadInitiationRequest": {
@@ -372,6 +973,57 @@
           "status"
         ],
         "title": "UploadInitiationResponse",
+        "type": "object"
+      },
+      "UxEventAccepted": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepted"
+        ],
+        "title": "UxEventAccepted",
+        "type": "object"
+      },
+      "UxEventName": {
+        "enum": [
+          "task_started",
+          "task_completed",
+          "candidate_confirmed",
+          "proposal_approved",
+          "agent_opened",
+          "briefing_viewed"
+        ],
+        "title": "UxEventName",
+        "type": "string"
+      },
+      "UxEventRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_ms": {
+            "maximum": 3600000.0,
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "name": {
+            "$ref": "#/components/schemas/UxEventName"
+          },
+          "schema_version": {
+            "const": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "name",
+          "duration_ms"
+        ],
+        "title": "UxEventRequest",
         "type": "object"
       },
       "ValidationError": {
@@ -466,6 +1118,203 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/agent/operations/{operation_id}/stream": {
+      "get": {
+        "operationId": "stream_operation_api_v1_agent_operations__operation_id__stream_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "operation_id",
+            "required": true,
+            "schema": {
+              "title": "Operation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "last_event_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": -1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last Event Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Last-Event-ID",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stream Operation",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/api/v1/analytics/ux-events": {
+      "post": {
+        "operationId": "record_ux_event_api_v1_analytics_ux_events_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UxEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UxEventAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record Ux Event",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/calendar": {
+      "get": {
+        "operationId": "get_calendar_api_v1_calendar_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Calendar",
+        "tags": [
+          "views"
+        ]
+      }
+    },
     "/api/v1/calendar/connections": {
       "post": {
         "operationId": "create_connection_api_v1_calendar_connections_post",
@@ -626,6 +1475,55 @@
         "summary": "Create Test Session",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/inbox": {
+      "get": {
+        "operationId": "get_inbox_api_v1_inbox_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Inbox",
+        "tags": [
+          "views"
         ]
       }
     },
@@ -814,6 +1712,113 @@
         ]
       }
     },
+    "/api/v1/projects": {
+      "get": {
+        "operationId": "get_projects_api_v1_projects_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Projects",
+        "tags": [
+          "views"
+        ]
+      }
+    },
+    "/api/v1/projects/{workstream_id}": {
+      "get": {
+        "operationId": "get_project_detail_api_v1_projects__workstream_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workstream_id",
+            "required": true,
+            "schema": {
+              "title": "Workstream Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Project Detail",
+        "tags": [
+          "views"
+        ]
+      }
+    },
     "/api/v1/proposals/{proposal_id}/approve": {
       "post": {
         "operationId": "approve_proposal_api_v1_proposals__proposal_id__approve_post",
@@ -880,6 +1885,55 @@
         "summary": "Approve Proposal",
         "tags": [
           "proposals"
+        ]
+      }
+    },
+    "/api/v1/review": {
+      "get": {
+        "operationId": "get_review_api_v1_review_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Review",
+        "tags": [
+          "views"
         ]
       }
     },
@@ -1133,6 +2187,55 @@
         "summary": "Transition Task",
         "tags": [
           "tasks"
+        ]
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "operationId": "get_today_api_v1_today_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Today",
+        "tags": [
+          "views"
         ]
       }
     },

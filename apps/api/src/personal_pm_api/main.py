@@ -119,12 +119,15 @@ def create_app(
             event = StructuredLogger().bind(**fields).capture("request.completed")
             REQUEST_LOGGER.info(json.dumps(event, sort_keys=True, separators=(",", ":")))
 
+    from personal_pm_api.agent.router import router as agent_router
+    from personal_pm_api.analytics.router import router as analytics_router
     from personal_pm_api.approvals.router import router as approvals_router
     from personal_pm_api.calendar.router import router as calendar_router
     from personal_pm_api.identity.router import router as identity_router
     from personal_pm_api.inbox.router import router as inbox_router
     from personal_pm_api.planning.router import router as planning_router
     from personal_pm_api.shared.errors import install_error_handlers
+    from personal_pm_api.views.router import router as views_router
     from personal_pm_api.workspaces.router import router as workspaces_router
 
     app.include_router(identity_router)
@@ -133,6 +136,9 @@ def create_app(
     app.include_router(approvals_router)
     app.include_router(inbox_router)
     app.include_router(calendar_router)
+    app.include_router(views_router)
+    app.include_router(agent_router)
+    app.include_router(analytics_router)
     install_error_handlers(app)
 
     @app.get("/health/live", include_in_schema=False)

@@ -113,7 +113,7 @@ git commit -m "feat(client): generate typed OpenAPI client"
 - Produces: authenticated `GET /api/v1/agent/operations/{operation_id}/stream`
 - Produces: `POST /api/v1/analytics/ux-events`
 
-- [ ] **Step 1: Write ownership and empty-state tests**
+- [x] **Step 1: Write ownership and empty-state tests**
 
 ```python
 response = await client.get("/api/v1/today")
@@ -130,17 +130,17 @@ assert response.json() == {
 
 For each endpoint, seed another workspace and assert its IDs/titles never appear.
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest apps/api/tests/integration/test_web_read_models.py -q`
 
-- [ ] **Step 3: Add typed read-only projections**
+- [x] **Step 3: Add typed read-only projections**
 
 Queries accept `AsyncSession` and `CurrentActor`, filter every table by `actor.workspace_id`, and return Pydantic schemas. They contain no state transitions. Today reads the current plan snapshot; inbox reads unresolved candidates; review reads pending proposals; calendar reads active/tombstoned sync state; projects aggregate existing workstream/task/milestone rows.
 
 The agent router streams owned append-only events after `last_event_id` using `StreamingResponse(media_type="text/event-stream")`. The analytics router accepts only the versioned UX event allowlist, binds the actor workspace hash server-side, and rejects arbitrary event names or payload keys.
 
-- [ ] **Step 4: Export and regenerate OpenAPI**
+- [x] **Step 4: Export and regenerate OpenAPI**
 
 ```bash
 uv run pytest apps/api/tests/integration/test_web_read_models.py apps/api/tests/integration/test_notifications_and_sse.py apps/api/tests/contract/test_openapi.py -q
@@ -148,7 +148,7 @@ uv run python scripts/export_openapi.py
 pnpm --filter @personal-pm/api-client generate
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/api/src/personal_pm_api/views apps/api/src/personal_pm_api/agent/router.py apps/api/src/personal_pm_api/analytics/router.py apps/api/src/personal_pm_api/main.py apps/api/tests/integration/test_web_read_models.py apps/api/tests/integration/test_notifications_and_sse.py artifacts/openapi.json packages/api-client/src/generated/schema.ts

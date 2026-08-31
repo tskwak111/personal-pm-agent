@@ -90,9 +90,13 @@ async def test_silent_is_record_only(notif_env: dict[str, Any]) -> None:
     assert delivery_mode(intent, settings, day) == DeliveryMode.RECORD_ONLY
 
 
-async def test_sse_replays_after_last_event_id(database_url_session: str) -> None:
-    """SSE replay contract via the operations service event ordering."""
-    from personal_pm_api.agent.operations import OPERATION_STEPS
+def test_sse_frame_has_stable_public_fields() -> None:
+    """SSE frames carry stable sequence IDs and typed public fields only."""
+    from personal_pm_api.agent.operations import StepEventView
+    from personal_pm_api.agent.router import _encode_event
 
-    # The stream replays events with sequence > Last-Event-ID.
-    assert "OBSERVE" in OPERATION_STEPS  # sanity; full SSE covered by router contract
+    frame = _encode_event(StepEventView(step="OBSERVE", status="SUCCEEDED", sequence=3))
+    assert frame == (
+        "id: 3\nevent: operation.step\ndata: "
+        '{"step":"OBSERVE","status":"SUCCEEDED","sequence":3}\n\n'
+    )

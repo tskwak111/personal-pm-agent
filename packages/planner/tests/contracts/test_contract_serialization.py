@@ -124,3 +124,22 @@ def test_naive_now_is_rejected(planner_input_factory) -> None:
 def test_uuid_fields_never_leak_into_canonical_bytes(planner_input_factory) -> None:
     payload = canonical_input_bytes(planner_input_factory()).decode("utf-8")
     assert str(uuid4()) not in payload or "task-" in payload
+
+
+def test_canonical_output_preserves_complete_browser_projection(planner_input_factory) -> None:
+    from personal_pm_planner import plan
+
+    output = plan(planner_input_factory()).canonical_core()
+
+    today = output["today"]
+    assert isinstance(today, dict)
+    assert set(today) == {
+        "core_result_task_id",
+        "must_do",
+        "next_queue",
+        "opportunistic",
+        "excluded",
+    }
+    risks = output["risks"]
+    assert isinstance(risks, list)
+    assert all("reasons" in risk for risk in risks)

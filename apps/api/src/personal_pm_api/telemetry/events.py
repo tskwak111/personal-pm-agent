@@ -10,17 +10,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from personal_pm_api.telemetry.logging import SENSITIVE_KEYS
+
 SCHEMA_VERSION = 1
 
-SENSITIVE_FIELD_NAMES = frozenset(
-    {
-        "document_text",
-        "oauth_token",
-        "prompt_text",
-        "personal_note",
-        "calendar_description",
-    }
-)
+SENSITIVE_FIELD_NAMES = SENSITIVE_KEYS
 
 
 class SensitiveTelemetryFieldError(Exception):

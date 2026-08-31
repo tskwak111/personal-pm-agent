@@ -1,6 +1,5 @@
 import hashlib
 import json
-import logging
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -60,7 +59,7 @@ async def test_database_check_executes_select_one(
 
 
 def test_request_log_is_correlated_and_sanitized(
-    caplog: "pytest.LogCaptureFixture",
+    monkeypatch: "pytest.MonkeyPatch",
 ) -> None:
     workspace_id = "00000000-0000-0000-0000-000000000001"
     token = "secret-session-token"
@@ -71,7 +70,11 @@ def test_request_log_is_correlated_and_sanitized(
         request.state.workspace_id = workspace_id
         return {"status": "ok"}
 
-    caplog.set_level(logging.INFO, logger="personal_pm_api.requests")
+    messages: list[str] = []
+    monkeypatch.setattr(
+        "personal_pm_api.main.REQUEST_LOGGER.info",
+        lambda message: messages.append(str(message)),
+    )
     response = TestClient(app).get(
         "/request-log-probe",
         params={"workspace_id": workspace_id},
@@ -83,7 +86,7 @@ def test_request_log_is_correlated_and_sanitized(
     )
 
     assert response.headers["X-Correlation-ID"] == "request-42"
-    event = json.loads(caplog.records[-1].message)
+    event = json.loads(messages[-1])
     duration_ms = event.pop("duration_ms")
     assert isinstance(duration_ms, int)
     assert duration_ms >= 0
@@ -95,6 +98,7 @@ def test_request_log_is_correlated_and_sanitized(
         "status": 200,
         "workspace_hash": hashlib.sha256(workspace_id.encode()).hexdigest(),
     }
-    assert workspace_id not in caplog.text
-    assert token not in caplog.text
-    assert "also-secret" not in caplog.text
+    rendered = "\n".join(messages)
+    assert workspace_id not in rendered
+    assert token not in rendered
+    assert "also-secret" not in rendered

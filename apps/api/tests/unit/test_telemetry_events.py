@@ -8,11 +8,24 @@ from personal_pm_api.telemetry.events import (
 )
 
 
-def test_event_schema_rejects_sensitive_fields() -> None:
+@pytest.mark.parametrize(
+    "field",
+    (
+        "authorization",
+        "calendar_description",
+        "code",
+        "cookie",
+        "document_text",
+        "file_content",
+        "oauth_token",
+        "personal_note",
+        "prompt_text",
+        "refresh_token",
+    ),
+)
+def test_event_schema_rejects_sensitive_fields(field: str) -> None:
     with pytest.raises(SensitiveTelemetryFieldError):
-        validate_no_sensitive_fields(
-            {"trace_id": "t", "workspace_hash": "w", "document_text": "secret"}
-        )
+        validate_no_sensitive_fields({"trace_id": "t", "workspace_hash": "w", field: "secret"})
 
 
 def test_metric_events_include_version_dimensions() -> None:

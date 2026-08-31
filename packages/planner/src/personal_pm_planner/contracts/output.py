@@ -108,6 +108,15 @@ class PlannerOutput:
                 "must_do": [t.value.hex for t in self.today_plan.must_do]
                 if self.today_plan
                 else [],
+                "next_queue": [t.value.hex for t in self.today_plan.next_queue]
+                if self.today_plan
+                else [],
+                "opportunistic": [t.value.hex for t in self.today_plan.opportunistic]
+                if self.today_plan
+                else [],
+                "excluded": [t.value.hex for t in self.today_plan.excluded]
+                if self.today_plan
+                else [],
             },
             "risks": [
                 {
@@ -115,6 +124,8 @@ class PlannerOutput:
                     "level": risk.risk_level,
                     "base_coverage": risk.base_coverage,
                     "safety_coverage": risk.safety_coverage,
+                    "slack_minutes": risk.slack_minutes,
+                    "reasons": list(risk.reasons),
                 }
                 for risk in sorted(self.milestone_risks, key=lambda r: r.milestone_id.value.hex)
             ],
