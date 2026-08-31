@@ -454,3 +454,35 @@ Fixes during verification:
   - playwright 산출물(test-results/) prettier/gitignore 제외
 Residual: 실제 Google API 어댑터·파일럿 Stage D는 외부 의존으로 남음(RISK_REGISTER)
 ```
+
+## AAA remediation — Safety and planning integrity
+
+```text
+Task ID: AAA-SAFETY-01..06
+Commit SHAs: f73011b, dd67416, cbe33cb, d0be1be, f1b2c14, (본 증거 커밋)
+Timestamp UTC: 2026-08-31T01:16:23Z
+Focused red commands and observed failures:
+  packages/planner/tests/scheduling/test_serial_schedule.py::test_blocks_start_successor_begins_after_predecessor_finishes → successor 09:00 < predecessor completion 14:00
+  packages/planner/tests/replanning/test_replanning.py → 핀/Freeze 이전 배정 대신 fresh allocation 반환, 슬롯 없음에서는 배정 소실
+  apps/api/tests/integration/test_planning_service.py::test_build_planner_input_hydrates_persisted_workspace_facts + schema regressions → 외부 의존 모델 import 실패, unknown-time CHECK 미작동, dependency workspace_id 부재
+  apps/api/tests/integration/test_orchestrator_flow.py::test_missing_external_executor_never_reports_success → SUCCEEDED 반환
+  packages/planner/tests/replanning/test_replanning.py::test_today_plan_uses_user_local_date_at_utc_boundary → 현지 오늘 작업이 excluded
+  apps/api/tests/integration/test_calendar_conflicts.py::test_provider_deletion_is_scoped_to_workspace → workspace 인자 부재 TypeError
+Focused green results:
+  Planner 전체 → 128 passed; 관련 replanning/scheduling/vector/property → 41 passed
+  계획 서비스·스키마 → 10 passed; 빈 임시 DB 0001→0010 upgrade 성공; alembic check → No new upgrade operations detected
+  오케스트레이터 → 5 passed; worker calendar → 12 passed
+  Today 경계 → replanning 8 passed; calendar conflicts/import → 10 passed
+Adjacent regression command and result:
+  make format-check → exit 0, Python 164 files + pnpm Prettier clean
+  make lint → exit 0, Ruff + ESLint clean
+  make typecheck → exit 0, mypy strict 149 source files + TypeScript clean
+  make test-unit → exit 0, Python 240 passed/82 deselected + Web 24 passed
+  make test-integration → exit 0, 216 passed
+  python3 scripts/verify_package.py → PASSED
+  git diff --check → clean
+Rule/requirement evidence: PLAN-002, PLAN-006, PLAN-007, PLAN-009, SAFE-004, REQ-PRD-005, REQ-CORE-002/005/013, REQ-PLN-002/006/007/010/016, REQ-CAL-004/008
+Generated report/artifact paths: apps/api/migrations/versions/0010_planner_input_facts.py
+Reviewer: Codex self-review against docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md
+Residual risk: 실제 Google provider 자격증명 기반 실행 증거는 BLOCKED_EXTERNAL이며 R-005를 Open으로 유지한다. 파일럿 사용자 신뢰 측정도 저장소 범위 밖이다.
+```

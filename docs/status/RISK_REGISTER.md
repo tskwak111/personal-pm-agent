@@ -3,10 +3,10 @@
 | ID | 위험 | 가능성 | 영향 | 현재 완화책 | 상태 |
 |---|---|---:|---:|---|---|
 | R-001 | LLM이 마감·일정을 잘못 자동 등록 | Medium | Critical | 구현됨: evidence.py(자신감 배제), registration_policy(충돌/시간미상/고피해 항상 확인), intake 어댑터 source span 바인딩, golden eval AI-001/002 | Mitigated (P8 평가에서 최종 확인) |
-| R-002 | Planner가 같은 가용 시간을 중복 사용 | Low after tests | Critical | 고유 슬롯, Base/Safety 독립 Pass, 속성 테스트 | Open |
+| R-002 | Planner가 같은 가용 시간을 중복 사용 | Low after tests | Critical | 고유 슬롯, Base/Safety 독립 Pass, 보호된 이전 배정도 양쪽 Ledger에 예약, 속성·참조 벡터·전체 Planner 테스트 | Mitigated |
 | R-003 | 의존성 사이클로 계획이 불가능 | Medium | High | SCC 탐지, 자동 수정 금지, Blocked 표시 | Open |
-| R-004 | 계획이 자주 바뀌어 사용자 신뢰 하락 | Medium | High | Freeze Window, 변경 비용, change ratio Gate | Open |
-| R-005 | Google Calendar 중복 생성 또는 거짓 성공 | Medium | Critical | 구현됨: 멱등 실행기(중복 전달 1 이벤트), 타임아웃 PENDING 유지 후 재조정, Stage C fault 시나리오 7종 all_passed | Mitigated (P8에서 재검증) |
+| R-004 | 계획이 자주 바뀌어 사용자 신뢰 하락 | Medium | High | Freeze Window·핀 배정을 승인 전 원위치로 보존하고 회귀 테스트로 고정; 실제 신뢰 영향은 파일럿 필요 | Open |
+| R-005 | Google Calendar 중복 생성 또는 거짓 성공 | Medium | Critical | 저장소 검증: 실행기 부재/검증 실패는 FAILED, 멱등 실행기, 타임아웃 PENDING, Stage C fault 시나리오. 실제 Google 자격증명 기반 종단 증거는 없음 | Open (live-provider proof required) |
 | R-006 | OAuth 토큰 또는 개인 문서 노출 | Low | Catastrophic | 구현됨: AES-GCM 볼트, 로그 REDACTED 필터(테스트), 워크스페이스 해싱, 텔레메트리 민감필드 거부, 백업 암호화 | Mitigated |
 | R-007 | 문서 프롬프트 인젝션이 행동으로 이어짐 | Medium | Catastrophic | content 격리, tool-less extraction, approval | Open |
 | R-008 | 전체 기능 규모로 일정 지연 | High | Medium | Phase gate, 독립 Task, 우선 핵심 경로 구현 | Accepted |

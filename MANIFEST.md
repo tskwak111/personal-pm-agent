@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-26T18:03:25+09:00
+- **Manifest regenerated:** 2026-08-31T10:18:12+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -25,7 +25,7 @@
 | `PACKAGE_SUMMARY.json` | 1 |
 | `README.md` | 1 |
 | `SOURCE_SPEC_HASHES.sha256` | 1 |
-| `docs` | 41 |
+| `docs` | 48 |
 | `prompts` | 10 |
 | `scripts` | 12 |
 
@@ -67,15 +67,22 @@
 | `docs/quality/metric-gate-index.md` | 8826 | `5ef6b789df5c2e7da30a8f2483cd68403977015574fc0c5902e33a91c3953f7e` |
 | `docs/quality/verification-command-matrix.md` | 2151 | `ef4ddc3267b3f63a936ad04e0128911fd40921aaaf82d8a4926a9e12338b934c` |
 | `docs/requirements/acceptance-scenarios.md` | 7087 | `b2c59be7f7d3812fa5833ef99bd3c8c0b60861508d65be82d595ea2a1b1a0dac` |
-| `docs/requirements/requirements-traceability.md` | 20825 | `da27db501687ff30c8ab87b29cadf6b01369c376be3e1939e5e8e4b5edf8c4bf` |
+| `docs/requirements/requirements-traceability.md` | 22335 | `195df3ccce5b502ce606934a2eafbf2907dede315793c0deb5ef2c3e6db815ad` |
 | `docs/specs/2026-08-23-personal-pm-agent-design.md` | 66469 | `0945e7681761d487bc2a25c3df66bf17ecab1ca3acab17a9eb0343613b7582e7` |
 | `docs/specs/2026-08-23-personal-pm-agent-evaluation-and-pilot-plan.md` | 18086 | `c1c10711f737724dcf98f736ee941375ccb43e719c6d341446c19c760cad6afb` |
 | `docs/specs/2026-08-23-personal-pm-agent-planner-normative-spec.md` | 33320 | `6679afb3e3f2bfdc0e39e1e24ce768eec7111c5a8fb76cfdebd038695a6e171f` |
 | `docs/status/DECISION_LOG.md` | 4562 | `5de34ef6f73a0b5071ccdbda7c318f62e5b09565be615f1fff9db34fa5a5acad` |
 | `docs/status/HANDOFF_CHECKLIST.md` | 705 | `60a813901e95c99e8863e13961a8ec40b29d59067ef92a96283110a533089167` |
 | `docs/status/IMPLEMENTATION_STATUS.md` | 6246 | `c4bc2ea6cd7a43987aae5ded00297230e4fe8898cc7822841f575982aadf7d04` |
-| `docs/status/RISK_REGISTER.md` | 2912 | `5279f9fcca7d9eb79a5a090e11ca68ed0078b3897a367036a7ea15bc3edd3a5d` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 25016 | `761acdb6ca6ea16bc388628fa2ad19ef3b717d2ad508a7619d25fa539dc9af1d` |
+| `docs/status/RISK_REGISTER.md` | 3136 | `903c8f5ee59b27b8ccf3194fa6cff832337b26bfe2471604d9917d71475fbbfd` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 27630 | `c978449c59b766b36c6e5fb7355e76048c07c64cfb925659606f8e80cc65242d` |
+| `docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md` | 14912 | `b3b83a9de0a9ef432010a357165b33181aaaa1a2f84282bafd5fb0fb544e6195` |
+| `docs/superpowers/plans/2026-08-31-02-truthful-release-gates.md` | 12246 | `a8463d0ee65229977a79d5b34ec5617de89d64132396e3352d48ad90172ec462` |
+| `docs/superpowers/plans/2026-08-31-03-api-authorization-security.md` | 11415 | `e92f1712a1599a0977aa851ab7b802946379fa4a40320465ff0e9f8df977f992` |
+| `docs/superpowers/plans/2026-08-31-04-web-openapi-pwa.md` | 12830 | `c717ac4a546d0d06bdfd9670957306c2ea12c23c41897b152d9ba9090c53a50b` |
+| `docs/superpowers/plans/2026-08-31-05-runtime-deployment-observability.md` | 11327 | `7718c77d310dc125163bc9c52d3359e7e48123459bd76bdaac5fe25db0a284f6` |
+| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `635fc643303d2028feca4596782a31f00d4829edabc9060fe677fb5b6c00da4f` |
+| `docs/superpowers/specs/2026-08-31-aaa-production-readiness-design.md` | 11012 | `c37c8954ed4c62fb3c7f8c0e0daf187381d12184cdaa4b512c8d1d47e53c0fcc` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
 | `docs/templates/RELEASE_REPORT_TEMPLATE.md` | 717 | `c0e2355a50cadddc5f49b1a2f5c92462192508014382c5f4eb956c8bfe482948` |
