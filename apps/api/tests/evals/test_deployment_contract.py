@@ -41,8 +41,12 @@ def test_migration_is_separate_from_api_start() -> None:
 def test_web_build_mode_matches_docker_copy() -> None:
     config = (_REPO_ROOT / "apps" / "web" / "next.config.ts").read_text(encoding="utf-8")
     dockerfile = (_REPO_ROOT / "infra" / "docker" / "Dockerfile.web").read_text(encoding="utf-8")
+    playwright = (_REPO_ROOT / "apps" / "web" / "playwright.config.ts").read_text(
+        encoding="utf-8"
+    )
     assert 'output: "standalone"' in config
     assert ".next/standalone" in dockerfile
+    assert "node apps/web/.next/standalone/apps/web/server.js" in playwright
 
 
 def test_worker_image_copies_api_and_worker_sources() -> None:

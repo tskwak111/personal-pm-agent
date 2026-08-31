@@ -28,12 +28,18 @@ test.describe("accessibility coverage", () => {
 });
 
 async function tabTo(page: Page, label: string) {
+  const visited: string[] = [];
   for (let index = 0; index < 30; index += 1) {
     await page.keyboard.press("Tab");
-    if ((await page.locator(":focus").getAttribute("aria-label")) === label) return;
-    if ((await page.locator(":focus").textContent())?.trim() === label) return;
+    const focused = await page.evaluate(() => ({
+      label: document.activeElement?.getAttribute("aria-label"),
+      tag: document.activeElement?.tagName,
+      text: document.activeElement?.textContent?.trim(),
+    }));
+    visited.push(`${focused.tag}:${focused.label ?? focused.text ?? ""}`);
+    if (focused.label === label || focused.text === label) return;
   }
-  throw new Error(`keyboard focus did not reach ${label}`);
+  throw new Error(`keyboard focus did not reach ${label}: ${visited.join(" -> ")}`);
 }
 
 test("primary navigation and approval are keyboard reachable", async ({ page }) => {
@@ -43,6 +49,7 @@ test("primary navigation and approval are keyboard reachable", async ({ page }) 
   await expect(page).toHaveURL(/\/today$/);
 
   await page.goto("/review");
+  await expect(page.getByRole("button", { name: "승인" })).toBeEnabled();
   await tabTo(page, "승인");
   await page.keyboard.press("Enter");
   await expect(page.getByText("제안이 실행되었습니다")).toBeVisible();

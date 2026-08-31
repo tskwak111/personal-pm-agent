@@ -26,12 +26,14 @@ export default defineConfig({
     },
     {
       command:
-        "pnpm --filter @personal-pm/web build && pnpm --filter @personal-pm/web start --port 3000",
+        "pnpm --filter @personal-pm/web build && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && cp -R apps/web/public apps/web/.next/standalone/apps/web/public && node apps/web/.next/standalone/apps/web/server.js",
       cwd: "../..",
       env: {
         ...process.env,
         API_INTERNAL_BASE_URL: "http://127.0.0.1:8001",
+        HOSTNAME: "127.0.0.1",
         NEXT_PUBLIC_APP_ENVIRONMENT: "test",
+        PORT: "3000",
       },
       url: "http://127.0.0.1:3000/sign-in",
       reuseExistingServer: false,
