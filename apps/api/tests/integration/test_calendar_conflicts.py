@@ -54,7 +54,9 @@ async def test_external_deletion_creates_tombstone_not_immediate_hard_delete(
     conflict_env: dict[str, Any],
 ) -> None:
     service: Any = conflict_env["service"]
-    result = await service.apply_provider_deletion(conflict_env["managed"].external_event_id)
+    result = await service.apply_provider_deletion(
+        conflict_env["workspace"], conflict_env["managed"].external_event_id
+    )
     assert result.deleted_at is not None
     assert result.sync_status == "EXTERNALLY_DELETED"
 
@@ -101,6 +103,51 @@ async def test_tombstoned_row_is_excluded_from_active_imports(
 ) -> None:
     service: Any = conflict_env["service"]
     ext_id = conflict_env["managed"].external_event_id
-    await service.apply_provider_deletion(ext_id)
+    await service.apply_provider_deletion(conflict_env["workspace"], ext_id)
     active = await service.active_events(conflict_env["workspace"])
     assert all(event.external_event_id != ext_id for event in active)
+
+
+async def test_provider_deletion_is_scoped_to_workspace(conflict_env: dict[str, Any]) -> None:
+    from personal_pm_api.calendar.models import ExternalCalendarEventModel
+    from personal_pm_api.workspaces.models import UserModel, WorkspaceModel
+    from personal_pm_worker.calendar.adapter import ProviderEvent
+    from sqlalchemy import select
+
+    factory = conflict_env["factory"]
+    async with factory() as session:
+        other_user = UserModel(email="conf-other@example.com", display_name="Other")
+        session.add(other_user)
+        await session.flush()
+        other_workspace = WorkspaceModel(owner_user_id=other_user.id, name="other")
+        session.add(other_workspace)
+        await session.commit()
+        other_workspace_id = str(other_workspace.id)
+
+    original = conflict_env["managed"]
+    await conflict_env["service"].import_event(
+        other_workspace_id,
+        ProviderEvent(
+            external_id=original.external_event_id,
+            title="다른 워크스페이스 일정",
+            start_at=datetime(2026, 9, 2, 9, 0, tzinfo=UTC),
+            end_at=datetime(2026, 9, 2, 10, 0, tzinfo=UTC),
+            managed_focus_block=False,
+        ),
+    )
+
+    await conflict_env["service"].apply_provider_deletion(
+        conflict_env["workspace"], original.external_event_id
+    )
+
+    async with factory() as session:
+        rows = (
+            await session.execute(
+                select(ExternalCalendarEventModel).where(
+                    ExternalCalendarEventModel.external_event_id == original.external_event_id
+                )
+            )
+        ).scalars()
+        status_by_workspace = {str(row.workspace_id): row.sync_status for row in rows}
+    assert status_by_workspace[conflict_env["workspace"]] == "EXTERNALLY_DELETED"
+    assert status_by_workspace[other_workspace_id] == "SYNCED"

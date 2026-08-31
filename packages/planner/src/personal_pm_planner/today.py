@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Protocol
+from zoneinfo import ZoneInfo
 
 from personal_pm_planner.contracts.input import PlannerInput
 from personal_pm_planner.domain.enums import TaskStatus
@@ -42,15 +43,14 @@ def build_today_plan(
     - ``반드시 완료`` lists only tasks whose base demand is fully allocated.
     - Capacity-excluded tasks appear explicitly in ``excluded``.
     """
-    local_now_date = value.now_utc.astimezone(
-        __import__("zoneinfo").ZoneInfo(value.user_timezone)
-    ).date()
+    timezone = ZoneInfo(value.user_timezone)
+    local_now_date = value.now_utc.astimezone(timezone).date()
 
     minutes_today: dict[TaskId, int] = {}
     for allocation in passes.base.allocations:
         if allocation.kind != "TASK":
             continue
-        if allocation.start_at.date() != local_now_date:
+        if allocation.start_at.astimezone(timezone).date() != local_now_date:
             continue
         minutes = int((allocation.end_at - allocation.start_at).total_seconds() // 60)
         minutes_today[allocation.task_id] = minutes_today.get(allocation.task_id, 0) + minutes

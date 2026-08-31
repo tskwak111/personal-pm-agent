@@ -117,12 +117,15 @@ class CalendarSyncService:
             rows = (await session.execute(statement)).scalars().all()
             return [ImportedEvent.from_model(row) for row in rows]
 
-    async def apply_provider_deletion(self, external_event_id: str) -> Any:
+    async def apply_provider_deletion(
+        self, workspace_id: str | UUID, external_event_id: str
+    ) -> Any:
         from personal_pm_api.calendar.models import ExternalCalendarEventModel
 
         async with self._factory() as session:
             statement = select(ExternalCalendarEventModel).where(
-                ExternalCalendarEventModel.external_event_id == external_event_id
+                ExternalCalendarEventModel.workspace_id == UUID(str(workspace_id)),
+                ExternalCalendarEventModel.external_event_id == external_event_id,
             )
             model = (await session.execute(statement)).scalar_one_or_none()
             if model is None:

@@ -1,6 +1,7 @@
 from dataclasses import replace
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from personal_pm_planner.contracts.input import (
     PlannerInput,
@@ -263,3 +264,32 @@ def test_today_plan_structure_and_excluded_work() -> None:
         task_id in set(today.must_do) | set(today.next_queue) | set(today.excluded)
         for task_id in (TaskId(UUID(int=1)), TaskId(UUID(int=2)))
     )
+
+
+def test_today_plan_uses_user_local_date_at_utc_boundary() -> None:
+    from personal_pm_planner.domain.availability import AvailabilityWindow
+    from personal_pm_planner.risk.classify import build_risk_context, calculate_risks
+    from personal_pm_planner.scheduling.passes import run_planning_passes
+    from personal_pm_planner.today import build_today_plan
+
+    local_day_now = datetime(2026, 9, 1, 15, 30, tzinfo=UTC)
+    value = replace(
+        build_value(task_specs=[{"base": 60, "safety": 60}]),
+        now_utc=local_day_now,
+        availability_windows=(
+            AvailabilityWindow(
+                start_at=local_day_now,
+                end_at=local_day_now + timedelta(hours=3),
+                tags=frozenset({"focus"}),
+            ),
+        ),
+    )
+    passes = run_planning_passes(value)
+    risks = calculate_risks(passes, build_risk_context(value))
+    allocation = next(
+        item for item in passes.base.allocations if item.task_id == TaskId(UUID(int=1))
+    )
+
+    assert allocation.start_at.date() != date(2026, 9, 2)
+    assert allocation.start_at.astimezone(ZoneInfo("Asia/Seoul")).date() == date(2026, 9, 2)
+    assert TaskId(UUID(int=1)) in build_today_plan(value, passes, risks).must_do
