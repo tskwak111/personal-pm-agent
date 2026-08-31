@@ -11,10 +11,25 @@ def structured_logger() -> StructuredLogger:
 
 def test_sensitive_values_are_redacted(structured_logger: StructuredLogger) -> None:
     event = structured_logger.bind(
-        oauth_token="secret", document_text="private", trace_id="t"
+        authorization="Bearer secret",
+        calendar_description="private",
+        code="oauth-code",
+        cookie="session=secret",
+        document_text="private",
+        file_content=b"private",
+        oauth_token="secret",
+        trace_id="t",
     ).capture("test")
-    assert event["oauth_token"] == "[REDACTED]"
-    assert event["document_text"] == "[REDACTED]"
+    for key in (
+        "authorization",
+        "calendar_description",
+        "code",
+        "cookie",
+        "document_text",
+        "file_content",
+        "oauth_token",
+    ):
+        assert event[key] == "[REDACTED]"
 
 
 def test_workspace_identifier_is_hashed(structured_logger: StructuredLogger) -> None:
@@ -31,9 +46,11 @@ def test_trace_id_passes_through(structured_logger: StructuredLogger) -> None:
 
 
 def test_trace_propagation_context(structured_logger: StructuredLogger) -> None:
-    from personal_pm_api.telemetry.tracing import TraceContext
+    from personal_pm_api.telemetry.tracing import TraceContext, resolve_correlation_id
 
     ctx = TraceContext.new()
     child = ctx.child_span("planner.run")
     assert child.trace_id == ctx.trace_id
     assert child.span_id != ctx.span_id
+    assert resolve_correlation_id("request-42") == "request-42"
+    assert resolve_correlation_id("bad\nheader") != "bad\nheader"

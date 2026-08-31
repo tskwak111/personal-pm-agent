@@ -6,7 +6,7 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 
 from personal_pm_api.identity.service import IdentityService
@@ -28,6 +28,7 @@ class ActorDependency:
 
 
 async def current_actor(
+    request: Request,
     service: Annotated[IdentityService, Depends(_identity_service)],
     authorization: Annotated[str | None, Header()] = None,
 ) -> CurrentActor:
@@ -37,6 +38,7 @@ async def current_actor(
     actor: CurrentActor | None = await service.resolve_actor(raw_token)
     if actor is None or actor.workspace_id is None:
         raise HTTPException(status_code=401, detail="invalid or expired session")
+    request.state.workspace_id = str(actor.workspace_id)
     return actor
 
 

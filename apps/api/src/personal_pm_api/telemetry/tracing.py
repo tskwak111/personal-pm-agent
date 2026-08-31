@@ -2,12 +2,20 @@
 
 from __future__ import annotations
 
+import re
 import secrets
 from dataclasses import dataclass
+
+_CORRELATION_ID = re.compile(r"[A-Za-z0-9._:-]{1,128}").fullmatch
 
 
 def _new_id() -> str:
     return secrets.token_hex(16)
+
+
+def resolve_correlation_id(value: str | None) -> str:
+    """Accept a log-safe caller ID or generate an opaque replacement."""
+    return value if value is not None and _CORRELATION_ID(value) else _new_id()
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,4 +31,4 @@ class TraceContext:
         return TraceContext(trace_id=self.trace_id, span_id=_new_id())
 
 
-__all__ = ["TraceContext"]
+__all__ = ["TraceContext", "resolve_correlation_id"]

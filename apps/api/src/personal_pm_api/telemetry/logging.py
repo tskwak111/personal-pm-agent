@@ -11,9 +11,13 @@ from typing import Any
 
 SENSITIVE_KEYS = frozenset(
     {
+        "authorization",
+        "code",
+        "cookie",
         "oauth_token",
         "refresh_token",
         "document_text",
+        "file_content",
         "prompt_text",
         "personal_note",
         "calendar_description",
@@ -40,10 +44,10 @@ class StructuredLogger:
     def _sanitize_into(logger: StructuredLogger) -> StructuredLogger:
         sanitized: dict[str, Any] = {}
         for key, value in logger._bindings.items():
-            if key in SENSITIVE_KEYS:
+            if key.casefold() in SENSITIVE_KEYS:
                 sanitized[key] = REDACTED
-            elif key == "workspace_id" and isinstance(value, str):
-                sanitized["workspace_hash"] = hash_workspace_id(value)
+            elif key == "workspace_id" and value is not None:
+                sanitized["workspace_hash"] = hash_workspace_id(str(value))
             else:
                 sanitized[key] = value
         logger._bindings = sanitized
