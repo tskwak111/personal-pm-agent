@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Immutable release input bundle",
+  "type": "object",
+  "required": [
+    "stage-a",
+    "stage-b",
+    "stage-c",
+    "outcomes",
+    "incidents",
+    "threshold-changes"
+  ],
+  "properties": {
+    "stage-a": {"$ref": "#/$defs/stage"},
+    "stage-b": {"$ref": "#/$defs/stage"},
+    "stage-c": {"$ref": "#/$defs/stage"},
+    "outcomes": {
+      "type": "object",
+      "required": ["schema_version", "outcomes", "reevaluation_date"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "outcomes": {
+          "type": "object",
+          "patternProperties": {
+            "^OUT-00[1-9]$|^OUT-010$": {
+              "type": "object",
+              "required": ["passed", "within_ten_percent"],
+              "properties": {
+                "passed": {"type": "boolean"},
+                "within_ten_percent": {"type": "boolean"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "reevaluation_date": {"type": ["string", "null"], "format": "date"}
+      },
+      "additionalProperties": true
+    },
+    "incidents": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "s0_incidents",
+        "system_caused_deadline_delays"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "s0_incidents": {"type": "integer", "minimum": 0},
+        "system_caused_deadline_delays": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "threshold-changes": {
+      "type": "object",
+      "required": ["schema_version", "changes"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["changed_before_or_after_evaluation"],
+            "properties": {
+              "changed_before_or_after_evaluation": {"enum": ["BEFORE", "AFTER"]}
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "stage": {
+      "type": "object",
+      "required": ["schema_version", "overall"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "overall": {"enum": ["PASS", "FAIL", "BLOCKED_EXTERNAL"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

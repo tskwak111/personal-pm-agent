@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T10:48:28+09:00
+- **Manifest regenerated:** 2026-08-31T10:54:53+09:00
 - **Product implementation status:** not started; this manifest verifies
   development-package artifacts only
 
@@ -107,7 +107,7 @@
 | `scripts/smoke_deployment.py` | 2409 | `5b57e949da4ae9090c748e6b62993a3f4a649fe1e160e54a7f72cc20d989918b` |
 | `scripts/test_backup_restore.py` | 6769 | `1d695eb95dee15781969a1beeb7ef648c961f007b49b051cabe7494a5a717c45` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
-| `scripts/verify_release.py` | 2971 | `95e66a4afe80eef9432215dc398e87f046c13df6521b60cdac66feefdda9c251` |
+| `scripts/verify_release.py` | 8564 | `eb8a449220961b68e940506cf57401bb9c11f155ac1bd2573c7d4e110755b736` |
 | `scripts/verify_repo.py` | 2056 | `f4f7066151bae4492ba5d0fddbb217e30afcae08606aca9fcaf1685049f38cca` |
 
 ## Verification

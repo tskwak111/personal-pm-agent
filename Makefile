@@ -1,5 +1,16 @@
 .PHONY: bootstrap format-check lint typecheck test-unit test-integration test-e2e \
-        build verify-planner verify-api verify-web verify-docs verify-repo verify
+        build verify-planner verify-api verify-web verify-docs verify-repo \
+        verify-stage-a verify-stage-b verify-stage-c verify-release \
+        verify-release-readiness verify
+
+STAGE_A_REPORT ?= /tmp/pma-stage-a.json
+STAGE_B_REPORT ?= /tmp/pma-stage-b.json
+STAGE_C_REPORT ?= /tmp/pma-stage-c.json
+RELEASE_REPORT ?= /tmp/pma-release.json
+STAGE_A_SCENARIOS ?= 20000
+OUTCOMES_REPORT ?= evals/reports/pilot/outcomes.json
+INCIDENTS_REPORT ?= evals/reports/pilot/incidents.json
+THRESHOLD_CHANGES_REPORT ?= evals/reports/pilot/threshold-changes.json
 
 bootstrap:
 	uv sync
@@ -47,4 +58,29 @@ verify-docs:
 verify-repo:
 	python3 scripts/verify_repo.py
 
-verify: format-check lint typecheck test-unit build verify-docs verify-repo
+verify-stage-a:
+	uv run python scripts/run_stage_a.py --scenarios $(STAGE_A_SCENARIOS) --output $(STAGE_A_REPORT)
+
+verify-stage-b:
+	uv run python scripts/run_stage_b.py --output $(STAGE_B_REPORT)
+
+verify-stage-c:
+	uv run python scripts/run_stage_c.py --output $(STAGE_C_REPORT)
+
+verify-release:
+	uv run python scripts/verify_release.py \
+		--stage-a $(STAGE_A_REPORT) \
+		--stage-b $(STAGE_B_REPORT) \
+		--stage-c $(STAGE_C_REPORT) \
+		--outcomes $(OUTCOMES_REPORT) \
+		--incidents $(INCIDENTS_REPORT) \
+		--threshold-changes $(THRESHOLD_CHANGES_REPORT) \
+		--output $(RELEASE_REPORT)
+
+verify-release-readiness:
+	$(MAKE) verify-stage-a
+	-$(MAKE) verify-stage-b
+	$(MAKE) verify-stage-c
+	$(MAKE) verify-release
+
+verify: format-check lint typecheck test-unit build verify-docs verify-repo verify-stage-a verify-stage-c
