@@ -118,6 +118,7 @@ class ProposalSummary(BaseModel):
     approval_level: str
     status: str
     version: int
+    minutes_saved_or_added: int
     targets: list[dict[str, Any]]
 
 

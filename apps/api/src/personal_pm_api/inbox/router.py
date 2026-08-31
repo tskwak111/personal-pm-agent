@@ -4,17 +4,25 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import AsyncIterator
-from typing import Annotated
-from uuid import uuid4
+from datetime import UTC, datetime
+from typing import Annotated, Literal
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
 from personal_pm_api.identity.router import current_actor
 from personal_pm_api.identity.session import CurrentActor
-from personal_pm_api.inbox.models import SourceArtifactModel
+from personal_pm_api.inbox.models import (
+    CandidateFactModel,
+    InboxItemModel,
+    SourceArtifactModel,
+    transition_inbox,
+)
 from personal_pm_api.inbox.repository import SourceArtifactRepository
 from personal_pm_api.inbox.schemas import (
     UploadInitiationRequest,
@@ -24,6 +32,7 @@ from personal_pm_api.inbox.schemas import (
 )
 from personal_pm_api.security.uploads import MAX_UPLOAD_BYTES, scan_upload
 from personal_pm_api.shared.db import database_session
+from personal_pm_api.shared.errors import NotFoundError
 
 router = APIRouter(prefix="/api/v1", tags=["source-artifacts"])
 
@@ -82,6 +91,72 @@ async def _read_bounded_upload(request: Request) -> bytes | None:
             return None
         chunks.append(chunk)
     return b"".join(chunks)
+
+
+class CandidateDecisionRequest(BaseModel):
+    decision: Literal["confirm", "ignore"]
+
+
+class CandidateDecisionResponse(BaseModel):
+    id: str
+    decision: str
+    status: str
+
+
+@router.post(
+    "/inbox/candidates/{candidate_id}/decision",
+    response_model=CandidateDecisionResponse,
+)
+async def decide_candidate(
+    candidate_id: UUID,
+    body: CandidateDecisionRequest,
+    actor: Annotated[CurrentActor, Depends(current_actor)],
+    session: Annotated[AsyncSession, Depends(_session_dep)],
+) -> CandidateDecisionResponse:
+    row = (
+        await session.execute(
+            select(CandidateFactModel, InboxItemModel)
+            .join(InboxItemModel, InboxItemModel.id == CandidateFactModel.inbox_item_id)
+            .where(
+                CandidateFactModel.id == candidate_id,
+                InboxItemModel.workspace_id == actor.workspace_id,
+            )
+            .with_for_update()
+        )
+    ).one_or_none()
+    if row is None:
+        raise NotFoundError()
+    candidate, item = row
+    decision = "CONFIRMED" if body.decision == "confirm" else "IGNORED"
+    target_status = "STRUCTURED" if body.decision == "confirm" else "IGNORED"
+    if candidate.decision not in {"HOLD", decision}:
+        from personal_pm_api.shared.errors import DomainRuleError
+
+        raise DomainRuleError(
+            "CANDIDATE_ALREADY_RESOLVED", "candidate has a different terminal decision"
+        )
+    if candidate.decision != decision:
+        candidate.decision = decision
+        item.status = transition_inbox(item.status, target_status)
+        from personal_pm_api.audit.repository import AuditRepository
+
+        await AuditRepository(session).append(
+            workspace_id=actor.workspace_id,
+            actor_user_id=actor.user_id,
+            entity_kind="candidate_fact",
+            entity_id=str(candidate.id),
+            reason=f"candidate.{body.decision}",
+            rule_basis=("REQ-UX-003",),
+            trace_id=f"sess:{actor.session_id}",
+            reversible=False,
+            occurred_at=datetime.now(UTC),
+            before_state={"decision": "HOLD", "status": "NEEDS_CONFIRMATION"},
+            after_state={"decision": decision, "status": target_status},
+        )
+        await session.commit()
+    return CandidateDecisionResponse(
+        id=str(candidate.id), decision=candidate.decision, status=item.status
+    )
 
 
 @router.post("/inbox/sources", response_model=UploadInitiationResponse, status_code=201)

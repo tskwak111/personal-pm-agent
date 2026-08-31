@@ -123,6 +123,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/inbox/candidates/{candidate_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide Candidate */
+        post: operations["decide_candidate_api_v1_inbox_candidates__candidate_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/inbox/sources": {
         parameters: {
             query?: never;
@@ -389,6 +406,23 @@ export interface components {
             /** Flexible Tasks */
             flexible_tasks: components["schemas"]["TaskSummary"][];
         };
+        /** CandidateDecisionRequest */
+        CandidateDecisionRequest: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "confirm" | "ignore";
+        };
+        /** CandidateDecisionResponse */
+        CandidateDecisionResponse: {
+            /** Decision */
+            decision: string;
+            /** Id */
+            id: string;
+            /** Status */
+            status: string;
+        };
         /** ConnectionResponse */
         ConnectionResponse: {
             /** Authorization Url */
@@ -571,6 +605,8 @@ export interface components {
             id: string;
             /** Kind */
             kind: string;
+            /** Minutes Saved Or Added */
+            minutes_saved_or_added: number;
             /** Status */
             status: string;
             /** Targets */
@@ -986,6 +1022,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InboxResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_candidate_api_v1_inbox_candidates__candidate_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                candidate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CandidateDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidateDecisionResponse"];
                 };
             };
             /** @description Validation Error */

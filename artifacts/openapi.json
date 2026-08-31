@@ -124,6 +124,46 @@
         "title": "CalendarResponse",
         "type": "object"
       },
+      "CandidateDecisionRequest": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "confirm",
+              "ignore"
+            ],
+            "title": "Decision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "CandidateDecisionRequest",
+        "type": "object"
+      },
+      "CandidateDecisionResponse": {
+        "properties": {
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "decision",
+          "status"
+        ],
+        "title": "CandidateDecisionResponse",
+        "type": "object"
+      },
       "ConnectionResponse": {
         "properties": {
           "authorization_url": {
@@ -614,6 +654,10 @@
             "title": "Kind",
             "type": "string"
           },
+          "minutes_saved_or_added": {
+            "title": "Minutes Saved Or Added",
+            "type": "integer"
+          },
           "status": {
             "title": "Status",
             "type": "string"
@@ -637,6 +681,7 @@
           "approval_level",
           "status",
           "version",
+          "minutes_saved_or_added",
           "targets"
         ],
         "title": "ProposalSummary",
@@ -1524,6 +1569,75 @@
         "summary": "Get Inbox",
         "tags": [
           "views"
+        ]
+      }
+    },
+    "/api/v1/inbox/candidates/{candidate_id}/decision": {
+      "post": {
+        "operationId": "decide_candidate_api_v1_inbox_candidates__candidate_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Candidate Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateDecisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide Candidate",
+        "tags": [
+          "source-artifacts"
         ]
       }
     },

@@ -526,6 +526,7 @@ async def review_view(session: AsyncSession, actor: CurrentActor) -> ReviewRespo
                 approval_level=row.approval_level,
                 status=row.status,
                 version=row.version,
+                minutes_saved_or_added=row.minutes_saved_or_added,
                 targets=row.targets_json,
             )
             for row in proposals

@@ -181,16 +181,15 @@ async def _seed_read_models(web_env: dict[str, Any]) -> dict[str, str]:
             )
             session.add(inbox_item)
             await session.flush()
-            session.add(
-                CandidateFactModel(
-                    inbox_item_id=inbox_item.id,
-                    operation_id=uuid4(),
-                    kind="task",
-                    payload_json={"title": f"{title} candidate"},
-                    evidence_score=0.8,
-                    decision="HOLD",
-                )
+            candidate = CandidateFactModel(
+                inbox_item_id=inbox_item.id,
+                operation_id=uuid4(),
+                kind="task",
+                payload_json={"title": f"{title} candidate"},
+                evidence_score=0.8,
+                decision="HOLD",
             )
+            session.add(candidate)
             event = ExternalCalendarEventModel(
                 workspace_id=workspace_id,
                 external_event_id=f"event-{label}",
@@ -241,8 +240,10 @@ async def _seed_read_models(web_env: dict[str, Any]) -> dict[str, str]:
                     is_current=True,
                 )
             )
+            await session.flush()
             seeded[f"workstream_{label}"] = str(workstream.id)
             seeded[f"task_{label}"] = str(task.id)
+            seeded[f"candidate_{label}"] = str(candidate.id)
         await session.commit()
     return seeded
 
@@ -302,6 +303,26 @@ async def test_agent_sse_is_owned_and_replays_after_last_event_id(
     assert (
         await web_env["other_client"].get(f"/api/v1/agent/operations/{operation.id}/stream")
     ).status_code == 404
+
+
+async def test_candidate_decision_is_owned_and_removes_resolved_candidate(
+    web_env: dict[str, Any],
+) -> None:
+    seeded = await _seed_read_models(web_env)
+
+    hidden = await web_env["owner_client"].post(
+        f"/api/v1/inbox/candidates/{seeded['candidate_other']}/decision",
+        json={"decision": "confirm"},
+    )
+    confirmed = await web_env["owner_client"].post(
+        f"/api/v1/inbox/candidates/{seeded['candidate_owner']}/decision",
+        json={"decision": "confirm"},
+    )
+
+    assert hidden.status_code == 404
+    assert confirmed.status_code == 200
+    assert confirmed.json()["decision"] == "CONFIRMED"
+    assert (await web_env["owner_client"].get("/api/v1/inbox")).json() == {"candidates": []}
 
 
 async def test_ux_events_use_server_workspace_hash_and_strict_allowlist(
