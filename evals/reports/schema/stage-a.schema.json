@@ -2,19 +2,37 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Stage A evaluation report",
   "type": "object",
-  "required": ["overall", "scenarios", "gates", "environment"],
+  "required": [
+    "schema_version",
+    "overall",
+    "scenarios",
+    "code_version",
+    "input_hash",
+    "generated_at_utc",
+    "gates",
+    "environment"
+  ],
   "properties": {
+    "schema_version": {"const": "1.0"},
     "overall": {"enum": ["PASS", "FAIL"]},
     "scenarios": {"type": "integer", "minimum": 1},
+    "code_version": {"type": "string", "minLength": 1},
+    "input_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
     "gates": {
       "type": "object",
+      "minProperties": 15,
       "additionalProperties": {
         "type": "object",
-        "required": ["failures", "passed"],
+        "required": ["executed", "checks", "failures", "source", "passed"],
         "properties": {
+          "executed": {"type": "boolean"},
+          "checks": {"type": "integer", "minimum": 0},
           "failures": {"type": "integer", "minimum": 0},
+          "source": {"type": "string", "minLength": 1},
           "passed": {"type": "boolean"}
-        }
+        },
+        "additionalProperties": false
       }
     },
     "environment": {
@@ -26,5 +44,6 @@
         "memory_bytes": {"type": "integer"}
       }
     }
-  }
+  },
+  "additionalProperties": false
 }

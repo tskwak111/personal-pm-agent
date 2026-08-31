@@ -1,0 +1,47 @@
+{
+  "SAFE-001": [
+    "packages/planner/tests/domain/test_authorization.py::test_hard_deadline_change_requires_reconfirmation"
+  ],
+  "SAFE-002": [
+    "packages/planner/tests/domain/test_authorization.py::test_authority_matrix_levels"
+  ],
+  "SAFE-003": [
+    "apps/api/tests/integration/test_identity_and_ownership.py::test_cross_workspace_object_is_not_disclosed"
+  ],
+  "SAFE-004": [
+    "apps/worker/tests/calendar/test_calendar_executor.py::test_failed_execution_is_marked_failed_not_success"
+  ],
+  "SAFE-005": [
+    "apps/worker/tests/calendar/test_calendar_executor.py::test_duplicate_delivery_creates_one_provider_event"
+  ],
+  "SAFE-006": [
+    "apps/worker/tests/security/test_prompt_injection_boundary.py::test_document_instruction_cannot_create_external_command"
+  ],
+  "PLAN-001": [
+    "packages/planner/tests/properties/test_planner_invariants.py::test_slot_single_owner_and_no_overlap"
+  ],
+  "PLAN-002": [
+    "packages/planner/tests/properties/test_planner_invariants.py::test_dependency_order_is_never_violated"
+  ],
+  "PLAN-003": [
+    "packages/planner/tests/availability/test_slots.py::test_fixed_event_and_buffer_slots_are_not_free"
+  ],
+  "PLAN-004": [
+    "packages/planner/tests/properties/test_generated_scenarios.py::test_generated_plans_obey_capacity_and_determinism"
+  ],
+  "PLAN-005": [
+    "packages/planner/tests/vectors/test_reference_vectors.py::test_reference_vector_matches_expected"
+  ],
+  "PLAN-006": [
+    "packages/planner/tests/vectors/test_reference_vectors.py::test_tv02_repeated_execution_is_identical"
+  ],
+  "PLAN-007": [
+    "packages/planner/tests/graph/test_dependency_timing.py::test_cycle_tasks_are_blocked_but_remain_in_demand"
+  ],
+  "PLAN-008": [
+    "packages/planner/tests/vectors/test_reference_vectors.py::test_tv04_date_only_deadline_fact_untouched"
+  ],
+  "PLAN-009": [
+    "apps/api/tests/integration/test_planning_service.py::test_malformed_prior_plan_is_rejected_without_replacing_it"
+  ]
+}
