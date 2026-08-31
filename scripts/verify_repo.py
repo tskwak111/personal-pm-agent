@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -26,6 +27,55 @@ REQUIRED_WORKSPACE_MEMBERS = (
     ("apps/api", "personal-pm-api"),
     ("apps/worker", "personal-pm-worker"),
 )
+
+_LOCAL_REFERENCE = re.compile(
+    r"(?:\.\./)+[A-Za-z0-9_./-]+|"
+    r"/?(?:apps|packages|tests|scripts|docs|evals|reports|pilot|infra|artifacts|prompts|\.github)"
+    r"/[A-Za-z0-9_./*?-]+(?:::[A-Za-z_][A-Za-z0-9_]*)*"
+)
+
+
+def verify_traceability(document: Path, *, repo_root: Path) -> list[str]:
+    root = repo_root.resolve()
+    errors: list[str] = []
+    for line in document.read_text(encoding="utf-8").splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 3 or cells[0] in {"Requirement ID", "---"} or set(cells[0]) == {"-"}:
+            continue
+        requirement = cells[0]
+        row = " | ".join(cells)
+        if "BLOCKED_EXTERNAL" in row or "Not Implemented" in row:
+            continue
+        references = _LOCAL_REFERENCE.findall(cells[-1])
+        if "Complete" in cells and not references:
+            errors.append(f"{requirement}: Complete has no local evidence")
+            continue
+        for reference in references:
+            path_text, *nodes = reference.split("::")
+            candidate = Path(path_text)
+            resolved = (root / candidate).resolve() if not candidate.is_absolute() else candidate.resolve()
+            if not resolved.is_relative_to(root):
+                errors.append(f"{requirement}: evidence path escapes repository: {path_text}")
+                continue
+            if "*" in path_text:
+                if not list(root.glob(path_text)):
+                    errors.append(f"{requirement}: missing evidence path {path_text}")
+                continue
+            if not resolved.exists():
+                errors.append(f"{requirement}: missing evidence path {path_text}")
+                continue
+            if nodes:
+                if not resolved.is_file():
+                    errors.append(f"{requirement}: pytest node path is not a file {path_text}")
+                    continue
+                source = resolved.read_text(encoding="utf-8")
+                for node in nodes:
+                    if re.search(rf"\b(?:def|class)\s+{re.escape(node)}\b", source) is None:
+                        errors.append(f"{requirement}: missing pytest node {reference}")
+                        break
+    return errors
 
 
 def main() -> int:
@@ -52,6 +102,13 @@ def main() -> int:
         text = (ROOT / lockfile).read_text(encoding="utf-8")
         if needle not in text:
             errors.append(f"{lockfile} does not contain {needle}")
+
+    errors.extend(
+        verify_traceability(
+            ROOT / "docs/requirements/requirements-traceability.md",
+            repo_root=ROOT,
+        )
+    )
 
     if errors:
         print("Repository verification FAILED", file=sys.stderr)

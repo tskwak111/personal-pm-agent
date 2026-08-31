@@ -50,3 +50,10 @@ Reviewer notes:
 ```
 
 A command is evidence only when it was run against the claimed commit or an uncommitted diff that is explicitly shown.
+
+## Traceability evidence rules
+
+- Local evidence uses an existing repository-relative path, optionally followed by `::pytest_node`.
+- A requirement without local implementation says `Not Implemented` and must not cite a placeholder file.
+- Evidence that can only be produced with credentials, private data, production infrastructure, or real users says `BLOCKED_EXTERNAL` and names the exact missing proof.
+- `python3 scripts/verify_repo.py` rejects missing paths, unknown pytest nodes, repository escapes, and unsupported `Complete` claims.

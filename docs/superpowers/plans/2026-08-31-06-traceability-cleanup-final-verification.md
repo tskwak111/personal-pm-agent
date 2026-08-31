@@ -31,7 +31,7 @@
 **Interfaces:**
 - Produces: repository verifier failure for nonexistent local evidence paths, unknown test nodes, or unsupported completion claims
 
-- [ ] **Step 1: Write a failing missing-reference test**
+- [x] **Step 1: Write a failing missing-reference test**
 
 ```python
 def test_traceability_rejects_missing_local_evidence(tmp_path: Path) -> None:
@@ -43,19 +43,19 @@ def test_traceability_rejects_missing_local_evidence(tmp_path: Path) -> None:
 
 Add tests for a valid `path::test_name`, an external `BLOCKED_EXTERNAL` record, and a line that says Complete with no evidence.
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest tests/handoff/test_traceability_contract.py -q`
 
-- [ ] **Step 3: Parse local references conservatively**
+- [x] **Step 3: Parse local references conservatively**
 
 Use `pathlib.Path` and regular expressions from stdlib. Accept repository-relative paths and optional `::pytest_node`; reject paths outside the repository. For pytest nodes, verify the file contains the named function or class method. Do not validate URLs or external ticket IDs as local files.
 
-- [ ] **Step 4: Repair every broken reference**
+- [x] **Step 4: Repair every broken reference**
 
 For each missing path, either point to the real implementation/test/report, change status to `Not Implemented`, or mark `BLOCKED_EXTERNAL` with the exact required evidence. Do not create empty evidence files.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 uv run pytest tests/handoff/test_traceability_contract.py -q
