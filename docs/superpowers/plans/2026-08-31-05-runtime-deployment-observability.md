@@ -35,7 +35,7 @@
 - Produces: `run_once(session_factory, executor, batch_size) -> WorkerRunResult`
 - Produces: `python -m personal_pm_worker.main` polling loop with SIGTERM stop
 
-- [ ] **Step 1: Write the worker behavior tests**
+- [x] **Step 1: Write the worker behavior tests**
 
 ```python
 async def test_run_once_processes_pending_outbox_and_counts_failures() -> None:
@@ -50,19 +50,19 @@ async def test_run_once_without_executor_fails_closed() -> None:
     assert result.failed == result.claimed
 ```
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `uv run pytest apps/worker/tests/test_outbox_worker.py -q`
 
-- [ ] **Step 3: Declare actual imports**
+- [x] **Step 3: Declare actual imports**
 
 Add `personal-pm-planner` to API dependencies. Add `personal-pm-api`, SQLAlchemy async, asyncpg, and pydantic-settings to worker dependencies, using uv workspace sources at the root. Regenerate `uv.lock`.
 
-- [ ] **Step 4: Implement one polling owner**
+- [x] **Step 4: Implement one polling owner**
 
 `outbox_worker.py` selects a bounded pending batch through the existing `OutboxRepository`, executes each item through the existing calendar executor, persists verified status, and commits each idempotent outcome. `main.py` reads settings, installs SIGINT/SIGTERM handlers, and waits with `asyncio.Event.wait()` plus timeout; it does not busy-loop.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 uv lock

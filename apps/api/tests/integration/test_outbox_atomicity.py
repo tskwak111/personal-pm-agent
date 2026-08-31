@@ -112,3 +112,38 @@ async def test_execution_requires_verified_success_shape(clean_tables, uow_facto
         uow.typed_session.add(bad)
         with pytest.raises(IntegrityError):
             await uow.typed_session.flush()
+
+
+async def test_database_worker_persists_only_verified_provider_success(
+    clean_tables, uow_factory, database_url_session: str
+) -> None:
+    from personal_pm_api.execution.models import ExternalExecutionModel, OutboxEventModel
+    from personal_pm_api.execution.outbox import ExternalCommand, enqueue_external_command
+    from personal_pm_worker.outbox_worker import VerifiedExecution, run_once
+    from sqlalchemy import select
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+    workspace_id = await _seed_workspace_id(uow_factory)
+    async with uow_factory() as uow:
+        await enqueue_external_command(uow, ExternalCommand(**make_command(workspace_id)))
+        await uow.commit()
+
+    class Executor:
+        async def execute(self, _command):  # noqa: ANN001, ANN201
+            return VerifiedExecution(external_id="provider-event-1", verified=True)
+
+    engine = create_async_engine(database_url_session)
+    factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+    try:
+        result = await run_once(factory, Executor(), batch_size=10)
+        async with factory() as session:
+            outbox = (await session.execute(select(OutboxEventModel))).scalar_one()
+            execution = (await session.execute(select(ExternalExecutionModel))).scalar_one()
+    finally:
+        await engine.dispose()
+
+    assert result.succeeded == 1
+    assert outbox.status == "succeeded"
+    assert execution.result_status == "Succeeded"
+    assert execution.external_id == "provider-event-1"
+    assert execution.verified is True

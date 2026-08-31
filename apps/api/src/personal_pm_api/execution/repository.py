@@ -45,6 +45,7 @@ class OutboxRepository:
             .where(OutboxEventModel.status == "pending")
             .order_by(OutboxEventModel.created_at)
             .limit(limit)
+            .with_for_update(skip_locked=True)
         )
         return list((await self._session.execute(statement)).scalars())
 
