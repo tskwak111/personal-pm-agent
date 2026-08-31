@@ -203,15 +203,5 @@ class FocusBlockApprovalService:
             approval_level=proposal.approval_level,
         )
 
-    async def _load_proposal(self, actor: Any, proposal_id: str) -> Any:
-        from personal_pm_api.approvals.models import ProposalModel
-
-        async with self._factory() as session:
-            statement = select(ProposalModel).where(
-                ProposalModel.id == UUID(proposal_id),
-                ProposalModel.workspace_id == UUID(str(actor.workspace_id)),
-            )
-            return (await session.execute(statement)).scalar_one_or_none()
-
 
 __all__ = ["ApprovalOutcome", "FocusBlockApprovalService"]

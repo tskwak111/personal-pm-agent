@@ -82,10 +82,6 @@ def build_stage_c_report(
     )
 
 
-class LatencyLike:
-    """Structural marker retained for test inputs."""
-
-
 def _failure_report(output: Path, reason: str) -> int:
     payload = {
         "schema_version": "1.0",

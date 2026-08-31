@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from dataclasses import dataclass
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
@@ -19,12 +18,6 @@ router = APIRouter(prefix="/api/v1", tags=["identity"])
 async def _identity_service() -> AsyncIterator[IdentityService]:
     async with database_session() as session:
         yield IdentityService(session)
-
-
-@dataclass(frozen=True, slots=True)
-class ActorDependency:
-    user_id: str
-    workspace_id: str
 
 
 async def current_actor(

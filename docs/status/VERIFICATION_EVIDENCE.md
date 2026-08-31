@@ -542,3 +542,21 @@ Reconciliation:
   release → BLOCKED_EXTERNAL
 Residual risk: IMPLEMENTATION_STATUS.md의 외부 증거 표가 비워질 때까지 release PASS를 주장하지 않는다.
 ```
+
+## AAA remediation — Proven dead-code cleanup
+
+```text
+Task ID: AAA-FINAL-03
+Timestamp UTC: 2026-08-31
+Proof: rg found production callers for SqlAlchemyUnitOfWork, so it was retained; the removed wrappers/protocols/hooks had zero callers.
+Before deletion: focused API/worker 21 passed; onboarding Web 2 passed.
+After deletion: expanded API/worker 40 passed; onboarding Web 2 passed.
+Completion:
+  make format-check → PASS
+  make lint → PASS
+  make typecheck → mypy 159 source files + TypeScript PASS
+  make test-unit → Python 290 passed/112 deselected, API client 2 passed, Web 40 passed
+  git diff --check → clean
+Net: 126 lines removed, 2 lines added, 0 dependencies added or removed.
+Residual risk: production transaction, ownership, adapter and Planner boundaries were retained.
+```

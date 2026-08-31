@@ -55,7 +55,9 @@ def verify_traceability(document: Path, *, repo_root: Path) -> list[str]:
         for reference in references:
             path_text, *nodes = reference.split("::")
             candidate = Path(path_text)
-            resolved = (root / candidate).resolve() if not candidate.is_absolute() else candidate.resolve()
+            resolved = (
+                (root / candidate).resolve() if not candidate.is_absolute() else candidate.resolve()
+            )
             if not resolved.is_relative_to(root):
                 errors.append(f"{requirement}: evidence path escapes repository: {path_text}")
                 continue
@@ -100,7 +102,10 @@ def verify_phase_status(repo_root: Path) -> list[str]:
         "8": "09-phase-8-evaluation-security-deployment.md",
     }
     for phase, plan_name in phase_plans.items():
-        if re.search(rf"^\| {phase}\. .* \| Complete(?: \([^|]+\))? \|", status, re.MULTILINE) is None:
+        if (
+            re.search(rf"^\| {phase}\. .* \| Complete(?: \([^|]+\))? \|", status, re.MULTILINE)
+            is None
+        ):
             continue
         plan = (repo_root / "docs/plans" / plan_name).read_text(encoding="utf-8")
         exit_section = plan.rsplit("## Phase", maxsplit=1)[-1]

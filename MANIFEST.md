@@ -2,7 +2,7 @@
 
 - **Package:** Personal PM Agent Final Development Package
 - **Version:** 1.0.0
-- **Manifest regenerated:** 2026-08-31T13:21:56+09:00
+- **Manifest regenerated:** 2026-08-31T13:25:33+09:00
 - **Product implementation status:** local implementation under final verification;
   release remains blocked on external evidence
 
@@ -75,13 +75,13 @@
 | `docs/status/HANDOFF_CHECKLIST.md` | 944 | `703fd0e888f10630c6f62c96a1bb0e39038e57e7c075bb86fec043e7b38dd5d9` |
 | `docs/status/IMPLEMENTATION_STATUS.md` | 6892 | `6ee801b2d75585d1aceb4a07b9523622958c11c56643f1e5bc38c917e16bf973` |
 | `docs/status/RISK_REGISTER.md` | 3622 | `b51ead920f46a560972611566c486bec3c261d8d44cfa27a6ebb56dcaf03ecf5` |
-| `docs/status/VERIFICATION_EVIDENCE.md` | 30727 | `f2f39925010b92cd2fcfd3f491a70ad5736092959157d6a0f1d351d64e3e2e7d` |
+| `docs/status/VERIFICATION_EVIDENCE.md` | 31527 | `48a03c09c7e6508861b846ba3054fb0f5c179f75cf2a28ba0ed5f499b64e704f` |
 | `docs/superpowers/plans/2026-08-31-01-safety-planning-integrity.md` | 14912 | `b3b83a9de0a9ef432010a357165b33181aaaa1a2f84282bafd5fb0fb544e6195` |
 | `docs/superpowers/plans/2026-08-31-02-truthful-release-gates.md` | 12246 | `a8463d0ee65229977a79d5b34ec5617de89d64132396e3352d48ad90172ec462` |
 | `docs/superpowers/plans/2026-08-31-03-api-authorization-security.md` | 11415 | `e92f1712a1599a0977aa851ab7b802946379fa4a40320465ff0e9f8df977f992` |
 | `docs/superpowers/plans/2026-08-31-04-web-openapi-pwa.md` | 12830 | `315e81399d58dee4e05e62a3f7755ac3d15b34c21def4b6faa30a2c0506a7998` |
 | `docs/superpowers/plans/2026-08-31-05-runtime-deployment-observability.md` | 11327 | `1bf44f06f59b24a42e0053c95994afacce4cdb07bbd27da2db797c4a605f699c` |
-| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `a00b442944b41ab87319576e11edd5db1bec77915a54ed08eb467aacd5190443` |
+| `docs/superpowers/plans/2026-08-31-06-traceability-cleanup-final-verification.md` | 10351 | `5b2f8660aad15c17b50fbca0206e20383025b43997f51be3dd03b838801bf728` |
 | `docs/superpowers/specs/2026-08-31-aaa-production-readiness-design.md` | 11012 | `c37c8954ed4c62fb3c7f8c0e0daf187381d12184cdaa4b512c8d1d47e53c0fcc` |
 | `docs/templates/ADR_TEMPLATE.md` | 579 | `b188a7e3787b79b29f571f30454aff736321660474cde2ff5a47207487c76e5c` |
 | `docs/templates/INCIDENT_TEMPLATE.md` | 798 | `933138dc379f72c86ff28f641b4f5b50a4413a833219d980c164f467e6ca14d0` |
@@ -104,12 +104,12 @@
 | `scripts/run_intake_eval.py` | 4275 | `d079f48f2c10c334437f2b7b29a4ff8ce1cd41eb4bfa78904aeb531d0f45e853` |
 | `scripts/run_stage_a.py` | 9806 | `20e3d6141d2ab0baa7bdd2676330dfc2ba2e5cafacdb4ae79c89a7db49a51df5` |
 | `scripts/run_stage_b.py` | 6978 | `4400865f55f93f6a459cd6334439556b0970c44dba5d0ab65890914f04896250` |
-| `scripts/run_stage_c.py` | 5243 | `bcdafa7b15a7454c7dc1cf867168cea76fe6abe582eb2a3b616ae48531cefc1f` |
+| `scripts/run_stage_c.py` | 5168 | `61da0f949cacd19e05fa1700627d7f19abff1552af67d3616b1ea9f0d59fb957` |
 | `scripts/smoke_deployment.py` | 4276 | `121615c73b8bc7b0afd0c3d4d39d8fd1d4e8f31f6bdb36347ed7b2cb2b1b715d` |
 | `scripts/test_backup_restore.py` | 6769 | `1d695eb95dee15781969a1beeb7ef648c961f007b49b051cabe7494a5a717c45` |
 | `scripts/verify_package.py` | 14992 | `782724ca816d2f482974c33afaadf560a90d3f7b97bebe8b38632dc686e80e8c` |
 | `scripts/verify_release.py` | 8564 | `eb8a449220961b68e940506cf57401bb9c11f155ac1bd2573c7d4e110755b736` |
-| `scripts/verify_repo.py` | 6225 | `b0bc3b6e3e05abca90e007641f9849c71b3bd02ea84f0bc4af3f35e674a3e235` |
+| `scripts/verify_repo.py` | 6293 | `f8888743704bcf56945e8fb53564922497f39878bcb0400e8ad02cf279b0a5b7` |
 
 ## Verification
 

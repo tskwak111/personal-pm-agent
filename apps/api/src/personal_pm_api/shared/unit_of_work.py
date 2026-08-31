@@ -6,8 +6,6 @@ audit events and outbox records share a single transaction boundary.
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator, Callable
-from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from types import TracebackType
 from typing import TYPE_CHECKING
 
@@ -24,18 +22,6 @@ if TYPE_CHECKING:
     )
     from personal_pm_api.planning.repository import PlanningRepository
     from personal_pm_api.workspaces.repository import WorkstreamRepository
-
-
-class UnitOfWork:
-    """Protocol shape for application services (structural typing)."""
-
-    session: AsyncSession
-
-    async def commit(self) -> None:  # pragma: no cover - interface
-        raise NotImplementedError
-
-    async def rollback(self) -> None:  # pragma: no cover - interface
-        raise NotImplementedError
 
 
 class SqlAlchemyUnitOfWork:
@@ -87,17 +73,3 @@ class SqlAlchemyUnitOfWork:
             await self.session.rollback()
         if self.session is not None:
             await self.session.close()
-
-
-def uow_context(
-    session_factory: async_sessionmaker[AsyncSession],
-) -> Callable[[], AbstractAsyncContextManager[SqlAlchemyUnitOfWork]]:
-    """Context helper returning the UoW for ``async with`` usage."""
-
-    @asynccontextmanager
-    async def factory() -> AsyncIterator[SqlAlchemyUnitOfWork]:
-        unit = SqlAlchemyUnitOfWork(session_factory)
-        async with unit:
-            yield unit
-
-    return factory

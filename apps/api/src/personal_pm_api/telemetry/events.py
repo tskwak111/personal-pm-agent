@@ -28,14 +28,6 @@ def validate_no_sensitive_fields(payload: dict[str, Any]) -> None:
         raise SensitiveTelemetryFieldError(found)
 
 
-def _base(trace_id: str, workspace_hash: str) -> dict[str, Any]:
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "trace_id": trace_id,
-        "workspace_hash": workspace_hash,
-    }
-
-
 @dataclass(frozen=True, slots=True)
 class PlannerRunEvent:
     schema_version: int

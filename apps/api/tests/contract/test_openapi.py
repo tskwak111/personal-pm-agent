@@ -3,7 +3,6 @@ from pathlib import Path
 
 from personal_pm_api.main import create_app
 
-
 ROOT = Path(__file__).resolve().parents[4]
 
 

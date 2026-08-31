@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from personal_pm_api.execution.repository import ExternalExecutionRepository
@@ -43,10 +42,6 @@ async def enqueue_external_command(
         idempotency_key=command.idempotency_key,
     )
     return record
-
-
-def utc_now() -> datetime:
-    return datetime.now(UTC)
 
 
 __all__ = ["ExternalCommand", "enqueue_external_command"]

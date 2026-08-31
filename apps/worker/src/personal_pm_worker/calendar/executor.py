@@ -7,30 +7,13 @@ side-effect are reconciled through provider-side idempotency keys.
 
 from __future__ import annotations
 
-from typing import Any, Protocol
-
-from personal_pm_worker.calendar.retry import classify_failure
-
-
-class OutboxRepositoryProtocol(Protocol):
-    async def find_success_by_idempotency(self, idempotency_key: str) -> Any: ...
-
-    async def link_existing_result(self, record_id: str, existing: Any) -> None: ...
-
-    async def mark_succeeded(self, record_id: str, external_event_id: str) -> None: ...
-
-
-class ProviderAdapterProtocol(Protocol):
-    async def execute(self, command: dict[str, object]) -> dict[str, object]: ...
-
-    async def verify(self, result: dict[str, object]) -> bool: ...
+from typing import Any
 
 
 class CalendarCommandExecutor:
     def __init__(self, *, repository: Any, adapter: Any) -> None:
         self.repository = repository
         self.adapter = adapter
-        self.attempts: dict[str, int] = {}
 
     async def execute(self, outbox_id: str) -> str:
         record = self.repository.get(outbox_id)
@@ -40,15 +23,11 @@ class CalendarCommandExecutor:
             await self.repository.link_existing_result(record.id, existing)
             return "SUCCEEDED"
 
-        attempts = self.attempts.get(record.id, 0) + 1
-        self.attempts[record.id] = attempts
         try:
             result = await self.adapter.execute(dict(record.command))
         except TimeoutError:
             # Unknown outcome: leave PENDING so redelivery reconciles; never
             # mark success or failure on an ambiguous timeout.
-            decision = classify_failure(None, None, attempts, timeout=True)
-            _ = decision
             return "PENDING"
 
         verified = await self.adapter.verify(result)

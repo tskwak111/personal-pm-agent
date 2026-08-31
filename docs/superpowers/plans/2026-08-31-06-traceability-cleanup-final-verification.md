@@ -135,7 +135,7 @@ git commit -m "docs(status): reconcile readiness with evidence"
 **Interfaces:**
 - Produces: unchanged public behavior with fewer unused symbols
 
-- [ ] **Step 1: Prove each candidate unused**
+- [x] **Step 1: Prove each candidate unused**
 
 ```bash
 rg -n 'UnitOfWork|uow_context' --glob '!apps/api/src/personal_pm_api/shared/unit_of_work.py'
@@ -145,18 +145,18 @@ rg -n 'ActorDependency|_base\(|utc_now\(|LatencyLike|_load_proposal'
 
 For each symbol, retain it if a production caller exists. Protocols with multiple concrete test/production implementations stay.
 
-- [ ] **Step 2: Run affected tests before deletion**
+- [x] **Step 2: Run affected tests before deletion**
 
 ```bash
 uv run pytest apps/api/tests/integration/test_unit_of_work.py apps/api/tests/integration/test_pilot_metrics.py apps/api/tests/integration/test_focus_block_approval.py apps/worker/tests/calendar -q
 pnpm --filter @personal-pm/web test --run src/test/onboarding.test.tsx
 ```
 
-- [ ] **Step 3: Delete wrappers, not behavior**
+- [x] **Step 3: Delete wrappers, not behavior**
 
 Inline a wrapper only when the callee is already the sole public behavior. Delete unused helpers and imports. Do not collapse ownership, transaction, executor, parser, storage, or Planner structural protocols that have multiple implementations.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 ```bash
 make format-check
