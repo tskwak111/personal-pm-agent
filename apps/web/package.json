@@ -2,16 +2,22 @@
   "name": "@personal-pm/web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm --filter @personal-pm/api-client build",
     "build": "next build",
     "start": "next start",
+    "prelint": "pnpm --filter @personal-pm/api-client build",
     "lint": "eslint .",
     "format:check": "prettier --check .",
+    "pretypecheck": "pnpm --filter @personal-pm/api-client build",
     "typecheck": "tsc --noEmit",
+    "pretest": "pnpm --filter @personal-pm/api-client build",
     "test": "vitest"
   },
   "dependencies": {
+    "@personal-pm/api-client": "workspace:*",
     "next": "16.3.2",
     "react": "19.2.8",
     "react-dom": "19.2.8"

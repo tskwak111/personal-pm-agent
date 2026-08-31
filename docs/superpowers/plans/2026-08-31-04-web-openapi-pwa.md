@@ -171,7 +171,7 @@ git commit -m "feat(api): expose workspace web read models"
 - Produces: browser client using `NEXT_PUBLIC_API_BASE_URL` and an in-memory/sessionStorage bearer token
 - Produces: explicit `loading|unauthenticated|empty|error|ready` rendering
 
-- [ ] **Step 1: Write shell and auth-state tests**
+- [x] **Step 1: Write shell and auth-state tests**
 
 ```typescript
 it("renders app navigation around application routes", () => {
@@ -187,17 +187,17 @@ it("never presents a GET link as a sign-in action", () => {
 });
 ```
 
-- [ ] **Step 2: Confirm RED**
+- [x] **Step 2: Confirm RED**
 
 Run: `pnpm --filter @personal-pm/web test --run src/test/app-shell.test.tsx src/test/api-state.test.tsx`
 
-- [ ] **Step 3: Wire the shell once**
+- [x] **Step 3: Wire the shell once**
 
 Application route group uses `AppShell`; auth routes remain outside it. `session.ts` exposes `getToken/setToken/clearToken` and no fixture data. In production without a configured identity provider, sign-in renders `로그인 공급자 미설정` and does not claim success. Test-session creation is visible only when `NEXT_PUBLIC_APP_ENVIRONMENT === "test"`.
 
 Replace unauthenticated `EventSource` with `fetch` streaming so the same bearer token is sent in the `Authorization` header. Parse SSE `id:` and `data:` fields incrementally and reconnect with the last sequence after transient disconnects.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 ```bash
 pnpm --filter @personal-pm/web test --run

@@ -44,9 +44,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Button>
       </nav>
 
-      <main id="main-content" tabIndex={-1}>
+      <div id="main-content" tabIndex={-1}>
         {children}
-      </main>
+      </div>
 
       <aside aria-label="에이전트 패널" data-open={agentOpen} hidden={!agentOpen}>
         <p>에이전트</p>

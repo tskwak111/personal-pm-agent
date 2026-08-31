@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { AppShell } from "../features/navigation/app-shell";
+import AppLayout from "../app/(app)/layout";
 
 it("exposes the five primary destinations", () => {
   render(
@@ -22,4 +23,10 @@ it("has a keyboard reachable agent trigger", () => {
   );
   const trigger = screen.getAllByRole("button", { name: "에이전트 열기" })[0];
   expect(trigger).toHaveAttribute("aria-expanded", "false");
+});
+
+it("wraps application routes in the shared shell", () => {
+  render(<AppLayout>today</AppLayout>);
+  expect(screen.getByRole("navigation", { name: "주요 메뉴" })).toBeVisible();
+  expect(screen.getByText("today")).toBeVisible();
 });

@@ -1,21 +1,12 @@
 /**
  * UX-001..UX-006 interaction-time instrumentation.
  *
- * Events are recorded client-side and delivered via sendBeacon so page
- * unload cannot lose the final event. Durations use monotonic
+ * Events are recorded client-side and delivered with a keepalive request so
+ * page unload does not discard the final event. Durations use monotonic
  * performance.now(), never wall clocks.
  */
 
-export const UX_EVENT_NAMES = [
-  "task_started",
-  "task_completed",
-  "candidate_confirmed",
-  "proposal_approved",
-  "agent_opened",
-  "briefing_viewed",
-] as const;
-
-export type UxEventName = (typeof UX_EVENT_NAMES)[number];
+export type UxEventName = components["schemas"]["UxEventName"];
 
 declare global {
   interface Window {
@@ -39,11 +30,13 @@ export function recordUxEvent(
   // Debug/test hook: the E2E suite asserts on this array.
   (window.__uxEvents ??= []).push({ name, duration_ms: durationMs, metadata });
 
-  const payload = JSON.stringify({ name, duration_ms: durationMs, metadata });
-  void fetch("/api/v1/analytics/ux-events", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: payload,
-    keepalive: true,
-  }).catch(() => undefined);
+  void api
+    .POST("/api/v1/analytics/ux-events", {
+      body: { schema_version: 1, name, duration_ms: durationMs },
+      keepalive: true,
+    })
+    .catch(() => undefined);
 }
+import type { components } from "@personal-pm/api-client";
+
+import { api } from "../api";
