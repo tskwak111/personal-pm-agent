@@ -259,6 +259,6 @@ Repeat every final command after the last fix. A previous green run does not cou
 
 Set local readiness PASS only if the final review is READY and all local commands are green. Keep release `BLOCKED_EXTERNAL` until the explicit external evidence table is empty.
 
-- [ ] **Step 5: Invoke `superpowers:finishing-a-development-branch`**
+- [x] **Step 5: Invoke `superpowers:finishing-a-development-branch`**
 
 Present merge/PR/keep-worktree options. Do not push, merge, publish, or delete the worktree without the user's choice.

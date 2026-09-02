@@ -2,10 +2,10 @@
 
 - **Local Production Readiness:** PASS
 - **Release:** BLOCKED_EXTERNAL
-- **현재 Phase:** AAA production-readiness reconciliation
-- **현재 Task:** independent whole-branch review and final verification
+- **현재 Phase:** Release preparation — BLOCKED_EXTERNAL
+- **현재 Task:** external release evidence collection
 - **마지막 로컬 검증:** `make verify` PASS; Python unit 295, API client 2, Web unit 41, PostgreSQL integration 249, standalone E2E/axe 16, Stage A 20,000/15 gates PASS — revision `02674bc`, 2026-08-31 실측
-- **기준 브랜치:** `codex/aaa-production-readiness`
+- **기준 브랜치:** `main` (`a34935f`)
 
 ## Phase 현황
 
@@ -74,5 +74,5 @@
 ## 다음 행동
 
 1. 전체 브랜치 self-review의 Critical/Important 5건은 TDD로 수정했고 scoped re-review에서 잔여 0건이다.
-2. 마지막 수정 뒤 전체 완료 매트릭스를 재실행했고 모두 통과했다.
+2. 최종 완료 매트릭스를 재실행한 뒤 `main`에 fast-forward 병합했다.
 3. 외부 증거 표가 남아 있으므로 release는 계속 차단한다.
